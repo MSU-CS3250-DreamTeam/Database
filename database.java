@@ -1,23 +1,29 @@
-class Database {
+package Database;
+
+/**
+ * 
+ */
+public class Database {
   // TODO class variables, class methods
-    
+
   // A list of class private variables.
-  // TODO data structure like 2 dimension array and other necessary variables.
-  int columns = 0;
+  private static int rows = 100;
+  private static String[][] data_table;  // Tentative data structure. We can change this.
   
   // Constructor
-  public Database(int col, String[] labels) {
-    // TODO constructor parameters like number of columns and column labels ie cost, wholesale cost, vendor id, etc.
-    // TODO instancing two dimensional array or other table data structure with appropriate dimensions and column labels.
-
+  public Database(int columns) {
+    this.data_table = new String[columns][rows];
   }
   
   // TODO in case we need it, finds a set of data within database to return to read and update methods.
-  private static int[] search() {
-    int arr_width = 1;
-    int[] database_coords = new int[arr_width];
+  /**
+   * 
+   * @return the position of an entry in the data structure; a row.
+   */
+  private static int search() {
+    int position = 0;
     
-    return database_coords; // currently null value
+    return position; // currently returns 0.
   }
 
   // TODO create to add rows of data to database.
