@@ -7,25 +7,48 @@ public class Database {
   // TODO class variables, class methods
 
   // A list of class private variables.
-  private static int rows = 100000;
-  private static int row_index = 0;
-  private String[][] data_table; // Tentative data structure. We can change this.
+  private static int rows = 100000; // Entry capacity of data structure.
+  private static int row_index = 0; // Position of final entry in data structure.
+  private static String[][] data_table; // Tentative data structure. We can change this.
 
   // Constructor
   public Database(int columns) {
     this.data_table = new String[rows][columns];
   }
 
-  // TODO in case we need it, finds a set of data within database to return to read and update methods.
+  // TODO in case we need it, finds a set of data within database to return to
+  // read and update methods.
   /**
    * 
-   * @param entry the entry used to find the sought row's position.
-   * @return the position of an entry in the data structure; a row.
+   * @param id the entry used to find the sought row's position in data structure.
+   * @return the position of an entry in the data structure; a row. 0 if not found.
    */
-  private static int search(String entry) {
-    int position = 0;
-    
-    return position; // currently returns 0.
+  private static int search(String id) {
+    int position = 0; // 0 for not found; position of labels entry.
+    int index = 1;
+    boolean is_searching = true;
+
+    while (is_searching) {
+      if (data_table[index][position] == id) {
+        position = index;
+        is_searching = false;
+      } else if (index >= row_index) {
+        is_searching = false;
+      } else {
+        index++;
+      }
+    }
+
+    // int position = row_index;
+    // for (int i = 1; i < position; i++) {
+    //   if (data_table[i][0] == id) {
+    //     position = i;
+    //   }  else if (i >= position) {
+    //     position = 0;
+    //   }
+    // }
+
+    return position;
   }
 
   /**
