@@ -1,3 +1,5 @@
+package com.dreamteam.database;
+
 public class DataList {
 
     //Class variables match order and type presented in excel file
@@ -52,7 +54,7 @@ public class DataList {
     private void setSupplier_id(String supplier_id){
         this.supplier_id = supplier_id;
     }
-
+    
     //Still need to add checks to other methods for valid inputs
     //Probably link it to the excel file to get the inputs?
     //Feel free to make changes or add suggestions :)

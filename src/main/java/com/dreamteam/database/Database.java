@@ -1,3 +1,5 @@
+package com.dreamteam.database;
+
 import java.util.Arrays;
 
 /**
@@ -53,12 +55,13 @@ public class Database {
 
   /**
    * Prints the entire database to console. May want to disable in finished project.
+   * Also prints the number of current entries in database.
    */
   public void display() {
 
-    for (int i = 0; i < row_index; i++) {
-      System.out.println(Arrays.toString(data_table[i]));
-    }
+    // for (int i = 0; i < row_index; i++) {
+    //   System.out.println(Arrays.toString(data_table[i]));
+    // }
 
     System.out.println("\nThere are " + row_index + " entries recorded in the database.\n");
 

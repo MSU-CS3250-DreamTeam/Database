@@ -1,4 +1,4 @@
-
+package com.dreamteam.database;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -46,7 +46,7 @@ public class main {
     data_input.close();
 
     // For debugging. There are ~22k entries to display.
-    //new_database.display();
+    new_database.display();
 
   }
 }
