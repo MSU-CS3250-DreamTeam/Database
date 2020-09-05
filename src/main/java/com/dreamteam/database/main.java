@@ -117,7 +117,7 @@ public class main {
     }
   }
 
-  // Appears to be redundant. Why not call load() where we call this main()?
+  // Appears to be redundant. Why not call loadData() where we call this main()?
   // public main() throws FileNotFoundException{
   //   loadData();
   // }
@@ -155,6 +155,9 @@ public class main {
       String Supplier_id = row[3].trim();
 
     }
+
+    sc.close();
+
   }
 
   /**
