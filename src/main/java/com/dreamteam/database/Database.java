@@ -18,6 +18,10 @@ public class Database {
     this.data_table = new String[rows][columns];
   }
 
+  public Database() {
+    
+  }
+
   /**
    * 
    * @param id the entry used to find the sought row's position in data structure.

@@ -11,14 +11,64 @@ public class main {
 
   static private final String SPREAD_SHEET = "inventory_team1.csv";
   static private Database new_database;
+  public static final int Option_Create = 1;
+  public static final int Option_ADD = 2;
+  public static final int Option_Update = 3;
+  public static final int Option_Delete = 4;
+  public static final int Option_Quit = 5;
+  public static Scanner sc = new Scanner(System.in);
+
+
+  public static int getOption() {
+    while (true) {
+      System.out.println("Options: 1:Create 2:Add 3:Update 4:Delete 5:Quit");
+      System.out.print("? ");
+      String line = sc.nextLine();
+      try {
+        int option = Integer.parseInt(line);
+        if (option == Option_Create || option == Option_ADD || option == Option_Update || option == Option_Delete || option == Option_Quit)
+          return option;
+      } catch (NumberFormatException ex) {
+      }
+      System.out.println("Error!");
+    }
+  }
+
+
+  static public void main(String[] args) throws FileNotFoundException {
+    System.out.println("Welcome to DreamTeam DataBase");
+    Database database = new Database();
+    boolean quit = false;
+    while (!quit) {
+      int option = getOption();
+      switch (option) {
+        case Option_Create:
+          System.out.println(database);
+          break;
+        case Option_ADD:
+          // Add product id
+          break;
+        case Option_Update:
+        // Update Product Id w
+          break;
+        case Option_Delete:
+          //Deletes Product Id
+          break;
+        case Option_Quit:
+          System.out.println("Saving Database changes...");
+          System.out.println("Done!");
+          quit = true;
+          System.out.println("Bye!");
+      }
+    }
+    //System.out.println("Bye!");
 
   /**
-   * 
+   *
    * @param args
    * @throws FileNotFoundException
    */
-  static public void main(String[] args) throws FileNotFoundException {
-    
+
     File new_file = new File(SPREAD_SHEET);
     if (!new_file.exists()) {
       throw new FileNotFoundException("Is the data file " + SPREAD_SHEET + " in the wrong directory?"); // For debugging.
