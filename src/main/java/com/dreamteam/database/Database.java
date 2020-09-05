@@ -1,16 +1,16 @@
 package com.dreamteam.database;
 
-import java.util.Arrays;
+ import java.util.Arrays;
 
 /**
  * 
  */
 public class Database {
-  // TODO class variables, class methods
+  // TODO polish, test, refactor, redesign,etc.
 
   // A list of class private variables.
-  private static int rows = 100000; // Entry capacity of data structure.
-  private static int row_index = 0; // Position of final entry in data structure.
+  private static int rows = 42000; // Entry capacity of data structure.
+  private static int entry_count = 0; // Position of final entry in data structure.
   private static String[][] data_table; // Tentative data structure. We can change this.
 
   // Constructor
@@ -18,39 +18,23 @@ public class Database {
     this.data_table = new String[rows][columns];
   }
 
-  // TODO in case we need it, finds a set of data within database to return to
-  // read and update methods.
   /**
    * 
    * @param id the entry used to find the sought row's position in data structure.
    * @return the position of an entry in the data structure; a row. 0 if not found.
    */
   private static int search(String id) {
-    int position = 0; // 0 for not found; position of labels entry.
-    int index = 1;
-    boolean is_searching = true;
 
-    while (is_searching) {
-      if (data_table[index][position] == id) {
-        position = index;
-        is_searching = false;
-      } else if (index >= row_index) {
-        is_searching = false;
-      } else {
-        index++;
+    for (int i = 0; i < entry_count; i++) {
+      if (data_table[i][0].equals(id)) {
+        System.out.println("Found at: " + (i + 1));
+        return i;
       }
     }
 
-    // int position = row_index;
-    // for (int i = 1; i < position; i++) {
-    //   if (data_table[i][0] == id) {
-    //     position = i;
-    //   }  else if (i >= position) {
-    //     position = 0;
-    //   }
-    // }
+    System.out.println("Product not found.");
 
-    return position;
+    return entry_count + 1;
   }
 
   /**
@@ -59,11 +43,12 @@ public class Database {
    */
   public void display() {
 
-    // for (int i = 0; i < row_index; i++) {
+    // for (int i = 0; i < entry_count; i++) {
     //   System.out.println(Arrays.toString(data_table[i]));
+    //   // System.out.println(data_table[i][0]);
     // }
 
-    System.out.println("\nThere are " + row_index + " entries recorded in the database.\n");
+    System.out.println("\nThere are " + entry_count + " entries recorded in the database.\n");
 
   }
 
@@ -73,41 +58,57 @@ public class Database {
    */
   public void create(String[] new_data) {
     
-    for (int i = 0; i < new_data.length; i++) {
-      data_table[row_index][i] = new_data[i];
-    }
+    data_table[entry_count] = new_data;
     
-    row_index++;
+    entry_count++;
+
   }
 
-  // TODO retrieve some data from database, perhaps by a search or coordinates ie two_dimensional_array[1], parameter may be incorrect.
   /**
    * Read existing entry from database.
-   * @param data_set
+   * @param id
    */
-  public void read(String[] data_set) {
-
+  public void read(String id) {
+    int entry_position = search(id);
+    
+    if (entry_position < entry_count + 1) {
+      System.out.println(Arrays.toString(data_table[entry_position]));
+    }
+    
   }
 
-  // TODO modifies a row of database, replacing old data with new data. Parameters are tentative. Change if needed.
   /**
    * Find existing entry in database and update with new entry.
    * @param new_data
    * @param old_data
    */
-  public void update(String[] new_data, String[] old_data) {
+  public void update(String[] old_data, String[] new_data) {
+    int entry_position = search(old_data[0]);
+
+    if (entry_position < entry_count + 1) {
+      data_table[entry_position] = new_data;
+    }
     
   }
 
-  // TODO removes a row from database
   /**
    * Delete existing entry from database. Return true if successfully removed from database.
-   * @param old_data
+   * @param id
    */
-  public boolean delete(String[] old_data) {
-    boolean is_del = false;
+  public void delete(String id) {
+    
+    int entry_position = search(id);
 
-    return is_del;
+    if (entry_position < entry_count + 1) {
+
+      for (int i = entry_position; i < entry_count; i++) {
+        data_table[i] = data_table[i + 1];
+      }
+      System.out.println("Product removed.");
+      entry_count--;
+
+    }
+
   }
 
 }
