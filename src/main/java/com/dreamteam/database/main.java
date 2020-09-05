@@ -2,6 +2,9 @@ package com.dreamteam.database;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.util.Iterator;
 import java.util.Scanner;
 
 /**
@@ -18,6 +21,7 @@ public class main {
   public static final int Option_Quit = 5;
   public static Scanner sc = new Scanner(System.in);
   private int key;
+
 
 
   public static int getOption() {
@@ -61,14 +65,45 @@ public class main {
       String Supplier_id = row[3].trim();
     }
   }
+//Updates and saves the data that user inputs.
+  //Still needs some work done, need it to iterate through the csv file and find empty column to add the user data.
+  public void updateData() throws IOException {
+    File f = new File(SPREAD_SHEET);
+    PrintStream p = new PrintStream(f);
+    StringBuffer buffer = new StringBuffer();
+    String line[];
+    while ((line = f.list()) != null) {
+      for (int i = 0; i < line.length; i++) {
+        System.out.print(line[i] + " ");
+      }
+      System.out.println(" ");
+    }
+  }
+        //This was for testing dont know if we should do a iterator that iterates through each column by their category or do an array
+       /* String Product = line.next().getProduct();
+        p.print(Product + ", ");
+        int Quantity = line.next().getProduct();
+        p.print(Quantity + ", ");
+        double Wholesale = line.next().getProduct();
+        p.print(Wholesale + ", ");
+        double SalesPrice = line.next().getProduct();
+        p.print(SalesPrice + ", ");
+        String Supplier = line.next().getProduct();
+        p.print(Supplier + ", ");
+      }
+    }
+  }*/
 
+
+
+//This is to add the data into the csv but does not save it
+  // the update method does that. 
   public void addData(DataList dataList){
     dataList.setKey(key);
     addData(dataList);
   }
 
-  /*return "Product" + PRODUCT + "Quantity" + QUANTITY + "Wholesale" + WHOLESALE_COST + "SalePrice" + SALE_PRICE +
-          "Supplier" + SUPPLIER_ID;*/
+
 
   public static DataList getData() {
     System.out.println("Product");
