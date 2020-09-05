@@ -8,11 +8,14 @@ public class DataList {
     private double wholesale_cost;
     private double sale_price;
     private String supplier_id;
+    private int key;
 
     public static final int PRODUCT = 1;
     public static final int QUANTITY = 2;
     public static final int WHOLESALE_COST = 3;
-    public static final int SUPPLIER_ID = 4;
+    public static final int SALE_PRICE = 4;
+    public static final int SUPPLIER_ID = 5;
+
 
 
     public DataList(String product_id, int quantity, double wholesale_cost, double sale_price, String supplier_id){
@@ -56,7 +59,7 @@ public class DataList {
     public double getSale_price(){
         return sale_price;
     }
-    private void setSale_price(double sale_price){
+    private void  setSale_price(double sale_price){
         this.sale_price = Math.round(sale_price * 100.0) / 100.0;  //Ensures two decimal places for price
     }
 
@@ -68,11 +71,18 @@ public class DataList {
     private void setSupplier_id(String supplier_id){
         this.supplier_id = supplier_id;
     }
-    
+
+    public void setKey(int key){
+        if(key==PRODUCT || key==QUANTITY || key==WHOLESALE_COST || key==SALE_PRICE || key==SUPPLIER_ID){
+            this.key=key;
+        }
+    }
+
 
     @Override
     public String toString(){
-        return "Product" + PRODUCT + "Quantity" + QUANTITY + "Wholesale" + WHOLESALE_COST + "Supplier" + SUPPLIER_ID;
+        return "Product" + PRODUCT + "Quantity" + QUANTITY + "Wholesale" + WHOLESALE_COST + "SalePrice" + SALE_PRICE +
+                "Supplier" + SUPPLIER_ID;
     }
 
 

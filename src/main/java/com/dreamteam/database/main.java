@@ -17,6 +17,7 @@ public class main {
   public static final int Option_Delete = 4;
   public static final int Option_Quit = 5;
   public static Scanner sc = new Scanner(System.in);
+  private int key;
 
 
   public static int getOption() {
@@ -44,6 +45,7 @@ public class main {
   private double wholesale_cost;
   private double sale_price;
   private String supplier_id;*/
+
 // read from the file and give each of the following options to choose from
   public void loadData() throws FileNotFoundException {
     File f = new File(SPREAD_SHEET);
@@ -52,12 +54,38 @@ public class main {
     while (sc.hasNextLine()){
       String input = sc.nextLine();
       row = input.split(";");
-      String quanity = row[0].trim();
-      String wholesale_cost = row[1].trim();
-      String sale_prive = row[2].trim();
-      String supplier_id = row[3].trim();
+      String product_id = row[0].trim();
+      String Quanity = row[0].trim();
+      String Wholesale_cost = row[1].trim();
+      String Sale_prive = row[2].trim();
+      String Supplier_id = row[3].trim();
     }
   }
+
+  public void addData(DataList dataList){
+    dataList.setKey(key);
+    addData(dataList);
+  }
+
+  /*return "Product" + PRODUCT + "Quantity" + QUANTITY + "Wholesale" + WHOLESALE_COST + "SalePrice" + SALE_PRICE +
+          "Supplier" + SUPPLIER_ID;*/
+
+  public static DataList getData() {
+    System.out.println("Product");
+    String Product = sc.nextLine();
+    System.out.println("Quanity");
+    int Quanitity = Integer.parseInt(sc.nextLine());
+    System.out.println("Wholesale");
+   double Wholesale = Double.parseDouble(sc.nextLine());
+    System.out.println("SalesPrice");
+    double SalesPrice = Double.parseDouble(sc.nextLine());
+    System.out.println("Supplier");
+    String Supplier = sc.nextLine();
+    return new DataList(Product,  Quanitity, Wholesale, SalesPrice,Supplier);
+  }
+
+
+
 
 
   static public void main(String[] args) throws FileNotFoundException {
@@ -71,6 +99,8 @@ public class main {
           System.out.println(database);
           break;
         case Option_ADD:
+          DataList dataList = getData();
+
           // Add product id
           break;
         case Option_Update:
