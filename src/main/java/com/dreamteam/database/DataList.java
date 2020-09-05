@@ -8,7 +8,7 @@ public class DataList {
     private double wholesale_cost;
     private double sale_price;
     private String supplier_id;
-    // private int key; // Unused.
+    private int key;
 
     public static final int PRODUCT = 1;
     public static final int QUANTITY = 2;
