@@ -9,7 +9,7 @@ public class Database {
   // TODO polish, test, refactor, redesign,etc.
 
   // A list of class private variables.
-  private static int rows = 30000; // Entry capacity of data structure.
+  private static int rows = 3000; // Entry capacity of data structure.
   private static int entry_count = 0; // Position of final entry in data structure.
   private static String[][] data_table; // Tentative data structure. We can change this.
 
@@ -53,12 +53,16 @@ public class Database {
   }
 
   /**
-   * Add new entries to database. Return true if successfully added to database.
+   * Add new entries to database.
    * @param new_data
    */
   public void create(String[] new_data) {
     
-    //if (entry_count )
+    if (entry_count + 1 > rows ) {
+      System.out.println("Resizing the database from " + rows + " rows to " + (rows * 2) + " rows.");
+      rows *= 2;
+      data_table = Arrays.copyOf(data_table, rows);
+    }
 
     data_table[entry_count] = new_data;
     
@@ -94,7 +98,7 @@ public class Database {
   }
 
   /**
-   * Delete existing entry from database. Return true if successfully removed from database.
+   * Delete existing entry from database.
    * @param id
    */
   public void delete(String id) {
