@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.util.Iterator;
 import java.util.Scanner;
 
 /**
@@ -23,7 +22,6 @@ public class main {
   private int key;
 
 
-
   public static int getOption() {
     while (true) {
       System.out.println("Options: 1:Create 2:Read 3:Update 4:Delete 5:Quit");
@@ -40,34 +38,27 @@ public class main {
   }
 
 
-  public main() throws FileNotFoundException{
+  public main() throws FileNotFoundException {
     loadData();
   }
 
- /* private String product_id;
-  private int quantity;
-  private double wholesale_cost;
-  private double sale_price;
-  private String supplier_id;*/
 
   // read from the file and give each of the following options to choose from
-  public void loadData() throws FileNotFoundException {
-    File f = new File(SPREAD_SHEET);
-    Scanner sc = new Scanner(f);
-    String[]row;
-    while (sc.hasNextLine()){
-      String input = sc.nextLine();
-      row = input.split(";");
-      String product_id = row[0].trim();
-      String Quanity = row[0].trim();
-      String Wholesale_cost = row[1].trim();
-      String Sale_prive = row[2].trim();
-      String Supplier_id = row[3].trim();
+  public static DataList loadData() throws FileNotFoundException {
+    Scanner sc = new Scanner(new File(SPREAD_SHEET));
+    sc.useDelimiter(",");   //sets the delimiter pattern
+    while (sc.hasNext())  //returns a boolean value
+    {
+      System.out.print(sc.next());  //find and returns the next complete token from this scanner
     }
+    sc.close();  //closes the scanner
+    return null;
   }
+
+
   //Updates and saves the data that user inputs.
   //Still needs some work done, need it to iterate through the csv file and find empty column to add the user data.
-  public void updateData() throws IOException {
+  public static DataList updateData() throws IOException {
     File f = new File(SPREAD_SHEET);
     PrintStream p = new PrintStream(f);
     StringBuffer buffer = new StringBuffer();
@@ -78,6 +69,7 @@ public class main {
       }
       System.out.println(" ");
     }
+    return null;
   }
   //This was for testing dont know if we should do a iterator that iterates through each column by their category or do an array
        /* String Product = line.next().getProduct();
@@ -135,6 +127,8 @@ public class main {
           System.out.println(database);
           break;
         case Option_READ:
+          DataList readData = loadData();
+          System.out.println(database);
           //DataList dataList = getData();
 
           // Add product id
@@ -152,14 +146,7 @@ public class main {
           System.out.println("Bye!");
       }
     }
-    //System.out.println("Bye!");
-
-
-
-
-
-
-
+    System.out.println("Bye!");
 
     /**
      *
@@ -200,7 +187,7 @@ public class main {
 
   }
 
-  private static final void demo_database() {
+  private static DataList demo_database() {
 
     String existing_product_id = "8XXKZRELM2JJ";
     String fake_product_id = "AGEXCVFG3344";
@@ -229,7 +216,7 @@ public class main {
 
     System.out.print("\nRetrieving a product. ");
     new_database.read(fake_product_id);
-
+return null;
   }
 
 }
