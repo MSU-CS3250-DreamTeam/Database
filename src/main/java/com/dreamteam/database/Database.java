@@ -43,7 +43,7 @@ public class Database {
    */
   public void display() {
 
-    // for (int i = 0; i < 14; i++) {
+    // for (int i = 0; i < entry_count; i++) {
     //   System.out.println(Arrays.toString(data_table[i]));
     //   // System.out.println(data_table[i][0]);
     // }
