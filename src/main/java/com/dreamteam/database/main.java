@@ -69,7 +69,7 @@ public class main {
     System.out.print("Existing product should not be found: ");
     new_database.read(existing_product_id);
 
-    System.out.print("\nNew product should be found: ");
+    System.out.print("\nNew product should be found.");
     new_database.create(new_product);
     new_database.display();
 
