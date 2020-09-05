@@ -48,11 +48,11 @@ public class main {
     new_database.display();
 
     // For debugging. Disable in final project.
-    pseudo_test();
+    demo_database();
 
   }
 
-  private static final void pseudo_test() {
+  private static final void demo_database() {
 
     String existing_product_id = "8XXKZRELM2JJ";
     String fake_product_id = "AGEXCVFG3344";
