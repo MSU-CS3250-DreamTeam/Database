@@ -8,14 +8,14 @@ import java.util.Iterator;
 import java.util.Scanner;
 
 /**
- * 
+ *
  */
 public class main {
 
   static private final String SPREAD_SHEET = "inventory_team1.csv";
   static private Database new_database;
   public static final int Option_Create = 1;
-  public static final int Option_ADD = 2;
+  public static final int Option_READ = 2;
   public static final int Option_Update = 3;
   public static final int Option_Delete = 4;
   public static final int Option_Quit = 5;
@@ -26,12 +26,12 @@ public class main {
 
   public static int getOption() {
     while (true) {
-      System.out.println("Options: 1:Create 2:Add 3:Update 4:Delete 5:Quit");
+      System.out.println("Options: 1:Create 2:Read 3:Update 4:Delete 5:Quit");
       System.out.print("? ");
       String line = sc.nextLine();
       try {
         int option = Integer.parseInt(line);
-        if (option == Option_Create || option == Option_ADD || option == Option_Update || option == Option_Delete || option == Option_Quit)
+        if (option == Option_Create || option == Option_READ || option == Option_Update || option == Option_Delete || option == Option_Quit)
           return option;
       } catch (NumberFormatException ex) {
       }
@@ -50,7 +50,7 @@ public class main {
   private double sale_price;
   private String supplier_id;*/
 
-// read from the file and give each of the following options to choose from
+  // read from the file and give each of the following options to choose from
   public void loadData() throws FileNotFoundException {
     File f = new File(SPREAD_SHEET);
     Scanner sc = new Scanner(f);
@@ -65,7 +65,7 @@ public class main {
       String Supplier_id = row[3].trim();
     }
   }
-//Updates and saves the data that user inputs.
+  //Updates and saves the data that user inputs.
   //Still needs some work done, need it to iterate through the csv file and find empty column to add the user data.
   public void updateData() throws IOException {
     File f = new File(SPREAD_SHEET);
@@ -79,7 +79,7 @@ public class main {
       System.out.println(" ");
     }
   }
-        //This was for testing dont know if we should do a iterator that iterates through each column by their category or do an array
+  //This was for testing dont know if we should do a iterator that iterates through each column by their category or do an array
        /* String Product = line.next().getProduct();
         p.print(Product + ", ");
         int Quantity = line.next().getProduct();
@@ -96,8 +96,8 @@ public class main {
 
 
 
-//This is to add the data into the csv but does not save it
-  // the update method does that. 
+  //This is to add the data into the csv but does not save it
+  // the update method does that.
   public void addData(DataList dataList){
     dataList.setKey(key);
     addData(dataList);
@@ -111,7 +111,7 @@ public class main {
     System.out.println("Quanity");
     int Quanitity = Integer.parseInt(sc.nextLine());
     System.out.println("Wholesale");
-   double Wholesale = Double.parseDouble(sc.nextLine());
+    double Wholesale = Double.parseDouble(sc.nextLine());
     System.out.println("SalesPrice");
     double SalesPrice = Double.parseDouble(sc.nextLine());
     System.out.println("Supplier");
@@ -131,10 +131,11 @@ public class main {
       int option = getOption();
       switch (option) {
         case Option_Create:
+          DataList dataList = getData();
           System.out.println(database);
           break;
-        case Option_ADD:
-          DataList dataList = getData();
+        case Option_READ:
+          //DataList dataList = getData();
 
           // Add product id
           break;
@@ -160,11 +161,11 @@ public class main {
 
 
 
-  /**
-   *
-   * @param args
-   * @throws FileNotFoundException
-   */
+    /**
+     *
+     * @param args
+     * @throws FileNotFoundException
+     */
 
     File new_file = new File(SPREAD_SHEET);
     if (!new_file.exists()) {
