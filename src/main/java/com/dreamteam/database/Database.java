@@ -9,7 +9,7 @@ public class Database {
   // TODO polish, test, refactor, redesign,etc.
 
   // A list of class private variables.
-  private static int rows = 42000; // Entry capacity of data structure.
+  private static int rows = 30000; // Entry capacity of data structure.
   private static int entry_count = 0; // Position of final entry in data structure.
   private static String[][] data_table; // Tentative data structure. We can change this.
 
@@ -34,7 +34,7 @@ public class Database {
 
     System.out.println("Product not found.");
 
-    return entry_count + 1;
+    return entry_count;
   }
 
   /**
@@ -58,6 +58,8 @@ public class Database {
    */
   public void create(String[] new_data) {
     
+    //if (entry_count )
+
     data_table[entry_count] = new_data;
     
     entry_count++;
@@ -71,7 +73,7 @@ public class Database {
   public void read(String id) {
     int entry_position = search(id);
     
-    if (entry_position < entry_count + 1) {
+    if (entry_position < entry_count) {
       System.out.println(Arrays.toString(data_table[entry_position]));
     }
     
@@ -85,7 +87,7 @@ public class Database {
   public void update(String[] old_data, String[] new_data) {
     int entry_position = search(old_data[0]);
 
-    if (entry_position < entry_count + 1) {
+    if (entry_position < entry_count) {
       data_table[entry_position] = new_data;
     }
     
@@ -99,7 +101,7 @@ public class Database {
     
     int entry_position = search(id);
 
-    if (entry_position < entry_count + 1) {
+    if (entry_position < entry_count) {
 
       for (int i = entry_position; i < entry_count; i++) {
         data_table[i] = data_table[i + 1];
