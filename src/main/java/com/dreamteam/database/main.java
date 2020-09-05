@@ -31,10 +31,10 @@ public class main {
 
     System.out.println("Welcome to DreamTeam DataBase");
     Database database = new Database();
-    boolean quit = false;
+    int option = 0;
 
-    while (!quit) {
-      int option = getOption();
+    while (option != Option_Quit) {
+      option = getOption();
 
       switch (option) {
         case Option_Create:
@@ -54,10 +54,9 @@ public class main {
           // Deletes Product Id
           break;
 
-        case Option_Quit:
+        default:
           System.out.println("Saving Database changes...");
           System.out.println("Done!");
-          quit = true;
           System.out.println("Bye!");
       }
     }
