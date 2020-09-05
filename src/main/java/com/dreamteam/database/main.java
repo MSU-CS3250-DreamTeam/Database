@@ -35,6 +35,31 @@ public class main {
   }
 
 
+  public main() throws FileNotFoundException{
+    loadData();
+  }
+
+ /* private String product_id;
+  private int quantity;
+  private double wholesale_cost;
+  private double sale_price;
+  private String supplier_id;*/
+// read from the file and give each of the following options to choose from
+  public void loadData() throws FileNotFoundException {
+    File f = new File(SPREAD_SHEET);
+    Scanner sc = new Scanner(f);
+    String[]row;
+    while (sc.hasNextLine()){
+      String input = sc.nextLine();
+      row = input.split(";");
+      String quanity = row[0].trim();
+      String wholesale_cost = row[1].trim();
+      String sale_prive = row[2].trim();
+      String supplier_id = row[3].trim();
+    }
+  }
+
+
   static public void main(String[] args) throws FileNotFoundException {
     System.out.println("Welcome to DreamTeam DataBase");
     Database database = new Database();
@@ -49,7 +74,7 @@ public class main {
           // Add product id
           break;
         case Option_Update:
-        // Update Product Id w
+          // Update Product Id w
           break;
         case Option_Delete:
           //Deletes Product Id
@@ -62,6 +87,13 @@ public class main {
       }
     }
     //System.out.println("Bye!");
+
+
+
+
+
+
+
 
   /**
    *
@@ -77,7 +109,7 @@ public class main {
     Scanner data_input = new Scanner(new_file);
 
     while (data_input.hasNextLine()) {
-      
+
       String[] data_row = data_input.nextLine().split(",");
 
       if (new_database == null) {
