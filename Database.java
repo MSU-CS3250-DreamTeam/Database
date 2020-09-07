@@ -32,6 +32,7 @@ public class Database {
    * @param new_data
    */
   public static boolean create(String[] new_data) {
+    
     boolean is_added = false;
 
     return is_added;
@@ -63,6 +64,13 @@ public class Database {
    */
   public static boolean delete(String[] old_data) {
     boolean is_del = false;
+    for (int i = 0; i < data_table.length; i++) {
+      if (data_table[i] == old_data) {
+        data_table[i] = null;
+        is_del = true;
+      }
+    }
+
 
     return is_del;
   }
