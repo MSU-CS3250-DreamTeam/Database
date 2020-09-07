@@ -78,7 +78,6 @@ public class DataList {
         }
     }
 
-
     @Override
     public String toString(){
         return "Product" + PRODUCT + "Quantity" + QUANTITY + "Wholesale" + WHOLESALE_COST + "SalePrice" + SALE_PRICE +
