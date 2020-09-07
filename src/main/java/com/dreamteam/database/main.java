@@ -2,10 +2,12 @@ package com.dreamteam.database;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.PrintStream;
 import java.util.Scanner;
 
 /**
- * 
+ *
  */
 public class main {
 
@@ -17,7 +19,7 @@ public class main {
   public static Scanner sc = new Scanner(System.in);
 
   public static final int Option_Create = 1;
-  public static final int Option_ADD = 2;
+  public static final int Option_Read = 2;
   public static final int Option_Update = 3;
   public static final int Option_Delete = 4;
   public static final int Option_Quit = 5;
@@ -38,11 +40,15 @@ public class main {
 
       switch (option) {
         case Option_Create:
+          DataList dataList = getData();
           System.out.println(database);
           break;
 
-        case Option_ADD:
-          DataList dataList = getData();
+        case Option_Read:
+          DataList readData = loadData();
+          System.out.println(database);
+          // DataList dataList = getData();
+
           // Add product id
           break;
 
@@ -60,10 +66,12 @@ public class main {
           System.out.println("Bye!");
       }
     }
+    // System.out.println("Bye!"); // Redundant.
 
     File new_file = new File(SPREAD_SHEET);
+
     if (!new_file.exists()) {
-      throw new FileNotFoundException("Is the data file " + SPREAD_SHEET + " in the wrong directory?"); // For debugging.
+      throw new FileNotFoundException("Is the data file " + SPREAD_SHEET + " in the wrong directory?");
     }
 
     Scanner data_input = new Scanner(new_file);
@@ -71,15 +79,16 @@ public class main {
     while (data_input.hasNextLine()) {
 
       String[] data_row = data_input.nextLine().split(",");
-      
+
       // Initializes the database to the spreadsheet's columns.
       if (new_database == null) {
 
         new_database = new Database(data_row.length);
 
         // For debugging.
-        //System.out.println("You should see the column labels if program read the populated spreadsheet: ");
-        //System.out.println(Arrays.toString(data_row));
+        // System.out.println("You should see the column labels if program read the
+        // populated spreadsheet: ");
+        // System.out.println(Arrays.toString(data_row));
       }
 
       new_database.create(data_row);
@@ -88,28 +97,34 @@ public class main {
 
     data_input.close();
 
-    // For debugging. There are ~22k entries to display when method is entirely uncommented.
+    // For debugging. There are ~22k entries to display when method is entirely
+    // uncommented.
     new_database.display();
 
     // For debugging. Disable in final project.
     demo_database();
 
-  }
+  } // End main method.
+
+  //	***************************************************************************
 
   /**
-   * 
-   * @return
+   * Prompt the user for a correct option of the existing menu.
    */
   public static int getOption() {
+
     while (true) {
-      System.out.println("Options: 1:Create 2:Add 3:Update 4:Delete 5:Quit");
+
+      System.out.println("Options: 1:Create 2:Read 3:Update 4:Delete 5:Quit");
       System.out.print("? ");
       String line = sc.nextLine();
 
       try {
         int option = Integer.parseInt(line);
-        if (option == Option_Create || option == Option_ADD || option == Option_Update || option == Option_Delete || option == Option_Quit)
+
+        if (option == Option_Create || option == Option_Read || option == Option_Update || option == Option_Delete || option == Option_Quit)
           return option;
+
       } catch (NumberFormatException ex) {
       }
 
@@ -117,62 +132,88 @@ public class main {
     }
   }
 
-  // Appears to be redundant. Why not call loadData() where we call this main()?
-  // public main() throws FileNotFoundException{
-  //   loadData();
-  // }
-
-  // ctrl + / to toggle comments
-  // private String product_id;
-  // private int quantity;
-  // private double wholesale_cost;
-  // private double sale_price;
-  // private String supplier_id;
+  
+  //	***************************************************************************
 
   /**
-   * Read from the file for database validation.
    * 
-   * Currently reads each row of file, and 
-   * overwrites the previous values of the variables, until the final row.
+   * This is to add the data into the csv but does not save it. The update method does that.
    * 
-   * @throws FileNotFoundException
-   */
-  public void loadData() throws FileNotFoundException {
-
-    File f = new File(SPREAD_SHEET);
-    Scanner sc = new Scanner(f);
-    String[]row;
-
-    while (sc.hasNextLine()){
-
-      String input = sc.nextLine();
-      row = input.split(";");
-
-      String product_id = row[0].trim();
-      String Quanity = row[0].trim();
-      String Wholesale_cost = row[1].trim();
-      String Sale_prive = row[2].trim();
-      String Supplier_id = row[3].trim();
-
-    }
-
-    sc.close();
-
-  }
-
-  /**
-   * Recursive, but why?
    * @param dataList
    */
   public void addData(DataList dataList){
     dataList.setKey(key);
-    addData(dataList); 
+
+    // Recursive. Without a condition to return to caller, will cause stack overflow if called, so it's commented.
+    // addData(dataList); 
+    
   }
+
+  //	***************************************************************************
+
+  // TODO Should iterate through the csv file and find empty row to add the user data.
+  // Note First assignment doesn't say we need to export to file. Instead, send to the active database object.
+
+  /**
+   * Updates and saves the data that user inputs.
+   * 
+   * @throws IOException
+   */
+  public static void updateData() throws IOException {
+
+    File source_file = new File(SPREAD_SHEET);
+    PrintStream data_stream = new PrintStream(source_file);
+    StringBuffer buffer = new StringBuffer();
+    String line[];
+
+    while ((line = source_file.list()) != null) {
+
+      for (int i = 0; i < line.length; i++) {
+        System.out.print(line[i] + " ");
+      }
+
+      System.out.println(" ");
+
+    }
+  }
+
+  //	***************************************************************************
+  // TODO Called as though to return a populated object, so it should probably do that.
+
+  /**
+   * Read from the file and give each of the following options to choose from.
+   * 
+   * ###############################################!!! 
+   * Currently reads each row of file, and prints the values, 
+   * until the final row. 
+   * ###############################################!!!
+   * 
+   * @return
+   * 
+   * @throws FileNotFoundException
+   */
+  public static DataList loadData() throws FileNotFoundException {
+
+    Scanner sc = new Scanner(new File(SPREAD_SHEET));
+    sc.useDelimiter(","); //sets the delimiter pattern
+
+    while (sc.hasNext())  //returns a boolean value
+    {
+      System.out.print(sc.next() + (", "));  //find and returns the next complete token from this scanner
+    }
+    sc.close();  //closes the scanner
+    
+    return null;
+
+  }
+
+  //	***************************************************************************
 
   /**
    * 
-   * @return "Product" + PRODUCT + "Quantity" + QUANTITY + "Wholesale" + WHOLESALE_COST + "SalePrice" + SALE_PRICE +
-              "Supplier" + SUPPLIER_ID;
+   * Retrieves data entered by user and returns as an object.
+   * 
+   * @return The data of an entry aka row.
    */
   public static DataList getData() {
 
@@ -191,10 +232,15 @@ public class main {
     System.out.println("Supplier");
     String Supplier = sc.nextLine();
 
-    return new DataList(Product, Quantity, Wholesale, SalesPrice,Supplier);
+    return new DataList(Product, Quantity, Wholesale, SalesPrice, Supplier);
 
   }
 
+  //	***************************************************************************
+
+  /**
+   * A demonstration of how to use the CRUD methods on an active, visible database object.
+   */
   private static final void demo_database() {
 
     String existing_product_id = "8XXKZRELM2JJ";
@@ -227,4 +273,20 @@ public class main {
 
   }
 
-}
+} // End main class.
+
+//	***************************************************************************
+
+  // This was for testing dont know if we should do a iterator that iterates through 
+  // each column by their category or do an array
+
+  // String Product = line.next().getProduct();
+  // p.print(Product + ", ");
+  // int Quantity = line.next().getProduct();
+  // p.print(Quantity + ", ");
+  // double Wholesale = line.next().getProduct();
+  // p.print(Wholesale + ", ");
+  // double SalesPrice = line.next().getProduct();
+  // p.print(SalesPrice + ", ");
+  // String Supplier = line.next().getProduct();
+  // p.print(Supplier + ", ");
