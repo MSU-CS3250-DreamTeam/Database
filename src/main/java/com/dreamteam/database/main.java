@@ -49,7 +49,7 @@ public class main {
     sc.useDelimiter(",");   //sets the delimiter pattern
     while (sc.hasNext())  //returns a boolean value
     {
-      System.out.print(sc.next());  //find and returns the next complete token from this scanner
+      System.out.print(sc.next() + (", "));  //find and returns the next complete token from this scanner
     }
     sc.close();  //closes the scanner
     return null;
