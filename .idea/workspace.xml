@@ -3,8 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="74aef304-5bd6-4476-967c-228fe9d2b00f" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/main/com/dreamteam/database/main.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/main/com/dreamteam/database/main.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/dreamteam/database/main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/dreamteam/database/main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/main.iml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/main.iml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -20,7 +19,7 @@
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="PropertiesComponent">
     <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1599517386026" />
-    <property name="project.structure.last.edited" value="Modules" />
+    <property name="project.structure.last.edited" value="Project" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
     <property name="settings.editor.selected.configurable" value="configurable.group.editor" />

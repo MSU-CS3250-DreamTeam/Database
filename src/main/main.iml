@@ -3,7 +3,6 @@
   <component name="NewModuleRootManager">
     <output url="file://$MODULE_DIR$/../../target/classes/com/dreamteam/database" />
     <output-test url="file://$MODULE_DIR$/../../target/test-classes/com/dreamteam/database" />
-    <exclude-output />
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/java" isTestSource="false" />
     </content>
