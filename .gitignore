@@ -4,3 +4,4 @@ target/*
 .project
 out/*
 *.class
+.idea/*
