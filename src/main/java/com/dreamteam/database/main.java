@@ -161,7 +161,6 @@ public class main {
    * @throws IOException
    */
   public static void updateData() throws IOException {
-
     File source_file = new File(SPREAD_SHEET);
     PrintStream data_stream = new PrintStream(source_file);
     StringBuffer buffer = new StringBuffer();
@@ -170,13 +169,12 @@ public class main {
     while ((line = source_file.list()) != null) {
 
       for (int i = 0; i < line.length; i++) {
-        System.out.print(line[i] + " ");
+        System.out.print(line[i] + ", ");
       }
-
       System.out.println(" ");
-
     }
   }
+
 
   //	***************************************************************************
   // TODO Called as though to return a populated object, so it should probably do that.
@@ -194,7 +192,6 @@ public class main {
    * @throws FileNotFoundException
    */
   public static DataList loadData() throws FileNotFoundException {
-
     Scanner sc = new Scanner(new File(SPREAD_SHEET));
     sc.useDelimiter(","); //sets the delimiter pattern
 
