@@ -16,6 +16,7 @@ public class main {
 
   public static Scanner sc = new Scanner(System.in);
 
+
   public static final int Option_Create = 1;
   public static final int Option_Read = 2;
   public static final int Option_Update = 3;
@@ -187,7 +188,7 @@ public class main {
     sc.close();  //closes the scanner
     System.out.println("");
     System.out.println("-------------------------------------------------------------------");
-    System.out.println("Product I.D    Quantity   WholesaleCost   SalePrice   Supplier I.D");
+    System.out.println("Product I.D      Quantity   WholesaleCost   SalePrice   Supplier I.D");
     System.out.println("-------------------------------------------------------------------");
     return null;
   }
@@ -200,25 +201,6 @@ public class main {
    * @return The data of an entry aka row.
    */
   public static DataList getData() {
-    System.out.println("Product");
-    String Product = sc.nextLine();
-
-    System.out.println("Quanity");
-    int Quantity = Integer.parseInt(sc.nextLine());
-
-    System.out.println("Wholesale");
-    double Wholesale = Double.parseDouble(sc.nextLine());
-
-    System.out.println("SalesPrice");
-    double SalesPrice = Double.parseDouble(sc.nextLine());
-
-    System.out.println("Supplier");
-    String Supplier = sc.nextLine();
-    System.out.print(Product + "   " + " " + Quantity + " " + Wholesale + " " + SalesPrice + "   "+ Supplier + "     " );
-    return new DataList(Product, Quantity, Wholesale, SalesPrice, Supplier);
-  }
-
-  public static DataList updateData() {
     try (FileWriter fw = new FileWriter(SPREAD_SHEET, true);
          BufferedWriter bw = new BufferedWriter(fw);
          PrintWriter out = new PrintWriter(bw)) {
@@ -226,27 +208,46 @@ public class main {
       String Product = sc.nextLine();
       System.out.println("Quanity");
       int Quantity = Integer.parseInt(sc.nextLine());
+
       System.out.println("Wholesale");
       double Wholesale = Double.parseDouble(sc.nextLine());
+
       System.out.println("SalesPrice");
       double SalesPrice = Double.parseDouble(sc.nextLine());
+
       System.out.println("Supplier");
       String Supplier = sc.nextLine();
-     out.print(Product + "      " + Quantity + "    " + Wholesale + "    " + SalesPrice + "    "  + Supplier + "    ");
-
-      //out.println(Product);
-      //more code
-     // out.println("more text");
-      //more code
+      out.println(Product + "\t\t" + Quantity + "\t\t" + Wholesale + "\t\t" + SalesPrice + "\t\t" + Supplier + "\t\t");
     } catch (IOException e) {
       //exception handling left as an exercise for the reader
     }
     return null;
   }
 
+  public static DataList updateData() {
+    System.out.println("Updating Database");
+    return null;
+  }
+
+  // Was just trying some things could not get delete to work 
+  public static DataList deleteData() {
+    try (FileWriter fw = new FileWriter(SPREAD_SHEET, true);
+         BufferedWriter bw = new BufferedWriter(fw);
+         PrintWriter out = new PrintWriter(bw)) {
+      sc.nextLine();
+      sc.remove();
 
 
-    //	***************************************************************************
+  } catch (IOException e) {
+    //exception handling left as an exercise for the reader
+  }
+    return null;
+}
+
+
+
+
+  //	***************************************************************************
 
   /**
    * A demonstration of how to use the CRUD methods on an active, visible database object.
