@@ -29,7 +29,10 @@ public class main {
    */
   static public void main(String[] args) throws IOException {
 
-    System.out.println("Welcome to DreamTeam DataBase");
+   // System.out.println("Welcome to DreamTeam DataBase");
+    System.out.println("-------------------------------------------------------------------");
+    System.out.println("               Welcome to DreamTeam DataBase                       ");
+    System.out.println("-------------------------------------------------------------------");
     Database database = new Database();
     int option = 0;
 
