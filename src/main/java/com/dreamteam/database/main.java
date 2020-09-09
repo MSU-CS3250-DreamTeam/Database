@@ -11,6 +11,8 @@ public class main {
 
   // Variable Declarations
   static private final String SPREAD_SHEET = "inventory_team1.csv";
+  static private final String Delete = "output.csv";
+
   static private Database new_database;
   private int key;
 
@@ -21,7 +23,8 @@ public class main {
   public static final int Option_Read = 2;
   public static final int Option_Update = 3;
   public static final int Option_Delete = 4;
-  public static final int Option_Quit = 5;
+  public static final int Option_Automate = 5;
+  public static final int Option_Quit = 6;
 
   /**
    * @param args
@@ -60,6 +63,13 @@ public class main {
           break;
 
         case Option_Delete:
+          DataList delete = deleteData();
+          System.out.print(database);
+          // Deletes Product Id
+          break;
+        case Option_Automate:
+          DataList automate = getAutomate();
+          System.out.print(database);
           // Deletes Product Id
           break;
 
@@ -118,14 +128,14 @@ public class main {
 
     while (true) {
 
-      System.out.println("Options: 1:Create 2:Read 3:Update 4:Delete 5:Quit");
+      System.out.println("Options: 1:Create 2:Read 3:Update 4:Delete 5:Automate 6:Quit");
       System.out.print("? ");
       String line = sc.nextLine();
 
       try {
         int option = Integer.parseInt(line);
 
-        if (option == Option_Create || option == Option_Read || option == Option_Update || option == Option_Delete || option == Option_Quit)
+        if (option == Option_Create || option == Option_Read || option == Option_Update || option == Option_Delete || option == Option_Automate ||option == Option_Quit)
           return option;
 
       } catch (NumberFormatException ex) {
@@ -178,6 +188,23 @@ public class main {
    * @throws FileNotFoundException
    */
   public static DataList loadData() throws FileNotFoundException {
+    Scanner sc = new Scanner(new File(Delete));
+    sc.useDelimiter(","); //sets the delimiter pattern
+    System.out.println("-------------------------------------------------------------------");
+    System.out.println("Product I.D    Quantity   WholesaleCost   SalePrice   Supplier I.D");
+    System.out.println("-------------------------------------------------------------------");
+
+    while (sc.hasNext())  //returns a boolean value
+      System.out.print(sc.next() + ("\t\t"));  //find and returns the next complete token from this scanner
+    sc.close();  //closes the scanner
+    System.out.println("");
+    System.out.println("-------------------------------------------------------------------");
+    System.out.println("Product I.D      Quantity   WholesaleCost   SalePrice   Supplier I.D");
+    System.out.println("-------------------------------------------------------------------");
+    return null;
+  }
+
+  public static DataList getAutomate() throws FileNotFoundException {
     Scanner sc = new Scanner(new File(SPREAD_SHEET));
     sc.useDelimiter(","); //sets the delimiter pattern
     System.out.println("-------------------------------------------------------------------");
@@ -185,9 +212,7 @@ public class main {
     System.out.println("-------------------------------------------------------------------");
 
     while (sc.hasNext())  //returns a boolean value
-    {
       System.out.print(sc.next() + ("\t\t"));  //find and returns the next complete token from this scanner
-    }
     sc.close();  //closes the scanner
     System.out.println("");
     System.out.println("-------------------------------------------------------------------");
@@ -204,12 +229,12 @@ public class main {
    * @return The data of an entry aka row.
    */
   public static DataList getData() {
-    try (FileWriter fw = new FileWriter(SPREAD_SHEET, true);
+    try (FileWriter fw = new FileWriter((Delete), true);
          BufferedWriter bw = new BufferedWriter(fw);
          PrintWriter out = new PrintWriter(bw)) {
       System.out.println("Product");
       String Product = sc.nextLine();
-      System.out.println("Quanity");
+      System.out.println("Quantity");
       int Quantity = Integer.parseInt(sc.nextLine());
 
       System.out.println("Wholesale");
@@ -226,6 +251,18 @@ public class main {
     }
     return null;
   }
+
+
+
+
+
+
+
+
+
+
+
+
 // Had to include the save option with the Create option
   //so getData saves it to file.
   public static DataList updateData() {
@@ -234,19 +271,9 @@ public class main {
   }
 
   // Was just trying some things could not get delete to work
-  public static DataList deleteData() {
-    try (FileWriter fw = new FileWriter(SPREAD_SHEET, true);
-         BufferedWriter bw = new BufferedWriter(fw);
-         PrintWriter out = new PrintWriter(bw)) {
-      sc.nextLine();
-      sc.remove();
-
-
-  } catch (IOException e) {
-    //exception handling left as an exercise for the reader
-  }
+  public static DataList deleteData() throws IOException {
     return null;
-}
+  }
 
   //	***************************************************************************
 
