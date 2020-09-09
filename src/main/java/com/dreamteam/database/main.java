@@ -133,13 +133,13 @@ public class main {
     }
   }
 
-  
+
   //	***************************************************************************
 
   /**
-   * 
+   *
    * This is to add the data into the csv but does not save it. The update method does that.
-   * 
+   *
    * @param dataList
    */
   public void addData(DataList dataList){
@@ -147,7 +147,7 @@ public class main {
 
     // Recursive. Without a condition to return to caller, will cause stack overflow if called, so it's commented.
     // addData(dataList); 
-    
+
   }
 
   //	***************************************************************************
@@ -157,7 +157,7 @@ public class main {
 
   /**
    * Updates and saves the data that user inputs.
-   * 
+   *
    * @throws IOException
    */
   public static void updateData() throws IOException {
@@ -181,28 +181,33 @@ public class main {
 
   /**
    * Read from the file and give each of the following options to choose from.
-   * 
-   * ###############################################!!! 
-   * Currently reads each row of file, and prints the values, 
-   * until the final row. 
+   *
    * ###############################################!!!
-   * 
+   * Currently reads each row of file, and prints the values,
+   * until the final row.
+   * ###############################################!!!
+   *
    * @return
-   * 
+   *
    * @throws FileNotFoundException
    */
   public static DataList loadData() throws FileNotFoundException {
     Scanner sc = new Scanner(new File(SPREAD_SHEET));
     sc.useDelimiter(","); //sets the delimiter pattern
+    System.out.println("-------------------------------------------------------------------");
+    System.out.println("Product I.D    Quantity   WholesaleCost   SalePrice   Supplier I.D");
+    System.out.println("-------------------------------------------------------------------");
 
     while (sc.hasNext())  //returns a boolean value
     {
-      System.out.print(sc.next() + (", "));  //find and returns the next complete token from this scanner
+      System.out.print(sc.next() + ("\t\t"));  //find and returns the next complete token from this scanner
     }
     sc.close();  //closes the scanner
-    
+    System.out.println("");
+    System.out.println("-------------------------------------------------------------------");
+    System.out.println("Product I.D    Quantity   WholesaleCost   SalePrice   Supplier I.D");
+    System.out.println("-------------------------------------------------------------------");
     return null;
-
   }
 
   //	***************************************************************************
