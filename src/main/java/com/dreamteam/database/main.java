@@ -223,13 +223,14 @@ public class main {
     }
     return null;
   }
-
+// Had to include the save option with the Create option
+  //so getData saves it to file.
   public static DataList updateData() {
     System.out.println("Updating Database");
     return null;
   }
 
-  // Was just trying some things could not get delete to work 
+  // Was just trying some things could not get delete to work
   public static DataList deleteData() {
     try (FileWriter fw = new FileWriter(SPREAD_SHEET, true);
          BufferedWriter bw = new BufferedWriter(fw);
@@ -243,9 +244,6 @@ public class main {
   }
     return null;
 }
-
-
-
 
   //	***************************************************************************
 
