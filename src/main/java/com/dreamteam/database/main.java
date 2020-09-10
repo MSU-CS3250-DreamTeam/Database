@@ -31,7 +31,7 @@ public class main {
    * @throws FileNotFoundException
    */
   static public void main(String[] args) throws IOException {
-
+	System.out.println("Your mom lol");
    // System.out.println("Welcome to DreamTeam DataBase");
     System.out.println("-------------------------------------------------------------------");
     System.out.println("               Welcome to DreamTeam DataBase                       ");
