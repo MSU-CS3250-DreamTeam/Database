@@ -89,6 +89,7 @@ public class main {
   
   //	***************************************************************************
   // TODO Finish menu options. Each option should call the corresponding Database.java method.
+  // !!! Use these examples to use CRUD methods in the menu!
 
   /**
    *  Loops through the options of a menu for the user to access and modify the database.
@@ -191,7 +192,6 @@ public class main {
 
   /**
    * A demonstration of how to use the CRUD methods on an active, visible database object.
-   * !!! Use these examples to use CRUD methods in the menu!
    */
   private static final void demo_database() {
 
