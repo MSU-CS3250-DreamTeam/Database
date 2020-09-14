@@ -18,6 +18,23 @@ public class main {
 
   public static Scanner sc = new Scanner(System.in);
 
+  // Menu Option Structure
+  enum Options {
+    CREATE(1),
+    READ(2),
+    UPDATE(3),
+    DELETE(4),
+    AUTOMATE(5),
+    QUIT(6);
+
+    private int value;
+
+    private Options(int v) {
+      this.value = v;
+    }
+
+  }
+
   /**
    * @param args
    * @throws FileNotFoundException
@@ -65,63 +82,74 @@ public class main {
     // For debugging. Disable in final project.
     demo_database();
 
+    // Call the menu for user to access and modify the database.
+    runMenu();
+
   } // End main method.
   
   //	***************************************************************************
   // TODO Finish menu options. Each option should call the corresponding Database.java method.
 
+  /**
+   *  Loops through the options of a menu for the user to access and modify the database.
+   */
   public static void runMenu() {
 
     // Local Variable Declarations
-    int user_option = 0;
-    final int OPTION_CREATE = 1;
-    final int OPTION_READ = 2;
-    final int OPTION_UPDATE = 3;
-    final int OPTION_DELETE = 4;
-	  final int OPTION_AUTOMATE = 5;
-    final int OPTION_QUIT = 6;
+    Options user_choice;
 
-    while (user_option != OPTION_QUIT) {
-      user_option = getOption();
+    do {
 
-      switch (user_option) {
+      user_choice = getOption();
 
-        case OPTION_CREATE:
+      switch (user_choice) {
+
+        case CREATE:
+
           DataList dataList = getData();
-          System.out.println(new_database);
+          System.out.println(new_database); // Prints the object address in memory.
           break;
 
-        case OPTION_READ:
+        case READ:
+
           // DataList readData = loadData();
-          System.out.println(new_database);
+          System.out.println(new_database); // Prints the object address in memory.
           // DataList dataList = getData();
 
           // Add product id
           break;
 
-        case OPTION_UPDATE:
+        case UPDATE:
+
           DataList update = updateData();
-          System.out.println(new_database);
+          System.out.println(new_database); // Prints the object address in memory.
           // Update a product
           break;
 
-        case OPTION_DELETE:
+        case DELETE:
+
           // DataList delete = deleteData();
-          System.out.print(new_database);
+          System.out.println(new_database); // Prints the object address in memory.
           // Delete a product
           break;
-        case OPTION_AUTOMATE:
+
+        case AUTOMATE:
+
           // DataList automate = getAutomate();
-          System.out.print(new_database);
+          System.out.println(new_database); // Prints the object address in memory.
           // Delete a product
           break;
 
         default:
-          System.out.println("Saving Database changes...");
+
+          System.out.println("\nSaving Database changes...");
           System.out.println("Done!");
           System.out.println("Bye!");
+
       }
-    }
+
+    } while (user_choice != Options.QUIT);
+
   }
 
   //	***************************************************************************
@@ -129,22 +157,26 @@ public class main {
   /**
    * Prompt the user for a correct option of the existing menu.
    */
-  public static int getOption() {
+  public static Options getOption() {
+
+    // Local Variable Declarations
+    int user_input;
 
     while (true) {
-	  int user_choice;
-      System.out.println("Options: 1:Create 2:Read 3:Update 4:Delete 5:Automate 6:Quit");
+      
+      // Prompt user for a choice.
+      System.out.println("\nOptions: 1:Create 2:Read 3:Update 4:Delete 5:Automate 6:Quit");
       System.out.print("? ");
-      String user_input = sc.nextLine();
+      
+      user_input = Integer.parseInt(sc.nextLine());
 
       try {
-        user_choice = Integer.parseInt(user_input);
 
-        if (user_choice == OPTION_CREATE || user_choice == OPTION_READ 
-		        || user_choice == OPTION_UPDATE || user_choice == OPTION_DELETE 
-			      || user_choice == OPTION_AUTOMATE || user_choice == OPTION_QUIT)
-
-          return user_choice;
+        for (Options user_choice : Options.values()) {
+          if (user_input == user_choice.value) {
+            return user_choice;
+          }
+        }
 
       } catch (NumberFormatException ex) {
       }
