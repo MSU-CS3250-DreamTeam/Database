@@ -89,4 +89,131 @@ public class DataList {
     //Probably link it to the excel file to get the inputs?
     //Feel free to make changes or add suggestions :)
 
+    
+  /**
+   * This is to add the data into the csv but does not save it. The update method does that.
+   *
+   * @param dataList
+   */
+  public void addData(DataList dataList) {
+    dataList.setKey(key);
+
+    // Recursive. Without a condition to return to caller, will cause stack overflow if called, so it's commented.
+    // addData(dataList); 
+
+  }
+
+  //	***************************************************************************
+
+  // TODO Should iterate through the csv file and find empty row to add the user data.
+  // Note First assignment doesn't say we need to export to file. Instead, send to the active database object.
+
+  /**
+   * Updates and saves the data that user inputs.
+   *
+   * @throws IOException
+   */
+
+
+  //	***************************************************************************
+  // TODO Called as though to return a populated object, so it should probably do that.
+
+  /**
+   * Read from the file and give each of the following options to choose from.
+   * <p>
+   * ###############################################!!!
+   * Currently reads each row of file, and prints the values,
+   * until the final row.
+   * ###############################################!!!
+   *
+   * @return
+   * @throws FileNotFoundException
+   */
+  public static DataList loadData() throws FileNotFoundException {
+    Scanner sc = new Scanner(new File(Delete));
+    sc.useDelimiter(","); //sets the delimiter pattern
+    System.out.println("-------------------------------------------------------------------");
+    System.out.println("Product I.D    Quantity   WholesaleCost   SalePrice   Supplier I.D");
+    System.out.println("-------------------------------------------------------------------");
+
+    while (sc.hasNext())  //returns a boolean value
+      System.out.print(sc.next() + ("\t\t"));  //find and returns the next complete token from this scanner
+    sc.close();  //closes the scanner
+    System.out.println("");
+    System.out.println("-------------------------------------------------------------------");
+    System.out.println("Product I.D      Quantity   WholesaleCost   SalePrice   Supplier I.D");
+    System.out.println("-------------------------------------------------------------------");
+    return null;
+  }
+
+  public static DataList getAutomate() throws FileNotFoundException {
+    Scanner sc = new Scanner(new File(SPREAD_SHEET));
+    sc.useDelimiter(","); //sets the delimiter pattern
+    System.out.println("-------------------------------------------------------------------");
+    System.out.println("Product I.D    Quantity   WholesaleCost   SalePrice   Supplier I.D");
+    System.out.println("-------------------------------------------------------------------");
+
+    while (sc.hasNext())  //returns a boolean value
+      System.out.print(sc.next() + ("\t\t"));  //find and returns the next complete token from this scanner
+    sc.close();  //closes the scanner
+    System.out.println("");
+    System.out.println("-------------------------------------------------------------------");
+    System.out.println("Product I.D      Quantity   WholesaleCost   SalePrice   Supplier I.D");
+    System.out.println("-------------------------------------------------------------------");
+    return null;
+  }
+
+  //	***************************************************************************
+
+  /**
+   * Retrieves data entered by user and returns as an object.
+   *
+   * @return The data of an entry aka row.
+   */
+  public static DataList getData() {
+    try (FileWriter fw = new FileWriter((Delete), true);
+         BufferedWriter bw = new BufferedWriter(fw);
+         PrintWriter out = new PrintWriter(bw)) {
+      System.out.println("Product");
+      String Product = sc.nextLine();
+      System.out.println("Quantity");
+      int Quantity = Integer.parseInt(sc.nextLine());
+
+      System.out.println("Wholesale");
+      double Wholesale = Double.parseDouble(sc.nextLine());
+
+      System.out.println("SalesPrice");
+      double SalesPrice = Double.parseDouble(sc.nextLine());
+
+      System.out.println("Supplier");
+      String Supplier = sc.nextLine();
+      out.println(Product + "\t\t" + Quantity + "\t\t" + Wholesale + "\t\t" + SalesPrice + "\t\t" + Supplier + "\t\t");
+    } catch (IOException e) {
+      //exception handling left as an exercise for the reader
+    }
+    return null;
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+// Had to include the save option with the Create option
+  //so getData saves it to file.
+  public static DataList updateData() {
+    System.out.println("Updating Database");
+    return null;
+  }
+
+  // Was just trying some things could not get delete to work
+  public static DataList deleteData() throws IOException {
+    return null;
+  }
 }
