@@ -85,6 +85,7 @@ public class main {
       user_option = getOption();
 
       switch (user_option) {
+
         case OPTION_CREATE:
           DataList dataList = getData();
           System.out.println(new_database);
@@ -101,18 +102,18 @@ public class main {
         case OPTION_UPDATE:
           DataList update = updateData();
           System.out.println(new_database);
-          // Update Product Id w
+          // Update a product
           break;
 
         case OPTION_DELETE:
           // DataList delete = deleteData();
           System.out.print(new_database);
-          // Deletes Product Id
+          // Delete a product
           break;
         case OPTION_AUTOMATE:
           // DataList automate = getAutomate();
           System.out.print(new_database);
-          // Deletes Product Id
+          // Delete a product
           break;
 
         default:
@@ -131,16 +132,19 @@ public class main {
   public static int getOption() {
 
     while (true) {
-
+	  int user_choice;
       System.out.println("Options: 1:Create 2:Read 3:Update 4:Delete 5:Automate 6:Quit");
       System.out.print("? ");
-      String line = sc.nextLine();
+      String user_input = sc.nextLine();
 
       try {
-        int option = Integer.parseInt(line);
+        user_choice = Integer.parseInt(user_input);
 
-        if (option == Option_Create || option == Option_Read || option == Option_Update || option == Option_Delete || option == Option_Automate ||option == Option_Quit)
-          return option;
+        if (user_choice == OPTION_CREATE || user_choice == OPTION_READ 
+		        || user_choice == OPTION_UPDATE || user_choice == OPTION_DELETE 
+			      || user_choice == OPTION_AUTOMATE || user_choice == OPTION_QUIT)
+
+          return user_choice;
 
       } catch (NumberFormatException ex) {
       }
