@@ -155,11 +155,19 @@ public class main {
 
     // Local Variable Declarations
     int user_input;
+    int index;
+    
 
     while (true) {
-      
-      // Prompt user for a choice.
-      System.out.println("\nOptions: 1:Create 2:Read 3:Update 4:Delete 5:Automate 6:Quit");
+
+      // Reset Options counter.
+      index = 1;
+
+      // Prompt user for a choice from Options.
+      System.out.println("\nOptions:");
+      for (Options choice : Options.values()) {
+        System.out.println("  " + index++ + ": " + choice);
+      }
       System.out.print("? ");
       
       user_input = Integer.parseInt(sc.nextLine());
