@@ -1,9 +1,7 @@
 package com.dreamteam.database;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.PrintStream;
+
+import java.io.*;
 import java.util.Scanner;
 
 /**
@@ -13,19 +11,24 @@ public class main {
 
   // Variable Declarations
   static private final String SPREAD_SHEET = "inventory_team1.csv";
+  static private final String Delete = "output.csv";
+
   static private Database new_database;
   private int key;
+
   public static Scanner sc = new Scanner(System.in);
 
   /**
-   *
    * @param args
    * @throws FileNotFoundException
    */
-  static public void main(String[] args) throws FileNotFoundException {
+  static public void main(String[] args) throws IOException {
 
-    System.out.println("Welcome to DreamTeam DataBase");
-    
+    // System.out.println("Welcome to DreamTeam DataBase");
+    System.out.println("-------------------------------------------------------------------");
+    System.out.println("               Welcome to DreamTeam DataBase                       ");
+    System.out.println("-------------------------------------------------------------------");
+
     File new_file = new File(SPREAD_SHEET);
 
     if (!new_file.exists()) {
@@ -62,45 +65,53 @@ public class main {
     // For debugging. Disable in final project.
     demo_database();
 
-    // Call the user menu.
-    runMenu();
-
   } // End main method.
-
+  
   //	***************************************************************************
-  // TODO Finish menu.
+  // TODO Finish menu options. Each option should call the corresponding Database.java method.
 
   public static void runMenu() {
 
-    final int option = 0;
-    final int Option_Create = 1;
-    final int Option_Read = 2;
-    final int Option_Update = 3;
-    final int Option_Delete = 4;
-    final int Option_Quit = 5;
+    // Local Variable Declarations
+    int user_option = 0;
+    final int OPTION_CREATE = 1;
+    final int OPTION_READ = 2;
+    final int OPTION_UPDATE = 3;
+    final int OPTION_DELETE = 4;
+	  final int OPTION_AUTOMATE = 5;
+    final int OPTION_QUIT = 6;
 
-    while (option != Option_Quit) {
-      option = getOption();
+    while (user_option != OPTION_QUIT) {
+      user_option = getOption();
 
-      switch (option) {
-        case Option_Create:
+      switch (user_option) {
+        case OPTION_CREATE:
           DataList dataList = getData();
-          System.out.println(database);
+          System.out.println(new_database);
           break;
 
-        case Option_Read:
-          DataList readData = loadData();
-          System.out.println(database);
+        case OPTION_READ:
+          // DataList readData = loadData();
+          System.out.println(new_database);
           // DataList dataList = getData();
 
           // Add product id
           break;
 
-        case Option_Update:
+        case OPTION_UPDATE:
+          DataList update = updateData();
+          System.out.println(new_database);
           // Update Product Id w
           break;
 
-        case Option_Delete:
+        case OPTION_DELETE:
+          // DataList delete = deleteData();
+          System.out.print(new_database);
+          // Deletes Product Id
+          break;
+        case OPTION_AUTOMATE:
+          // DataList automate = getAutomate();
+          System.out.print(new_database);
           // Deletes Product Id
           break;
 
@@ -110,8 +121,6 @@ public class main {
           System.out.println("Bye!");
       }
     }
-    // System.out.println("Bye!"); // Redundant.
-
   }
 
   //	***************************************************************************
@@ -123,14 +132,14 @@ public class main {
 
     while (true) {
 
-      System.out.println("Options: 1:Create 2:Read 3:Update 4:Delete 5:Quit");
+      System.out.println("Options: 1:Create 2:Read 3:Update 4:Delete 5:Automate 6:Quit");
       System.out.print("? ");
       String line = sc.nextLine();
 
       try {
         int option = Integer.parseInt(line);
 
-        if (option == Option_Create || option == Option_Read || option == Option_Update || option == Option_Delete || option == Option_Quit)
+        if (option == Option_Create || option == Option_Read || option == Option_Update || option == Option_Delete || option == Option_Automate ||option == Option_Quit)
           return option;
 
       } catch (NumberFormatException ex) {
@@ -140,15 +149,15 @@ public class main {
     }
   }
 
+
   //	***************************************************************************
 
   /**
-   *
    * This is to add the data into the csv but does not save it. The update method does that.
    *
    * @param dataList
    */
-  public void addData(DataList dataList){
+  public void addData(DataList dataList) {
     dataList.setKey(key);
 
     // Recursive. Without a condition to return to caller, will cause stack overflow if called, so it's commented.
@@ -166,20 +175,6 @@ public class main {
    *
    * @throws IOException
    */
-  public static void updateData() throws IOException {
-    File source_file = new File(SPREAD_SHEET);
-    PrintStream data_stream = new PrintStream(source_file);
-    StringBuffer buffer = new StringBuffer();
-    String line[];
-
-    while ((line = source_file.list()) != null) {
-
-      for (int i = 0; i < line.length; i++) {
-        System.out.print(line[i] + ", ");
-      }
-      System.out.println(" ");
-    }
-  }
 
 
   //	***************************************************************************
@@ -187,17 +182,33 @@ public class main {
 
   /**
    * Read from the file and give each of the following options to choose from.
-   *
+   * <p>
    * ###############################################!!!
    * Currently reads each row of file, and prints the values,
    * until the final row.
    * ###############################################!!!
    *
    * @return
-   *
    * @throws FileNotFoundException
    */
   public static DataList loadData() throws FileNotFoundException {
+    Scanner sc = new Scanner(new File(Delete));
+    sc.useDelimiter(","); //sets the delimiter pattern
+    System.out.println("-------------------------------------------------------------------");
+    System.out.println("Product I.D    Quantity   WholesaleCost   SalePrice   Supplier I.D");
+    System.out.println("-------------------------------------------------------------------");
+
+    while (sc.hasNext())  //returns a boolean value
+      System.out.print(sc.next() + ("\t\t"));  //find and returns the next complete token from this scanner
+    sc.close();  //closes the scanner
+    System.out.println("");
+    System.out.println("-------------------------------------------------------------------");
+    System.out.println("Product I.D      Quantity   WholesaleCost   SalePrice   Supplier I.D");
+    System.out.println("-------------------------------------------------------------------");
+    return null;
+  }
+
+  public static DataList getAutomate() throws FileNotFoundException {
     Scanner sc = new Scanner(new File(SPREAD_SHEET));
     sc.useDelimiter(","); //sets the delimiter pattern
     System.out.println("-------------------------------------------------------------------");
@@ -205,13 +216,11 @@ public class main {
     System.out.println("-------------------------------------------------------------------");
 
     while (sc.hasNext())  //returns a boolean value
-    {
       System.out.print(sc.next() + ("\t\t"));  //find and returns the next complete token from this scanner
-    }
     sc.close();  //closes the scanner
     System.out.println("");
     System.out.println("-------------------------------------------------------------------");
-    System.out.println("Product I.D    Quantity   WholesaleCost   SalePrice   Supplier I.D");
+    System.out.println("Product I.D      Quantity   WholesaleCost   SalePrice   Supplier I.D");
     System.out.println("-------------------------------------------------------------------");
     return null;
   }
@@ -219,30 +228,55 @@ public class main {
   //	***************************************************************************
 
   /**
-   * 
    * Retrieves data entered by user and returns as an object.
-   * 
+   *
    * @return The data of an entry aka row.
    */
   public static DataList getData() {
+    try (FileWriter fw = new FileWriter((Delete), true);
+         BufferedWriter bw = new BufferedWriter(fw);
+         PrintWriter out = new PrintWriter(bw)) {
+      System.out.println("Product");
+      String Product = sc.nextLine();
+      System.out.println("Quantity");
+      int Quantity = Integer.parseInt(sc.nextLine());
 
-    System.out.println("Product");
-    String Product = sc.nextLine();
+      System.out.println("Wholesale");
+      double Wholesale = Double.parseDouble(sc.nextLine());
 
-    System.out.println("Quanity");
-    int Quantity = Integer.parseInt(sc.nextLine());
+      System.out.println("SalesPrice");
+      double SalesPrice = Double.parseDouble(sc.nextLine());
 
-    System.out.println("Wholesale");
-    double Wholesale = Double.parseDouble(sc.nextLine());
+      System.out.println("Supplier");
+      String Supplier = sc.nextLine();
+      out.println(Product + "\t\t" + Quantity + "\t\t" + Wholesale + "\t\t" + SalesPrice + "\t\t" + Supplier + "\t\t");
+    } catch (IOException e) {
+      //exception handling left as an exercise for the reader
+    }
+    return null;
+  }
 
-    System.out.println("SalesPrice");
-    double SalesPrice = Double.parseDouble(sc.nextLine());
 
-    System.out.println("Supplier");
-    String Supplier = sc.nextLine();
 
-    return new DataList(Product, Quantity, Wholesale, SalesPrice, Supplier);
 
+
+
+
+
+
+
+
+
+// Had to include the save option with the Create option
+  //so getData saves it to file.
+  public static DataList updateData() {
+    System.out.println("Updating Database");
+    return null;
+  }
+
+  // Was just trying some things could not get delete to work
+  public static DataList deleteData() throws IOException {
+    return null;
   }
 
   //	***************************************************************************
