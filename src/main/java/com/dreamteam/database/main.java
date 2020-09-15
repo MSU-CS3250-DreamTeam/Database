@@ -147,8 +147,10 @@ public class main {
 
   /**
    * Prompt the user for a correct option of the existing menu.
+   * 
+   * @return the selected option to menu.
    */
-  public static Options getOption() throws NumberFormatException {
+  public static Options getOption() {
 
     // Local Variable Declarations
     int user_input;
