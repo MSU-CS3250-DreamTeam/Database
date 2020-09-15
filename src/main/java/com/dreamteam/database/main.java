@@ -2,6 +2,7 @@ package com.dreamteam.database;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.Arrays;
 import java.util.Scanner;
 
 /**
@@ -77,7 +78,7 @@ public class main {
     new_database.display();
 
     // For debugging. Disable in final project.
-    //demo_database();
+    demo_database();
 
     // Call the menu for user to access and modify the database.
     runMenu();
@@ -96,12 +97,11 @@ public class main {
     // Local Variable Declarations
     Options user_choice;
     String[] database_header = new String[new_database.get_column_size()];
-    database_header = new_database.get_data_head();
-    // database_header = Arrays.copyOf(new_database.get_data_head(), database_header.length)
-    // System.arraycopy(new_database.get_data_head(), 0, database_header, 0, database_header.length); // !! Me going crazy!
-    String[] new_entry = new String[database_header.length];
+    String[] new_entry = new String[new_database.get_column_size()];
+    String[] existing_entry = new String[new_database.get_column_size()];
 
     database_header = new_database.get_data_head();
+
     do {
 
       user_choice = getOption();
@@ -124,7 +124,11 @@ public class main {
         case READ:
           
           System.out.print("Enter " + database_header[0] + ": ");
-          new_database.read(sc.nextLine());
+          existing_entry = new_database.read(sc.nextLine());
+
+          if (existing_entry != null) {
+            System.out.println(Arrays.toString(existing_entry));
+          }
 
           System.out.println(new_database); // Prints the object address in memory.
           // Retrieves a product and displays it.
@@ -132,15 +136,29 @@ public class main {
 
         case UPDATE:
 
-          System.out.print("Enter old entry's " + database_header[0] + ": ");
-          String[] old_entry = new String[] {sc.nextLine()};
+          System.out.print("Enter existing entry's " + database_header[0] + ": ");
+          existing_entry = new_database.read(sc.nextLine());
+          
+          boolean is_simulation = true;
+          if (is_simulation) {
 
-          for (int i = 1; i < database_header.length; i++ ) {
-            System.out.print("Enter new entry's " + database_header[i] + ": ");
-            new_entry[i] = sc.nextLine();
+            new_entry = existing_entry;
+            System.out.print("Enter the new quantity: ");
+            new_entry[1] = sc.nextLine();
+            System.out.println(Arrays.toString(new_entry));
+
+          } else {
+
+            for (int i = 1; i < database_header.length; i++ ) {
+            
+              System.out.print("Enter new entry's " + database_header[i] + ": ");
+              new_entry[i] = sc.nextLine();
+  
+            }
+
           }
 
-          new_database.update(old_entry, new_entry);
+          new_database.update(existing_entry, new_entry);
 
           System.out.println(new_database); // Prints the object address in memory.
           // Updates a product
