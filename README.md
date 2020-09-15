@@ -13,15 +13,15 @@ A database to manage cvs stored data.
 * Not committing generated files of project is a general convention.
 
 ## How to Git/Github Workflow
-* Add shared repo: git remote add <name ie "upstream"> <URL ie "https://github.com/MSU-CS3250-DreamTeam/Database">
-* Check remote repos: git remote -v
-* Update from remote: git pull upstream master
-* Check commits and changes: git status
-* Add a change: git add <path/to/file or path_head/*/file or *>
-* Remove a change git rm <path/to/file or path_head/*/file or *>
-* Apply changes to current head: git commit -m "<detailed but concise message>"
-* Update fork: git <fork name ie origin>
-* Update shared repo: git <repo name ie upstream> // May want to create pull request via GitHub instead.
+* _Add shared repo:_ git remote add <name ie "upstream"> <URL ie "https://github.com/MSU-CS3250-DreamTeam/Database">
+* _Check remote repos:_ git remote -v
+* _Update from remote:_ git pull upstream master
+* _Check commits and changes:_ git status
+* _Add a change: git_ add <path/to/file or path_head/*/file or *>
+* _Remove a change:_ git rm <path/to/file or path_head/*/file or *>
+* _Apply changes to current head:_ git commit -m "\<detailed but concise message\>"
+* _Update fork: git_ <fork name ie origin\>
+* _Update shared repo:_ git <repo name ie upstream\> // May want to create pull request via GitHub instead.
 ### Please remember to pull from upstream and check repo status after your commits and **just before pushing**!
 
 ## References					
