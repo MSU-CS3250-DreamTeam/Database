@@ -20,8 +20,8 @@ A database to manage cvs stored data.
 * _Add a change: git_ add <path/to/file or path_head/*/file or *>
 * _Remove a change:_ git rm <path/to/file or path_head/*/file or *>
 * _Apply changes to current head:_ git commit -m "\<detailed but concise message\>"
-* _Update fork: git_ <fork name ie origin\>
-* _Update shared repo:_ git <repo name ie upstream\> // May want to create pull request via GitHub instead.
+* _Update fork:_ git push <fork name ie origin\>
+* _Update shared repo:_ git push <repo name ie upstream\> // May want to create pull request via GitHub instead.
 ### Please remember to pull from upstream and check repo status after your commits and **just before pushing**!
 
 ## References					
