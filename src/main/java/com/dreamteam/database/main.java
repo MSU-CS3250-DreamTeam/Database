@@ -11,11 +11,7 @@ public class main {
 
   // Variable Declarations
   static private final String SPREAD_SHEET = "inventory_team1.csv";
-  static private final String Delete = "output.csv";
-
   static private Database new_database;
-  private int key;
-
   public static Scanner sc = new Scanner(System.in);
 
   // Menu Option Structure
@@ -151,6 +147,8 @@ public class main {
 
   /**
    * Prompt the user for a correct option of the existing menu.
+   * 
+   * @return the selected option to menu.
    */
   public static Options getOption() {
 
@@ -170,10 +168,9 @@ public class main {
         System.out.println("  " + index++ + ": " + choice);
       }
       System.out.print("? ");
-      
-      user_input = Integer.parseInt(sc.nextLine());
 
       try {
+        user_input = Integer.parseInt(sc.nextLine());
 
         for (Options user_choice : Options.values()) {
           if (user_input == user_choice.value) {
@@ -182,9 +179,12 @@ public class main {
         }
 
       } catch (NumberFormatException ex) {
-      }
 
-      System.out.println("Error!");
+        System.err.println(ex.getMessage());
+        System.out.println("Error!");
+
+      }
+      
     }
   }
 
