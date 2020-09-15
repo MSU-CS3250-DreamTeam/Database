@@ -152,7 +152,7 @@ public class main {
   /**
    * Prompt the user for a correct option of the existing menu.
    */
-  public static Options getOption() {
+  public static Options getOption() throws NumberFormatException {
 
     // Local Variable Declarations
     int user_input;
@@ -170,10 +170,9 @@ public class main {
         System.out.println("  " + index++ + ": " + choice);
       }
       System.out.print("? ");
-      
-      user_input = Integer.parseInt(sc.nextLine());
 
       try {
+        user_input = Integer.parseInt(sc.nextLine());
 
         for (Options user_choice : Options.values()) {
           if (user_input == user_choice.value) {
@@ -182,9 +181,12 @@ public class main {
         }
 
       } catch (NumberFormatException ex) {
-      }
 
-      System.out.println("Error!");
+        System.err.println(ex.getMessage());
+        System.out.println("Error!");
+
+      }
+      
     }
   }
 
