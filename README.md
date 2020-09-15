@@ -17,8 +17,8 @@ A database to manage cvs stored data.
 * Check remote repos: git remote -v
 * Update from remote: git pull upstream master
 * Check commits and changes: git status
-* Add a change: git add <path/to/file or path_head/*/file or *>
-* Remove a change git rm <path/to/file or path_head/*/file or *>
+* Add a change: git add <path\to\file or path_head\*\file or *>
+* Remove a change git rm <path\to\file or path_head\*\file or *>
 * Apply changes to current head: git commit -m "<detailed but concise message>"
 * Update fork: git <fork name ie origin>
 * Update shared repo: git <repo name ie upstream> // May want to create pull request via GitHub instead.
