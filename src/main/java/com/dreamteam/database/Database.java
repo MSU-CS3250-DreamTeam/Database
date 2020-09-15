@@ -34,7 +34,7 @@ public class Database {
   /**
    * 
    * @param id the entry used to find the sought row's position in data structure.
-   * @return the position of an entry in the data structure; a row. 0 if not found.
+   * @return the position of an entry in the data structure; a row. Entry count if not found.
    */
   private static int search(String id) {
 
@@ -86,12 +86,15 @@ public class Database {
   /**
    * Read existing entry from database.
    * @param id
+   * @return the entry of the database if found.
    */
-  public void read(String id) {
+  public String[] read(String id) {
     int entry_position = search(id);
     
     if (entry_position < entry_count) {
-      System.out.println(Arrays.toString(data_table[entry_position]));
+      return data_table[entry_position];
+    } else {
+      return null;
     }
     
   }
