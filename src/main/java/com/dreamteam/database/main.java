@@ -11,11 +11,7 @@ public class main {
 
   // Variable Declarations
   static private final String SPREAD_SHEET = "inventory_team1.csv";
-  static private final String Delete = "output.csv";
-
   static private Database new_database;
-  private int key;
-
   public static Scanner sc = new Scanner(System.in);
 
   // Menu Option Structure
