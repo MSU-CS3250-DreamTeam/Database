@@ -1,7 +1,7 @@
 package com.dreamteam.database;
 
-
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.Scanner;
 
 /**
@@ -14,7 +14,7 @@ public class main {
   static private Database new_database;
   public static Scanner sc = new Scanner(System.in);
 
-  // Menu Option Structure
+  // Menu Option Structure: order of options is the order displayed in the menu.
   enum Options {
     CREATE(1),
     READ(2),
@@ -58,6 +58,7 @@ public class main {
       if (new_database == null) {
 
         new_database = new Database(data_row.length);
+        new_database.set_data_head(data_row);
 
         // For debugging.
         // System.out.println("You should see the column labels if program read the
@@ -76,7 +77,7 @@ public class main {
     new_database.display();
 
     // For debugging. Disable in final project.
-    demo_database();
+    //demo_database();
 
     // Call the menu for user to access and modify the database.
     runMenu();
@@ -94,7 +95,13 @@ public class main {
 
     // Local Variable Declarations
     Options user_choice;
+    String[] database_header = new String[new_database.get_column_size()];
+    database_header = new_database.get_data_head();
+    // database_header = Arrays.copyOf(new_database.get_data_head(), database_header.length)
+    // System.arraycopy(new_database.get_data_head(), 0, database_header, 0, database_header.length); // !! Me going crazy!
+    String[] new_entry = new String[database_header.length];
 
+    database_header = new_database.get_data_head();
     do {
 
       user_choice = getOption();
@@ -103,11 +110,21 @@ public class main {
 
         case CREATE:
 
+          for (int i = 0; i < database_header.length; i++ ) {
+            System.out.print("Enter " + database_header[i] + ": ");
+            new_entry[i] = sc.nextLine();
+          }
+
+          new_database.create(new_entry);
+
           System.out.println(new_database); // Prints the object address in memory.
           // Adds a new product.
           break;
 
         case READ:
+          
+          System.out.print("Enter " + database_header[0] + ": ");
+          new_database.read(sc.nextLine());
 
           System.out.println(new_database); // Prints the object address in memory.
           // Retrieves a product and displays it.
@@ -115,11 +132,25 @@ public class main {
 
         case UPDATE:
 
+          System.out.print("Enter old entry's " + database_header[0] + ": ");
+          String[] old_entry = new String[] {sc.nextLine()};
+
+          for (int i = 1; i < database_header.length; i++ ) {
+            System.out.print("Enter new entry's " + database_header[i] + ": ");
+            new_entry[i] = sc.nextLine();
+          }
+
+          new_database.update(old_entry, new_entry);
+
           System.out.println(new_database); // Prints the object address in memory.
           // Updates a product
           break;
 
         case DELETE:
+
+          System.out.print("Enter " + database_header[0] + ": ");
+          new_database.delete(sc.nextLine());
+          new_database.display();
 
           System.out.println(new_database); // Prints the object address in memory.
           // Deletes a product
@@ -128,14 +159,20 @@ public class main {
         case AUTOMATE:
 
           System.out.println(new_database); // Prints the object address in memory.
-          // Deletes a product
+          System.out.println("The selected option exists, but is not implemented yet.");
+          // What does this do?
           break;
 
-        default:
+        case QUIT:
 
           System.out.println("\nSaving Database changes...");
           System.out.println("Done!");
           System.out.println("Bye!");
+          break;
+
+        default:
+
+        System.out.println("The selected option exists, but is not implemented yet.");
 
       }
 
@@ -155,17 +192,13 @@ public class main {
     // Local Variable Declarations
     int user_input;
     int index;
-    
 
     while (true) {
-
-      // Reset Options counter.
-      index = 1;
 
       // Prompt user for a choice from Options.
       System.out.println("\nOptions:");
       for (Options choice : Options.values()) {
-        System.out.println("  " + index++ + ": " + choice);
+        System.out.println("  " + choice.value + ": " + choice);
       }
       System.out.print("? ");
 
@@ -181,9 +214,11 @@ public class main {
       } catch (NumberFormatException ex) {
 
         System.err.println(ex.getMessage());
-        System.out.println("Error!");
+        System.out.println("Error! Incorrect format.");
 
       }
+
+      System.out.println("That option does not exist.");
       
     }
   }
@@ -222,6 +257,9 @@ public class main {
 
     System.out.print("\nRetrieving a product. ");
     new_database.read(fake_product_id);
+
+    System.out.print("\nRemoving fake product. ");
+    new_database.delete(fake_product_id);
 
   }
 
