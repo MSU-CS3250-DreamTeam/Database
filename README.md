@@ -22,6 +22,7 @@ A database to manage cvs stored data.
 * Apply changes to current head: git commit -m "<detailed but concise message>"
 * Update fork: git <fork name ie origin>
 * Update shared repo: git <repo name ie upstream> // May want to create pull request via GitHub instead.
+### Please remember to pull from upstream and check repo status after your commits and **just before pushing**!
 
 ## References					
 * Git/Github Guide:
