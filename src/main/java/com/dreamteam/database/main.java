@@ -35,7 +35,7 @@ public class main {
    * @param args
    * @throws FileNotFoundException
    */
-  static public void main(String[] args) throws IOException {
+  static public void main(String[] args) throws FileNotFoundException {
 
     // System.out.println("Welcome to DreamTeam DataBase");
     System.out.println("-------------------------------------------------------------------");
