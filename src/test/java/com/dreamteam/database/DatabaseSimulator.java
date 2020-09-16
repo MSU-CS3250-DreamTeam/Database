@@ -1,20 +1,15 @@
 package com.dreamteam.database;
 
+import java.io.File;
 import java.util.Scanner;
 
 public class DatabaseSimulator {
 
-
-    private final String buyFile = "buyEvent.csv";
-    private final String supplyFile = "supplyEvent.csv";
-    private String FILE_NAME;
-
     //BUYER EVENT
-    public static void buyerEvent(){
-        //This method reads from the respective buyer event file
-        //Update quantity, remove products/data rows if necessary
-        //Store customer email and date of purchase
-    }
+//     public static void buyerEvent(){
+//         This method reads from the respective buyer event file
+//         Update quantity, remove products/data rows if necessary
+//     }
 
     //SUPPLIER EVENT
 //    public static void supplierEvent() {
