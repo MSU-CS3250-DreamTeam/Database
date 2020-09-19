@@ -80,7 +80,7 @@ public class OrderHistory {
     }
 
     public static void main(String[] args) {
-// writes into a file
+        // writes into a file
         // this is for testing will fi
         String location = "customerHistory.csv";
         generateCsvFile(location);
