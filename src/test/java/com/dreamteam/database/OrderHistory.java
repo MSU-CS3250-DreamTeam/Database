@@ -6,7 +6,6 @@ import java.io.IOException;
 // Still writing code and this will be used as our foundation for the finance customer order history
 
 
-
 public class OrderHistory {
 
     private static void generateCsvFile(String fileName) {
