@@ -77,5 +77,5 @@ public class DatabaseSimulator {
         System.out.println("Exited simulation.");
 
     }
-    
+
 }
