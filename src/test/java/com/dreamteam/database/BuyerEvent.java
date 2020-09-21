@@ -12,6 +12,7 @@ public class BuyerEvent {
     private String shipping_address;
     private String product_id;
     private int quantity;
+    public static Database database = new Database(5);
 
     //Empty constructor
     public BuyerEvent(){
@@ -31,21 +32,32 @@ public class BuyerEvent {
 
     /**
      * Updates quantity of product inside of the Database
-     * @param product_id
-     * @param quantity
+     * @param event
      */
-    private static void updateQuantity(String product_id, int quantity){
-        //search for product in database with product_id
-        //update quantity of product by subtracting quantity variable of BuyerEvent
-        System.out.println("UPDATE METHOD STILL IN PROGRESS...");
+    private static void updateQuantity(BuyerEvent event){
+        String[] data = database.read(event.product_id);
+        int quantity = Integer.parseInt(data[0]);
+        quantity -= event.quantity;
+        data[0] = String.valueOf(quantity);
+        System.out.println(data[0]);
     }
 
     public static void main(String[] args) throws FileNotFoundException {
 
+        //Initialize database with original inventory
+        File inventory = new File("inventory_team1.csv");
+        Scanner dbScanner = new Scanner(inventory);
+        while (dbScanner.hasNextLine()){
+            String[] dbRow = dbScanner.nextLine().split(",");
+            database.create(dbRow);
+        }
+        dbScanner.close();
+
+
         //CSV file that holds buyer event parameters
         File file = new File("buyer_event.csv");
         Scanner scanner = new Scanner(file);
-        
+
         System.out.println("Buyer Event Simulation Initiated...\n");
 
         //Each buyer event (line of data in csv file) is stored as an object
@@ -60,13 +72,14 @@ public class BuyerEvent {
             event.product_id = data_row[3];
             event.quantity = Integer.parseInt(data_row[4]);
 
-
-            //updateQuantity(event.product_id, event.quantity);
+            //updateQuantity(event);
 
             //As of now, the program only reads from the csv and prints it.
             System.out.println(event.toString());
         }
-        
-        System.out.print("Buyer Event Simulation Complete!");
+
+        scanner.close();
+        System.out.println("Buyer Event Simulation Complete");
+
     }
 }
