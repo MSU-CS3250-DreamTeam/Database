@@ -21,7 +21,7 @@ public class BuyerEvent {
     public String toString(){
         String buyerEvent = "";
         buyerEvent += ("Date: " + date + "\n");
-        buyerEvent += ("Email" + email + "\n");
+        buyerEvent += ("Email: " + email + "\n");
         buyerEvent += ("Shipping Address: " + shipping_address + "\n");
         buyerEvent += ("Product ID: " + product_id + "\n");
         buyerEvent += ("Quantity: " + quantity + "\n");
@@ -45,6 +45,8 @@ public class BuyerEvent {
         //CSV file that holds buyer event parameters
         File file = new File("buyer_event.csv");
         Scanner scanner = new Scanner(file);
+        
+        System.out.println("Buyer Event Simulation Initiated...\n");
 
         //Each buyer event (line of data in csv file) is stored as an object
         BuyerEvent event = new BuyerEvent();
@@ -64,5 +66,7 @@ public class BuyerEvent {
             //As of now, the program only reads from the csv and prints it.
             System.out.println(event.toString());
         }
+        
+        System.out.print("Buyer Event Simulation Complete!");
     }
 }
