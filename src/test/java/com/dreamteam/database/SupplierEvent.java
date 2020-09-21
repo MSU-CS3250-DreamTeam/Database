@@ -17,7 +17,12 @@ public class SupplierEvent {
 
     }
 
-    private static void updateQuantity(){
+    /**
+     * Updates quantity of product inside of the Database
+     * @param product_id
+     * @param quantity
+     */
+    private static void updateQuantity(String product_id, int quantity){
         //
     }
 
@@ -50,7 +55,7 @@ public class SupplierEvent {
             event.product_id = data_row[2];
             event.quantity = Integer.parseInt(data_row[3]);
 
-            //updateQuantity();
+            //updateQuantity(event.product_id, event.quantity);
 
             //As of now, the program only reads from the csv and prints it.
             System.out.println(event.toString());
