@@ -40,7 +40,7 @@ public class Database {
 
     for (int i = 0; i < entry_count; i++) {
       if (data_table[i][0].equals(id)) {
-        System.out.println("Found at: " + (i + 1));
+        System.out.println("Found at: " + (i));
         return i;
       }
     }
@@ -134,5 +134,14 @@ public class Database {
     }
 
   }
-
+  /*public void buyerEvent(String[] new_data, String id) {
+  	System.out.println("We have a new buyer event!");
+  	Boolean entryExists = false;
+  	if (read(id) == null) {
+  		create(new_data);
+	}
+  	
+  	
+  	
+  }*/
 }
