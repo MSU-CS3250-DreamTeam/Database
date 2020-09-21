@@ -17,12 +17,18 @@
     <maven.compiler.source>1.7</maven.compiler.source>
     <maven.compiler.target>1.7</maven.compiler.target>
   </properties>
-
+  
   <dependencies>
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.11</version>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-api</artifactId>
+      <version>5.4.2</version>
+      <scope>test</scope>
+    </dependency>
+	<dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-engine</artifactId>
+      <version>5.4.2</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -73,3 +79,22 @@
     </pluginManagement>
   </build>
 </project>
+
+<!--	<plugins>
+		<plugin>
+			<groupID>org.apache.maven.plugin</groupID>
+			<artifactID>maven-surefire-plugin</artifactID>
+			<version>2.22.1</version>
+		</plugin>
+		<plugin>
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-surefire-plugin</artifactId>
+			<version>3.0.0-M5</version>
+			<configuration>
+				<argLine>-Xmx512m</argLine>
+				<forkMode>pertest</forkMode>
+				<childDelegaation>true</childDelegation>
+				<testFailureIgnore>true</testFailureIgnore>
+			</configuration>
+		</plugin>
+	 </plugins-->
