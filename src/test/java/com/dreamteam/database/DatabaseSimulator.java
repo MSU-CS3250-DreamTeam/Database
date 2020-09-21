@@ -21,8 +21,8 @@ public class DatabaseSimulator {
        if (new_file.exists()) {
            Scanner data_input = new Scanner(new_file);
 
-           if (!new_file.exists()) {
-            throw new FileNotFoundException("Is the data file in the wrong directory?");
+          if (!new_file.exists()) {
+            
           }
 
            while (data_input.hasNextLine()) {
@@ -30,18 +30,23 @@ public class DatabaseSimulator {
                String[] entry_row = new String[]{
                        data_row[3],data_row[4]
             };
-    //          if (new_database == null) {
-    //              new_database = new Database(data_row.length);
-    //              new_database.set_data_head(data_row);
+             if (new_database == null) {
+                 new_database = new Database(data_row.length);
+                 new_database.set_data_head(data_row);
 
-    //          }
-    //          new_database.create(data_row);
-    //            new_database.read(entry_row[0]);
-    //            new_database.update(entry_row,entry_row);
+             }
+               new_database.create(data_row);
+               new_database.read(entry_row[0]);
+               new_database.update(entry_row,entry_row);
 
+               assertEquals();
 
            }
            data_input.close();
+
+    
+       } else {
+            throw new FileNotFoundException("Is the data file in the wrong directory?");
        }
        
     }
