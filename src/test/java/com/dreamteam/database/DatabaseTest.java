@@ -59,8 +59,8 @@ public class DatabaseTest {
           database_entry[1] = Integer.toString(quantity);
           new_database.update(entry_row, database_entry);
 
-          assertEquals(Integer.toString(quantity), new_database.read(entry_row[0])[1]);
-          // assertEquals("6", new_database.read(entry_row[0])[1]);
+          assertEquals(Integer.toString(quantity), new_database.read(entry_row[0])[1], "Test failed.");
+          // assertEquals("6", new_database.read(entry_row[0])[1], "Test failed.");
 
       }
 
