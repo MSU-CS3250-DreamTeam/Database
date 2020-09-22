@@ -73,7 +73,7 @@ public class DatabaseSimulator {
             };
                new_database.create(data_row);
                database_entry = new_database.read(entry_row[0]);
-               quantity = Integer.parseInt(database_entry[1]) + Integer.parseInt(entry_row[1];
+               quantity = Integer.parseInt(database_entry[1]) + Integer.parseInt(entry_row[1]);
                database_entry[1] = Integer.toString(quantity);
                new_database.update(entry_row,database_entry);
 
