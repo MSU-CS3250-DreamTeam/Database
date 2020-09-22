@@ -2,7 +2,6 @@ package com.dreamteam.database;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.Arrays;
 import java.util.Scanner;
 
 public class BuyerEvent {
@@ -26,7 +25,7 @@ public class BuyerEvent {
         buyerEvent += ("Email: " + email + "\n");
         buyerEvent += ("Shipping Address: " + shipping_address + "\n");
         buyerEvent += ("Product ID: " + product_id + "\n");
-        buyerEvent += ("Quantity: " + quantity + "\n");
+        buyerEvent += ("Quantity Purchased: " + quantity);
 
         return buyerEvent;
     }
@@ -38,7 +37,9 @@ public class BuyerEvent {
     private static void updateQuantity(BuyerEvent event){
         String[] newData = DATABASE.read(event.product_id);
         int quantity = Integer.parseInt(newData[1]);
+        System.out.println("Product quantity before purchase: " + quantity);
         quantity -= event.quantity;
+        System.out.println("Product quantity after purchase: " + quantity + "\n");
         newData[1] = String.valueOf(quantity);
         DATABASE.update(newData, newData);
     }
@@ -60,10 +61,6 @@ public class BuyerEvent {
         Scanner scanner = new Scanner(file);
 
         System.out.println("");
-
-        //This prints out a product in database BEFORE buyerEvent
-        System.out.println(Arrays.toString(DATABASE.read("ZJ2VDLAXA5Y8")));
-
         System.out.println("Buyer Event Simulation Initiated...\n");
 
         //Each buyer event (line of data in csv file) is stored as an object
@@ -71,6 +68,7 @@ public class BuyerEvent {
 
         //Reads corresponding input fields from csv and assigns them to object
         String[] data_row;
+        int count = 1;
         while(scanner.hasNextLine()){
             data_row = scanner.nextLine().split(",");
             event.date = data_row[0];
@@ -79,17 +77,15 @@ public class BuyerEvent {
             event.product_id = data_row[3];
             event.quantity = Integer.parseInt(data_row[4]);
 
-            updateQuantity(event);
-
+            count++;
             System.out.println(event.toString());
+            updateQuantity(event);
         }
 
+        //Close the program and print out the total number of Buyer Events
         scanner.close();
+        System.out.println("Total number of Buyer Events: " + count + "\n");
         System.out.println("Buyer Event Simulation Complete");
-
-        //This prints out product information after BuyerEvent is complete
-        //Compared to first print out, the quantity should be reduced by amount purchased
-        System.out.println(Arrays.toString(DATABASE.read("ZJ2VDLAXA5Y8")));
-
+        System.exit(1);
     }
 }
