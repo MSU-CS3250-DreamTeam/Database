@@ -9,48 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DatabaseSimulator {
 
-    //BUYER EVENT
-//     public static void buyerEvent(){
-//         This method reads from the respective buyer event file
-//         Update quantity, remove products/data rows if necessary
-//     }
-
-   @Test
-   public static void supplierEvent() throws FileNotFoundException {
-       File new_file = new File("");
-       if (new_file.exists()) {
-           Scanner data_input = new Scanner(new_file);
-
-          if (!new_file.exists()) {
-            
-          }
-
-           while (data_input.hasNextLine()) {
-               String[] data_row = data_input.nextLine().split(",");
-               String[] entry_row = new String[]{
-                       data_row[3],data_row[4]
-            };
-             if (new_database == null) {
-                 new_database = new Database(data_row.length);
-                 new_database.set_data_head(data_row);
-
-             }
-               new_database.create(data_row);
-               new_database.read(entry_row[0]);
-               new_database.update(entry_row,entry_row);
-
-               assertEquals();
-
-           }
-           data_input.close();
-
-    
-       } else {
-            throw new FileNotFoundException("Is the data file in the wrong directory?");
-       }
-       
-    }
-
+    @BeforeAll
     public static void main(String[] args) {
 
         System.out.println("---------------------------------------------");
@@ -93,4 +52,40 @@ public class DatabaseSimulator {
 
     }
 
+    //BUYER EVENT
+//     public static void buyerEvent(){
+//         This method reads from the respective buyer event file
+//         Update quantity, remove products/data rows if necessary
+//     }
+
+   @Test
+   public static void supplierEvent() throws FileNotFoundException {
+       File new_file = new File("");
+       int quanity = 0;
+       String[] database_entry = new String[5];
+       if (new_file.exists()) {
+           Scanner data_input = new Scanner(new_file);
+
+           while (data_input.hasNextLine()) {
+               String[] data_row = data_input.nextLine().split(",");
+               String[] entry_row = new String[]{
+                       data_row[3],data_row[4]
+            };
+               new_database.create(data_row);
+               database_entry = new_database.read(entry_row[0]);
+               quanity = Integer.parseInt(database_entry[1]) + Integer.parseInt(entry_row[1];
+               database_entry[1] = Integer.toString(quanity);
+               new_database.update(entry_row,database_entry);
+
+               assertEquals(quanity,new_database.read(entry_row[0])[1]);
+
+           }
+           data_input.close();
+
+    
+       } else {
+            throw new FileNotFoundException("Is the data file in the wrong directory?");
+       }
+       
+    }
 }
