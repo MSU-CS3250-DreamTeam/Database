@@ -40,7 +40,7 @@ public class Database {
 
     for (int i = 0; i < entry_count; i++) {
       if (data_table[i][0].equals(id)) {
-        System.out.println("Found at: " + (i));
+        //System.out.println("Found at: " + (i));
         return i;
       }
     }
