@@ -134,14 +134,5 @@ public class Database {
     }
 
   }
-  /*public void buyerEvent(String[] new_data, String id) {
-  	System.out.println("We have a new buyer event!");
-  	Boolean entryExists = false;
-  	if (read(id) == null) {
-  		create(new_data);
-	}
-  	
-  	
-  	
-  }*/
+
 }
