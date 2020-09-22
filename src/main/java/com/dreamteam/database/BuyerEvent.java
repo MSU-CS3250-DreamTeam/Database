@@ -65,7 +65,7 @@ public class BuyerEvent {
 
         //Each buyer event (line of data in csv file) is stored as an object
         BuyerEvent event = new BuyerEvent();
-
+        System.out.println(scanner.nextLine());
         //Reads corresponding input fields from csv and assigns them to object
         String[] data_row;
         int count = 1;
