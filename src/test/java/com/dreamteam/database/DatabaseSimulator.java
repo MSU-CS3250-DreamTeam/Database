@@ -61,7 +61,7 @@ public class DatabaseSimulator {
    @Test
    public static void supplierEvent() throws FileNotFoundException {
        File new_file = new File("");
-       int quanity = 0;
+       int quantity = 0;
        String[] database_entry = new String[5];
        if (new_file.exists()) {
            Scanner data_input = new Scanner(new_file);
@@ -73,11 +73,11 @@ public class DatabaseSimulator {
             };
                new_database.create(data_row);
                database_entry = new_database.read(entry_row[0]);
-               quanity = Integer.parseInt(database_entry[1]) + Integer.parseInt(entry_row[1];
-               database_entry[1] = Integer.toString(quanity);
+               quantity = Integer.parseInt(database_entry[1]) + Integer.parseInt(entry_row[1];
+               database_entry[1] = Integer.toString(quantity);
                new_database.update(entry_row,database_entry);
 
-               assertEquals(quanity,new_database.read(entry_row[0])[1]);
+               assertEquals(quantity,new_database.read(entry_row[0])[1]);
 
            }
            data_input.close();
