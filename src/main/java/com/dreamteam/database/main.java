@@ -147,7 +147,7 @@ public class main {
           if (is_simulation) {
 
             System.out.println("Are you buying? y/n");
-            Boolean isBuyer = (("y" == sc.nextLine()) ? true : false);
+            Boolean isBuyer = (("y".equals(sc.nextLine())) ? true : false);
 
             // new_entry = existing_entry;
             System.out.print("Enter the desired quantity: ");
