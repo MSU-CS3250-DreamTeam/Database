@@ -34,7 +34,7 @@ public class SupplierEvent {
     public static void main(String[] args) throws FileNotFoundException {
 
         //CSV file that holds supplier event parameters
-        File file = new File("supplier_event.csv");
+        File file = new File("files/supplier_event.csv");
         Scanner scanner = new Scanner(file);
 
         System.out.println("Supplier Event Simulation Initiated...\n");

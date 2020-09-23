@@ -6,4 +6,4 @@ out/*
 *.class
 .idea/*
 *.iml
-*.csv
+/*.csv

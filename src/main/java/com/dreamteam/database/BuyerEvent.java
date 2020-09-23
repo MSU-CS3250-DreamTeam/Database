@@ -47,7 +47,7 @@ public class BuyerEvent {
     public static void main(String[] args) throws FileNotFoundException {
 
         //Initialize database with original inventory
-        File inventory = new File("inventory_team1.csv");
+        File inventory = new File("files/inventory_team1.csv");
         Scanner dbScanner = new Scanner(inventory);
         while (dbScanner.hasNextLine()){
             String[] dbRow = dbScanner.nextLine().split(",");
@@ -57,7 +57,7 @@ public class BuyerEvent {
 
 
         //CSV file that holds buyer event parameters
-        File file = new File("buyer_event.csv");
+        File file = new File("files/buyer_event.csv");
         Scanner scanner = new Scanner(file);
 
         System.out.println("");

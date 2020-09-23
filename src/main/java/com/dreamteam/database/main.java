@@ -15,7 +15,7 @@ import java.time.*;
 public class main {
 
   // Variable Declarations
-  static private final String SPREAD_SHEET = "inventory_team1.csv";
+  static private final String SPREAD_SHEET = "files/inventory_team1.csv";
   static private Database new_database;
   public static Scanner sc = new Scanner(System.in);
 
@@ -309,7 +309,7 @@ public class main {
   }
 
   private static void updateCustomerHistory(String customer, String date, String time) throws IOException {
-    String location = "customer_history.csv";
+    String location = "files/customer_history.csv";
 
     // if (customer != null) {}
     try {
