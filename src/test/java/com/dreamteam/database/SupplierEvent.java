@@ -48,7 +48,7 @@ public class SupplierEvent {
             event.date = data_row[0];
             event.supplier_id = data_row[1];
             event.product_id = data_row[2];
-            event.quantity = Integer.parseInt(data_row[3]);
+           //event.quantity = Integer.parseInt(data_row[3]);
 
             //updateQuantity();
 
