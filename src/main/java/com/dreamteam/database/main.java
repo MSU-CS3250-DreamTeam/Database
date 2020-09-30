@@ -4,9 +4,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Arrays;
 import java.util.Scanner;
-
-//import org.junit.jupiter.api.Test;
-//import org.junit.jupiter.api.Assertions.assertEquals;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.time.*;
+// import java.io.*;
 
 /**
  *
@@ -145,25 +146,48 @@ public class main {
           boolean is_simulation = true;
           if (is_simulation) {
 
-            new_entry = existing_entry;
-            System.out.print("Enter the new quantity: ");
-            new_entry[1] = sc.nextLine();
-            System.out.println(Arrays.toString(new_entry));
+            System.out.println("Are you buying? y/n");
+            Boolean isBuyer = (("y".equals(sc.nextLine())) ? true : false);
+
+            // new_entry = existing_entry;
+            System.out.print("Enter the desired quantity: ");
+            int quantity = Integer.parseInt(sc.nextLine());
+
+            if (isBuyer) {
+              quantity = Integer.parseInt(existing_entry[1]) - quantity;
+            } else {
+              quantity += Integer.parseInt(existing_entry[1]);
+            }
+            
+            existing_entry[1] = Integer.toString(quantity);
+            new_database.update(existing_entry, existing_entry);
+            
+
+            System.out.print("Enter customer Id: ");
+            String customer = sc.nextLine();
+            String date = LocalDate.now().toString();
+            String time = LocalDateTime.now().toString();
+            
+            try {
+              updateCustomerHistory(customer, date, time);
+            } catch (IOException e) {
+              System.err.println(e);
+            }
+            
 
           } else {
 
             for (int i = 1; i < database_header.length; i++ ) {
             
               System.out.print("Enter new entry's " + database_header[i] + ": ");
-              new_entry[i] = sc.nextLine();
+              existing_entry[i] = sc.nextLine();
   
             }
 
           }
 
-          new_database.update(existing_entry, new_entry);
-
-          System.out.println(new_database); // Prints the object address in memory.
+          new_database.update(existing_entry, existing_entry);
+          System.out.println(new_database.read(existing_entry[0])); // Prints the object address in memory.
           // Updates a product
           break;
 
@@ -283,6 +307,28 @@ public class main {
     new_database.delete(fake_product_id);
 
   }
+
+  private static void updateCustomerHistory(String customer, String date, String time) throws IOException {
+    String location = "customer_history.csv";
+
+    // if (customer != null) {}
+    try {
+        FileWriter writer = new FileWriter(location, true);
+        writer.append(customer); // we would append the order from the events into here
+        writer.append(", ");
+        writer.append(date);
+        writer.append(", ");
+        writer.append(time);
+        writer.append('\n');
+
+        System.out.println("CSV file is created...");
+        writer.flush();
+        writer.close();
+
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+}
 
 } // End main class.
 

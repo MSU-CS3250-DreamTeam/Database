@@ -10,18 +10,18 @@ public class SupplierEvent {
     private String date;
     private String supplier_id;
     private String product_id;
-    private int quantity;
+    private String quantity;
 
     //Empty Constructor
-    public SupplierEvent(){
+    public SupplierEvent() {
 
     }
 
-    private static void updateQuantity(){
+    private static void updateQuantity() {
         //
     }
 
-    public String toString(){
+    public String toString() {
         String supplierEvent = "";
         supplierEvent += ("Date: " + date + "\n");
         supplierEvent += ("Supplier ID: " + supplier_id + "\n");
@@ -43,12 +43,12 @@ public class SupplierEvent {
         SupplierEvent event = new SupplierEvent();
 
         //Reads corresponding input fields from csv and assigns them to object
-        while(scanner.hasNextLine()){
+        while (scanner.hasNextLine()) {
             String[] data_row = scanner.nextLine().split(",");
             event.date = data_row[0];
             event.supplier_id = data_row[1];
             event.product_id = data_row[2];
-            event.quantity = Integer.parseInt(data_row[3]);
+            event.quantity =  data_row[3];
 
             //updateQuantity();
 
