@@ -18,6 +18,22 @@ public class main {
 	static private Database new_database;
 	public static Scanner sc = new Scanner(System.in);
 	
+	enum Options {
+	CREATE(1),
+	READ(2),
+	UPDATE(3),
+	DELETE(4),
+	AUTOMATE(5),
+	QUIT(6);
+	
+	private Options(int v) {
+		this.value = v;
+	}
+	
+	private int value;
+	
+	public int getValue() { return value; }
+}
 	/*A demonstration of how to use the CRUD methods on an active, visible database object.*/
 	
 	private static final void demo_database() {
@@ -120,7 +136,7 @@ public class main {
 		// Initializes the database to the spreadsheet's columns.
 		if(new_database == null) {
 			
-			new_database = new Database();
+			new_database = new Database(SPREAD_SHEET);
 			new_database.set_data_head(columnLabels);
 			
 			// For debugging.
@@ -137,7 +153,7 @@ public class main {
 		
 		// For debugging. There are ~22k entries to display when method is entirely
 		// uncommented.
-		new_database.display();
+		//new_database.display();
 		
 		// For debugging. Disable in final project.
 		demo_database();
@@ -175,7 +191,7 @@ public class main {
 					}
 					Entry record = new_database.createEntry(new_entry);
 					
-					System.out.println(new_database); // Prints the object address in memory.
+					record.prettyPrint(); // Prints the object address in memory.
 					// Adds a new product.
 					break;
 				
@@ -188,7 +204,8 @@ public class main {
 						System.out.println(existing_entry);
 					}
 					
-					System.out.println(new_database); // Prints the object address in memory.
+					existing_entry.prettyPrint();
+					//System.out.println(new_database); // Prints the object address in memory.
 					// Retrieves a product and displays it.
 					break;
 				
@@ -208,7 +225,7 @@ public class main {
 						int requestQuantity = Integer.parseInt(sc.nextLine());
 						
 						if(isBuyer) {
-							existing_entry.subractQuantity(requestQuantity);
+							existing_entry.subtractQuantity(requestQuantity);
 						} else {
 							existing_entry.addQuantity(requestQuantity);
 						}
@@ -296,22 +313,7 @@ public class main {
 }
 
 // Menu Option Structure: order of options is the order displayed in the menu.
-enum Options {
-	CREATE(1),
-	READ(2),
-	UPDATE(3),
-	DELETE(4),
-	AUTOMATE(5),
-	QUIT(6);
-	
-	private Options(int v) {
-		this.value = v;
-	}
-	
-	private int value;
-	
-	public int getValue() { return value; }
-}
+
 // End main class.
 
 //	***************************************************************************

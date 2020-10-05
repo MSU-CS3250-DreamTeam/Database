@@ -28,9 +28,7 @@ public class Entry {
 		return productID;
 	}
 	
-	public int getQuantity() {
-		return quantity;
-	}
+	public int getQuantity() { return quantity; }
 	
 	public double getSalePrice() {
 		return salePrice;
@@ -63,7 +61,7 @@ public class Entry {
 		return setQuantity(getQuantity() + increment);
 	}
 	
-	public boolean subractQuantity(int increment) {
+	public boolean subtractQuantity(int increment) {
 		return setQuantity(getQuantity() - increment);
 	}
 	

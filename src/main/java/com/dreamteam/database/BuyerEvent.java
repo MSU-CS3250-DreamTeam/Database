@@ -70,7 +70,7 @@ public class BuyerEvent {
 			BuyerEvent event = events.remove();
 			if(db.contains(event.getProduct_id())) {
 			Entry entry = db.get(event.getProduct_id());
-			entry.subractQuantity(event.getQuantity());
+			entry.subtractQuantity(event.getQuantity());
 			} else {
 				System.out.println("that product Id does not exist...");
 			}
@@ -118,7 +118,7 @@ public class BuyerEvent {
 		if(record != null) {
 			System.out.println(
 			 "Product quantity before purchase: " + record.getQuantity());
-			record.subractQuantity(event.quantity);
+			record.subtractQuantity(event.quantity);
 		}
 	}
 }
