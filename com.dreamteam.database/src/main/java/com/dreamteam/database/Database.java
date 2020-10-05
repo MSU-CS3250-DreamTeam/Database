@@ -1,4 +1,4 @@
-package com.dreamteam.database.com.dreamteam.database;
+package com.dreamteam.database;
 
  import java.util.Arrays;
 

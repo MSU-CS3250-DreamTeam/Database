@@ -1,6 +1,5 @@
-package com.dreamteam.database.com.dreamteam.database;
+package com.dreamteam.database;
 
-import com.dreamteam.database.com.dreamteam.database.Database;
 
 import java.io.File;
 import java.io.FileNotFoundException;

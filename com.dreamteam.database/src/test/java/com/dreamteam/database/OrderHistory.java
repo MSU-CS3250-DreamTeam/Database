@@ -1,4 +1,4 @@
-package com.dreamteam.database.com.dreamteam.database;
+package com.dreamteam.database;
 
 import java.io.FileWriter;
 import java.io.IOException;
