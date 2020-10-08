@@ -1,147 +1,171 @@
 package com.dreamteam.database;
 
- import java.util.Arrays;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Scanner;
 
-/**
- * 
- */
 public class Database {
-  // TODO polish, test, refactor, redesign,etc.
-
-  // A list of class private variables.
-  private static int rows = 3000; // Entry capacity of data structure.
-  private static int entry_count = 0; // Position of final entry in data structure minus the header.
-  private static String[][] data_table; // Tentative data structure. We can change this.
-  private String[] data_head; // The column labels of the data structure.
-
-  // Constructor
-  public Database(int columns) {
-    this.data_table = new String[rows][columns];
-  }
-
-  public void set_data_head(String[] labels) {
-    this.data_head = labels;
-  }
-
-  public String[] get_data_head() {
-    return this.data_head;
-  }
-
-  public int get_column_size() {
-    return this.data_head.length;
-  }
-
-  /**
-   * 
-   * @param id the entry used to find the sought row's position in data structure.
-   * @return the position of an entry in the data structure; a row. Entry count if not found.
-   */
-  private static int search(String id) {
-
-    for (int i = 0; i < entry_count; i++) {
-      if (data_table[i][0].equals(id)) {
-        System.out.println("Found at: " + (i + 1));
-        return i;
-      }
-    }
-
-    System.out.println("Product not found.");
-
-    return entry_count;
-  }
-
-  /**
-   * Prints the entire database to console. May want to disable in finished project.
-   * Also prints the number of current entries in database.
-   */
-  public void display() {
-
-    // for (int i = 0; i < entry_count; i++) {
-    //   System.out.println(Arrays.toString(data_table[i]));
-    //   // System.out.println(data_table[i][0]);
-    // }
-
-    System.out.println("\nThere are " + (entry_count - 1) + " entries recorded in the database.\n");
-
-  }
-
-  /**
-   * Add new entries to database.
-   * @param new_data
-   */
-  public void create(String[] new_data) {
-    
-    if (entry_count + 1 > rows ) {
-      System.out.println("Resizing the database from " + rows + " rows to " + (rows * 2) + " rows.");
-      rows *= 2;
-      data_table = Arrays.copyOf(data_table, rows);
-    }
-
-    data_table[entry_count] = new_data;
-    
-    entry_count++;
-
-  }
-
-  /**
-   * Read existing entry from database.
-   * @param id
-   * @return the entry of the database if found.
-   */
-  public String[] read(String id) {
-    int entry_position = search(id);
-    
-    if (entry_position < entry_count) {
-      return data_table[entry_position];
-    } else {
-      return null;
-    }
-    
-  }
-
-  /**
-   * Find existing entry in database and update with new entry.
-   * @param new_data
-   * @param old_data
-   */
-  public void update(String[] old_data, String[] new_data) {
-    int entry_position = search(old_data[0]);
-
-    if (entry_position < entry_count) {
-      data_table[entry_position] = new_data;
-    }
-    
-  }
-
-  /**
-   * Delete existing entry from database.
-   * @param id
-   */
-  public void delete(String id) {
-    
-    int entry_position = search(id);
-
-    if (entry_position < entry_count) {
-      
-      data_table[entry_position] = null;
-
-      for (int i = entry_position; i <= entry_count; i++) {
-        data_table[i] = data_table[i + 1];
-      }
-      System.out.println("Product removed.");
-      entry_count--;
-
-    }
-
-  }
-  /*public void buyerEvent(String[] new_data, String id) {
-  	System.out.println("We have a new buyer event!");
-  	Boolean entryExists = false;
-  	if (read(id) == null) {
-  		create(new_data);
+	// Tentative data structure. We can change this.
+	private String[] data_head; // The column labels of the data structure.
+	// Position of final entry in data structure minus the header.
+	private static HashMap<String, Entry> data_table;
+	
+	// Constructor
+	public Database() {
+		data_table = new HashMap<>();
 	}
-  	
-  	
-  	
-  }*/
+	
+	public Database(String filePath) throws FileNotFoundException {
+		data_table = new HashMap<>();
+		File inventory = new File(filePath);
+		Scanner dbScanner = new Scanner(inventory);
+		data_head = dbScanner.nextLine().split(",");
+		while(dbScanner.hasNextLine()) {
+			String[] dbRow = dbScanner.nextLine().split(",");
+			Entry entry = createEntry(dbRow);
+			data_table.put(entry.getProductID(), entry);
+		}
+		dbScanner.close();
+	}
+	
+
+	// TODOd polish, test, refactor, redesign,etc.
+	// A list of class private variables.
+	
+	/* We don't need to keep track of the number of rows anymore. HashMap will resize dynamically 
+	on its own.
+	private static int rows = 3000; // Entry capacity of data structure. */
+	
+	/**
+	 * Check to see if we can make a sale
+	 *
+	 * @param attemptedQuantity
+	 *  which we need to have enough of
+	 */
+	public Boolean canProcessOrder(String id, int attemptedQuantity) {
+		Entry entry = data_table.get(id);
+		if(entry != null) {
+			
+			return attemptedQuantity <= entry.getQuantity();
+		}
+		return false;
+	}
+	
+	public boolean contains(String product_id) {
+		return data_table.containsKey(product_id);
+	}
+	
+	public Entry createEntry(String entryString) {
+		return createEntry(entryString.split(","));
+	}
+	
+	public Entry createEntry(String[] entryString) {
+		return parseEntry(entryString);
+	}
+	
+	/**
+	 * Delete existing entry from database.
+	 *
+	 * @param id
+	 *
+	 * @return the old Entry if there was one.
+	 *  otherwise, null
+	 */
+	public Entry delete(String id) {
+		return data_table.remove(id);
+	}
+	
+	/**
+	 * Prints the entire database to console. May want to disable in finished project.
+	 * Also prints the number of current entries in database.
+	 */
+	public void display() {
+		StringBuilder builder = new StringBuilder();
+		for(int i = 0; i < data_head.length; i++) {
+			builder.append(data_head[i])
+				   .append(i < data_head.length - 1 ? "," : "");
+		}
+		for(Entry value: data_table.values()) {
+			builder.append(value.toString());
+		}
+		System.out.println(builder.toString());
+		System.out.println("\nThere are " + data_table.size() +
+						   " entries recorded in the database.\n");
+	}
+	
+	public int get_column_size() {
+		return this.data_head.length;
+	}
+	
+	public String[] get_data_head() {
+		return this.data_head;
+	}
+	
+	/** Create a new Entry from a String array. */
+	public static Entry parseEntry(String[] temp) {
+		String productID = temp[0] + "";
+		return Entry.getEntry(temp, productID);
+	}
+	
+	/**
+	 * Read existing entry from database.
+	 *
+	 * @param id
+	 *
+	 * @return the entry of the database if found.
+	 */
+	public Entry read(String id) {
+		return data_table.get(id);
+	}
+	
+	public void set_data_head(String[] labels) {
+		this.data_head = labels;
+	}
+	
+	/**
+	 * Find existing entry in database and update with new entry.
+	 *
+	 * @param newEntry
+	 *  the new entry to overwrite the old one
+	 *
+	 * @return the old entry, in case we want to do something with it
+	 */
+	public Entry update(Entry newEntry) {
+		return data_table.put(newEntry.getProductID(), newEntry);
+	}
+	
+	public Entry update(String string) {
+		Entry newEntry = createEntry(string);
+		return data_table.put(newEntry.getProductID(), newEntry);
+	}
+	
+	@Override public String toString() {
+		StringBuilder sb = new StringBuilder();
+		String headers = Arrays.toString(data_head);
+		headers = headers.substring(1, headers.length() -1);
+		sb.append(headers).append("\n");
+		Iterator<Entry> itr = data_table.values().iterator();
+		while(itr.hasNext()) {
+			Entry next = itr.next();
+			if(next == null) {
+				System.out.println("but why???");
+			}
+			sb.append(next).append("\n");
+		}
+		return sb.toString();
+	}
+	
+	public static void main(String[] args) throws FileNotFoundException {
+		Database db = new Database("inventory_team1.csv");
+		Entry entry = db.get("ULSGKCQO385Y");
+		System.out.println(entry);
+		entry.prettyPrint();
+	}
+	
+	Entry get(String productId) {
+		return data_table.get(productId);
+	}
 }
