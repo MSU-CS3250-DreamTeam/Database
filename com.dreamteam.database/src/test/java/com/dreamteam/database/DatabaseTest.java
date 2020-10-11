@@ -1,20 +1,18 @@
 package com.dreamteam.database;
 
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DatabaseTest {
   private static final String SPREAD_SHEET = "inventory_team1.csv";
   private static Database new_database;
 
-  @BeforeAll
-  static void setup() throws FileNotFoundException {
+  @BeforeAll static void setup() throws FileNotFoundException {
 
     File new_file = new File(SPREAD_SHEET);
     Scanner data_input = new Scanner(new_file);
@@ -38,8 +36,7 @@ public class DatabaseTest {
 
   }
 
-  @Test
-  void buyTest() throws FileNotFoundException {
+  @Test void buyTest() throws FileNotFoundException {
     File new_file = new File("buyer_event.csv");
     int quantity = 0;
     String[] database_entry = new String[5];
@@ -74,8 +71,7 @@ public class DatabaseTest {
     }
   }
 
-  @Test
-  void supplyTest() throws FileNotFoundException {
+  @Test void supplyTest() throws FileNotFoundException {
     File new_file = new File("supplier_event.csv");
     int quantity = 0;
     String[] database_entry = new String[5];
