@@ -1,7 +1,5 @@
 package com.dreamteam.database;
 
-import org.junit.jupiter.api.Test;
-
 public class BuyerEventTest {
 
     // @Test
