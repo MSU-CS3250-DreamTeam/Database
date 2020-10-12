@@ -158,12 +158,12 @@ public class Database {
 		return sb.toString();
 	}
 	
-	public static void main(String[] args) throws FileNotFoundException {
-		Database db = new Database("inventory_team1.csv");
-		Entry entry = db.get("ULSGKCQO385Y");
-		System.out.println(entry);
-		entry.prettyPrint();
-	}
+	// public static void printDatabase() throws FileNotFoundException {
+	// 	Database db = new Database("inventory_team1.csv");
+	// 	Entry entry = db.get("ULSGKCQO385Y");
+	// 	System.out.println(entry);
+	// 	entry.prettyPrint();
+	// }
 	
 	Entry get(String productId) {
 		return data_table.get(productId);
