@@ -53,7 +53,7 @@ public class BuyerEvent {
 		// Initialize database inventory from ccsv
 		Database db = new Database("inventory_team1.csv");
 		
-		File file = new File("buyer_event.csv");
+		File file = new File("customer_orders_A_team1.csv");
 		Scanner scanner = new Scanner(file);
 		
 		// Reads corresponding input fields from csv and assigns them to object

@@ -1,17 +1,20 @@
 package com.dreamteam.database;
 
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Scanner;
 
 public class BuyerEvent {
 
     //Class variables
-    private String date;
-    private String email;
-    private String shipping_address;
-    private String product_id;
-    private int quantity;
+    protected String date;
+    protected String email;
+    protected String shipping_address;
+    protected String product_id;
+    protected int quantity;
+    protected String time;
     private static final Database DATABASE = new Database(5);
 
     //Empty constructor
@@ -34,17 +37,30 @@ public class BuyerEvent {
      * Updates quantity of product inside of the Database
      * @param event
      */
-    private static void updateQuantity(BuyerEvent event){
+    private static void updateQuantity(com.dreamteam.database.BuyerEvent event){
         String[] newData = DATABASE.read(event.product_id);
         int quantity = Integer.parseInt(newData[1]);
-        System.out.println("Product quantity before purchase: " + quantity);
         quantity -= event.quantity;
-        System.out.println("Product quantity after purchase: " + quantity + "\n");
         newData[1] = String.valueOf(quantity);
         DATABASE.update(newData, newData);
+        System.out.println("Updated Database Successfully");
     }
 
-    public static void main(String[] args) throws FileNotFoundException {
+    /**
+     * Appends Buyer Event information into CSV file using OrderHistory.java class
+     * @param event
+     */
+    private static void createOrder(com.dreamteam.database.BuyerEvent event) {
+        try {
+            OrderHistory.generateOrderHistory(event);
+            System.out.println("Customer Order Logged Successfully \n");
+        } catch (Exception e) {
+            System.out.println("Customer Order Log for this event FAILED \n");
+        }
+
+    }
+
+    public static void main(String[] args) throws IOException {
 
         //Initialize database with original inventory
         File inventory = new File("inventory_team1.csv");
@@ -57,18 +73,22 @@ public class BuyerEvent {
 
 
         //CSV file that holds buyer event parameters
-        File file = new File("buyer_event.csv");
+        File file = new File("customer_orders_A_team1.csv");
         Scanner scanner = new Scanner(file);
 
-        System.out.println("");
-        System.out.println("Buyer Event Simulation Initiated...\n");
+        //This creates the csv file that the following buyerEvents will be stored into
+        OrderHistory.generateCsvFile();
 
-        //Each buyer event (line of data in csv file) is stored as an object
-        BuyerEvent event = new BuyerEvent();
-        System.out.println(scanner.nextLine());
-        //Reads corresponding input fields from csv and assigns them to object
+        System.out.println("\nBuyer Event Simulation Initiated\n");
+
+        com.dreamteam.database.BuyerEvent event = new com.dreamteam.database.BuyerEvent(); //Each buyer event (line of data in csv file) is stored as an object
+
+        scanner.nextLine(); //This skips the header row in the csv file
+
+        //Reads corresponding input fields from buyerEvent csv and assigns them to object
+        //Object then updates database, and then stores order information in a new orderHistory csv file
         String[] data_row;
-        int count = 1;
+        int count = 0;
         while(scanner.hasNextLine()){
             data_row = scanner.nextLine().split(",");
             event.date = data_row[0];
@@ -77,12 +97,17 @@ public class BuyerEvent {
             event.product_id = data_row[3];
             event.quantity = Integer.parseInt(data_row[4]);
 
+            SimpleDateFormat format = new SimpleDateFormat("HH:mm");
+            Date time = new Date();
+            event.time = format.format(time);
+
             count++;
-            System.out.println(event.toString());
+            System.out.println("Processing Customer Order #" + count + "... ");
             updateQuantity(event);
+            createOrder(event);
         }
 
-        //Close the program and print out the total number of Buyer Events
+        //Prints out the total number of Buyer Events and closes program
         scanner.close();
         System.out.println("Total number of Buyer Events: " + count + "\n");
         System.out.println("Buyer Event Simulation Complete");

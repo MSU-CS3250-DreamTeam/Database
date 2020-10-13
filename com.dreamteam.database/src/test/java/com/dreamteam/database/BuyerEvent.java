@@ -13,8 +13,8 @@ public class BuyerEvent {
     protected String email;
     protected String shipping_address;
     protected String product_id;
-    protected int quantity;
     protected String time;
+    protected int quantity;
     private static final Database DATABASE = new Database(5);
 
     //Empty constructor
@@ -97,14 +97,14 @@ public class BuyerEvent {
             event.product_id = data_row[3];
             event.quantity = Integer.parseInt(data_row[4]);
 
-            SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
+            SimpleDateFormat format = new SimpleDateFormat("HH:mm");
             Date time = new Date();
             event.time = format.format(time);
 
+            count++;
             System.out.println("Processing Customer Order #" + count + "... ");
             updateQuantity(event);
             createOrder(event);
-            count++;
         }
 
         //Prints out the total number of Buyer Events and closes program
