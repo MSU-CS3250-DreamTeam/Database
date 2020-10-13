@@ -37,17 +37,17 @@ public class OrderHistory {
     protected static void generateOrderHistory(BuyerEvent event) throws IOException {
 
         writer = new FileWriter(FILE, true);
-        writer.append(event.date);
+        writer.append(event.getDate());
         writer.append(',');
-        writer.append(event.time);
+        writer.append(event.getTime());
         writer.append(',');
-        writer.append(event.email);
+        writer.append(event.getEmail());
         writer.append(',');
-        writer.append(event.shipping_address);
+        writer.append(event.getShipping_address());
         writer.append(',');
-        writer.append(event.product_id);
+        writer.append(event.getProduct_id());
         writer.append(',');
-        writer.append(String.valueOf(event.quantity));
+        writer.append(String.valueOf(event.getQuantity()));
         writer.append('\n');
 
         writer.flush();

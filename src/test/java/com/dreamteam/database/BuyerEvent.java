@@ -9,18 +9,42 @@ import java.util.Scanner;
 public class BuyerEvent {
 
     //Class variables
-    protected String date;
-    protected String email;
-    protected String shipping_address;
-    protected String product_id;
-    protected int quantity;
-    protected String time;
-    private static final Database DATABASE = new Database(5);
+    public String date;
+    public String email;
+    public String shipping_address;
+    public String product_id;
+    public int quantity;
+    public String time;
+    private static Database my_database;
 
     //Empty constructor
-    public BuyerEvent(){
+    public BuyerEvent() {
 
     }
+
+    public String getDate() {
+		return date;
+	}
+
+	public CharSequence getTime() {
+		return time;
+	}
+	
+	public String getEmail() {
+		return email;
+	}
+	
+	public String getProduct_id() {
+		return product_id;
+	}
+	
+	public int getQuantity() {
+		return quantity;
+	}
+	
+	public String getShipping_address() {
+		return shipping_address;
+	}
 
     public String toString(){
         String buyerEvent = "";
@@ -38,12 +62,8 @@ public class BuyerEvent {
      * @param event
      */
     private static void updateQuantity(BuyerEvent event){
-        String[] newData = DATABASE.read(event.product_id);
-        int quantity = Integer.parseInt(newData[1]);
-        quantity -= event.quantity;
-        newData[1] = String.valueOf(quantity);
-        DATABASE.update(newData, newData);
-        System.out.println("Updated Database Successfully");
+        if (my_database.read(event.product_id).buyQuantity(event.quantity)) 
+            System.out.println("Updated Database Successfully"); // Executes if purchase is successful!
     }
 
     /**
@@ -63,14 +83,7 @@ public class BuyerEvent {
     public static void main(String[] args) throws IOException {
 
         //Initialize database with original inventory
-        File inventory = new File("inventory_team1.csv");
-        Scanner dbScanner = new Scanner(inventory);
-        while (dbScanner.hasNextLine()){
-            String[] dbRow = dbScanner.nextLine().split(",");
-            DATABASE.create(dbRow);
-        }
-        dbScanner.close();
-
+        my_database = new Database("inventory_team1.csv");
 
         //CSV file that holds buyer event parameters
         File file = new File("customer_orders_A_team1.csv");

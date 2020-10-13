@@ -21,7 +21,6 @@ public class DatabaseTest {
   @Test void buyTest() throws FileNotFoundException {
     File new_file = new File("buyer_event.csv");
     int quantity = 0;
-    String[] database_entry = new String[5];
 
     if (new_file.exists()) {
 
@@ -30,19 +29,22 @@ public class DatabaseTest {
 
       while (data_input.hasNextLine()) {
 
-          String[] data_row = data_input.nextLine().split(",");
-          String[] entry_row = new String[]{
-                  data_row[3],data_row[4]
-          };
+        String[] data_row = data_input.nextLine().split(",");
+        String[] entry_row = new String[]{
+                data_row[3],data_row[4]
+        };
 
-          new_database.create(data_row);
-          database_entry = new_database.read(entry_row[0]);
-          quantity = Integer.parseInt(database_entry[1]) - Integer.parseInt(entry_row[1]);
-          database_entry[1] = Integer.toString(quantity);
-          new_database.update(entry_row, database_entry);
+        try {
+          quantity = Integer.parseInt(entry_row[1]) + new_database.read(data_row[0]).getQuantity();
+          new_database.read(entry_row[0]).buyQuantity(Integer.parseInt(entry_row[1]));
+          System.out.println("Updated Database Successfully"); // Executes if purchase is successful!
+        } catch(NumberFormatException ex) {
+          System.err.println(ex.getMessage());
+          new_database.create(entry_row);
+          quantity = new_database.read(data_row[0]).getQuantity();
+        }
 
-          assertEquals(Integer.toString(quantity), new_database.read(entry_row[0])[1], "Test failed.");
-          // assertEquals("6", new_database.read(entry_row[0])[1], "Test failed.");
+        assertEquals(Integer.toString(quantity), new_database.read(entry_row[0]).getQuantity());
 
       }
 
@@ -56,7 +58,6 @@ public class DatabaseTest {
   @Test void supplyTest() throws FileNotFoundException {
     File new_file = new File("supplier_event.csv");
     int quantity = 0;
-    String[] database_entry = new String[5];
 
     if (new_file.exists()) {
 
@@ -65,19 +66,23 @@ public class DatabaseTest {
 
       while (data_input.hasNextLine()) {
 
-          String[] data_row = data_input.nextLine().split(",");
-          String[] entry_row = new String[]{
-                  data_row[2],data_row[3]
-          };
+        String[] data_row = data_input.nextLine().split(",");
+        String[] entry_row = new String[]{
+                data_row[2],data_row[3]
+        };
 
-          new_database.create(data_row);
-          database_entry = new_database.read(entry_row[0]);
-          quantity = Integer.parseInt(database_entry[1]) + Integer.parseInt(entry_row[1]);
-          database_entry[1] = Integer.toString(quantity);
-          new_database.update(entry_row, database_entry);
+        try {
+          quantity = Integer.parseInt(entry_row[1]) + new_database.read(data_row[0]).getQuantity();
+          new_database.read(entry_row[0]).supplyQuantity(Integer.parseInt(entry_row[1]));
+          System.out.println("Updated Database Successfully"); // Executes if purchase is successful!
+        } catch(NumberFormatException ex) {
+          System.err.println(ex.getMessage());
+          new_database.create(entry_row);
+          quantity = new_database.read(data_row[0]).getQuantity();
+        }
+        
 
-          assertEquals(Integer.toString(quantity), new_database.read(entry_row[0])[1]);
-          // assertEquals("6", new_database.read(entry_row[0])[1]);
+        assertEquals(Integer.toString(quantity), new_database.read(entry_row[0]).getQuantity());
 
       }
 
