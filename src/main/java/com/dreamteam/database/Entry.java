@@ -10,6 +10,14 @@ public class Entry {
 		this.sellerID = sellerID;
 	}
 	
+	public Entry(String[] product) {
+		this.productID = product[0];
+		this.quantity = Integer.parseInt(product[1]);
+		this.wholesalePrice = Double.parseDouble(product[2]);
+		this.salePrice = Double.parseDouble(product[3]);
+		this.sellerID = product[4];
+	}
+
 	private String productID;
 	private int quantity;
 	private double salePrice;
@@ -57,11 +65,11 @@ public class Entry {
 		this.productID = productID;
 	}
 	
-	public boolean addQuantity(int increment) {
+	public boolean supplyQuantity(int increment) {
 		return setQuantity(getQuantity() + increment);
 	}
 	
-	public boolean subtractQuantity(int increment) {
+	public boolean buyQuantity(int increment) {
 		return setQuantity(getQuantity() - increment);
 	}
 	

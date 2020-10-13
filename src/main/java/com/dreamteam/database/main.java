@@ -53,7 +53,7 @@ public class main {
 		new_database.read(existing_product_id);
 		
 		System.out.print("\nNew product should be found.");
-		new_database.createEntry(fake_product);
+		new_database.create(fake_product);
 		new_database.display();
 		
 		System.out.print("Retrieving a product. ");
@@ -119,47 +119,20 @@ public class main {
 	 */
 	static public void main(String[] args) throws FileNotFoundException {
 		
-		// System.out.println("Welcome to DreamTeam DataBase");
+		// Welcome to DreamTeam DataBase
 		System.out.println("-------------------------------------------------------------------");
 		System.out.println("               Welcome to DreamTeam DataBase                       ");
 		System.out.println("-------------------------------------------------------------------");
-		
-		File new_file = new File(SPREAD_SHEET);
-		Scanner data_input = new Scanner(new_file);
-		String[] columnLabels = data_input.nextLine().split(",");
-		
-		if(!new_file.exists()) {
-			throw new FileNotFoundException(
-			 "Is the data file " + SPREAD_SHEET + " in the wrong directory?");
-		}
-		
+
 		// Initializes the database to the spreadsheet's columns.
-		if(new_database == null) {
-			
-			new_database = new Database(SPREAD_SHEET);
-			new_database.set_data_head(columnLabels);
-			
-			// For debugging.
-			// System.out.println("You should see the column labels if program read the
-			// populated spreadsheet: ");
-			// System.out.println(Arrays.toString(data_row));
-		}
-		while(data_input.hasNextLine()) {
-			String[] temp = data_input.nextLine().split(",");
-			new_database.createEntry(temp);
-		}
-		
-		data_input.close();
-		
-		// For debugging. There are ~22k entries to display when method is entirely
-		// uncommented.
-		//new_database.display();
+		new_database = new Database(SPREAD_SHEET);
 		
 		// For debugging. Disable in final project.
 		demo_database();
 		
 		// Call the menu for user to access and modify the database.
 		runMenu();
+
 	} // End main method.
 	
 	//	***************************************************************************
@@ -189,7 +162,7 @@ public class main {
 						System.out.print("Enter " + database_header[i] + ": ");
 						new_entry[i] = sc.nextLine();
 					}
-					Entry record = new_database.createEntry(new_entry);
+					Entry record = new_database.create(new_entry);
 					
 					record.prettyPrint(); // Prints the object address in memory.
 					// Adds a new product.
@@ -202,9 +175,9 @@ public class main {
 					
 					if(existing_entry != null) {
 						System.out.println(existing_entry);
+						existing_entry.prettyPrint();
 					}
 					
-					existing_entry.prettyPrint();
 					//System.out.println(new_database); // Prints the object address in memory.
 					// Retrieves a product and displays it.
 					break;
@@ -225,9 +198,9 @@ public class main {
 						int requestQuantity = Integer.parseInt(sc.nextLine());
 						
 						if(isBuyer) {
-							existing_entry.subtractQuantity(requestQuantity);
+							existing_entry.buyQuantity(requestQuantity);
 						} else {
-							existing_entry.addQuantity(requestQuantity);
+							existing_entry.supplyQuantity(requestQuantity);
 						}
 						
 						System.out.print("Enter customer Id: ");

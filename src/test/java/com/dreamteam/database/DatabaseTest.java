@@ -14,25 +14,7 @@ public class DatabaseTest {
 
   @BeforeAll static void setup() throws FileNotFoundException {
 
-    File new_file = new File(SPREAD_SHEET);
-    Scanner data_input = new Scanner(new_file);
-    while (data_input.hasNextLine()) {
-
-      String[] data_row = data_input.nextLine().split(",");
-
-      // Initializes the database to the spreadsheet's columns.
-      if (new_database == null) {
-
-        new_database = new Database(data_row.length);
-        new_database.set_data_head(data_row);
-
-      }
-  
-        new_database.create(data_row);
-  
-    }
-  
-    data_input.close();
+    new_database = new Database(SPREAD_SHEET);
 
   }
 

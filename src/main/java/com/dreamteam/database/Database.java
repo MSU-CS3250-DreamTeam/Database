@@ -13,22 +13,23 @@ public class Database {
 	// Position of final entry in data structure minus the header.
 	private static HashMap<String, Entry> data_table;
 	
-	// Constructor
-	public Database() {
+	public Database(String file_path) throws FileNotFoundException {
 		data_table = new HashMap<>();
-	}
-	
-	public Database(String filePath) throws FileNotFoundException {
-		data_table = new HashMap<>();
-		File inventory = new File(filePath);
-		Scanner dbScanner = new Scanner(inventory);
-		data_head = dbScanner.nextLine().split(",");
-		while(dbScanner.hasNextLine()) {
-			String[] dbRow = dbScanner.nextLine().split(",");
-			Entry entry = createEntry(dbRow);
-			data_table.put(entry.getProductID(), entry);
+		if (file_path != null) {
+			File inventory = new File(file_path);
+			Scanner dbScanner = new Scanner(inventory);
+			this.data_head = dbScanner.nextLine().split(",");
+			while(dbScanner.hasNextLine()) {
+				String[] dbRow = dbScanner.nextLine().split(",");
+				Entry entry = new Entry(dbRow);
+				data_table.put(entry.getProductID(), entry);
+			}
+			dbScanner.close();
+		} else {
+			throw new FileNotFoundException(
+			 "Is the data file " + file_path + " in the wrong directory?");
 		}
-		dbScanner.close();
+
 	}
 	
 
@@ -58,11 +59,11 @@ public class Database {
 		return data_table.containsKey(product_id);
 	}
 	
-	public Entry createEntry(String entryString) {
-		return createEntry(entryString.split(","));
+	public Entry create(String entryString) {
+		return parseEntry(entryString.split(","));
 	}
 	
-	public Entry createEntry(String[] entryString) {
+	public Entry create(String[] entryString) {
 		return parseEntry(entryString);
 	}
 	
@@ -83,17 +84,17 @@ public class Database {
 	 * Also prints the number of current entries in database.
 	 */
 	public void display() {
-		StringBuilder builder = new StringBuilder();
-		for(int i = 0; i < data_head.length; i++) {
-			builder.append(data_head[i])
-				   .append(i < data_head.length - 1 ? "," : "");
-		}
-		for(Entry value: data_table.values()) {
-			builder.append(value.toString());
-		}
-		System.out.println(builder.toString());
-		System.out.println("\nThere are " + data_table.size() +
-						   " entries recorded in the database.\n");
+		// StringBuilder builder = new StringBuilder();
+		// for(int i = 0; i < data_head.length; i++) {
+		// 	builder.append(data_head[i])
+		// 		   .append(i < data_head.length - 1 ? "," : "");
+		// }
+		// for(Entry value: data_table.values()) {
+		// 	builder.append(value.toString());
+		// }
+		// System.out.println(builder.toString());
+		// System.out.println("\nThere are " + data_table.size() +
+		// 				   " entries recorded in the database.\n");
 	}
 	
 	public int get_column_size() {
@@ -105,7 +106,7 @@ public class Database {
 	}
 	
 	/** Create a new Entry from a String array. */
-	public static Entry parseEntry(String[] temp) {
+	private static Entry parseEntry(String[] temp) {
 		String productID = temp[0] + "";
 		return Entry.getEntry(temp, productID);
 	}
@@ -117,7 +118,7 @@ public class Database {
 	 *
 	 * @return the entry of the database if found.
 	 */
-	public Entry read(String id) {
+	public Entry read(String id) throws NullPointerException {
 		return data_table.get(id);
 	}
 	
@@ -138,25 +139,25 @@ public class Database {
 	}
 	
 	public Entry update(String string) {
-		Entry newEntry = createEntry(string);
+		Entry newEntry = create(string);
 		return data_table.put(newEntry.getProductID(), newEntry);
 	}
 	
-	@Override public String toString() {
-		StringBuilder sb = new StringBuilder();
-		String headers = Arrays.toString(data_head);
-		headers = headers.substring(1, headers.length() -1);
-		sb.append(headers).append("\n");
-		Iterator<Entry> itr = data_table.values().iterator();
-		while(itr.hasNext()) {
-			Entry next = itr.next();
-			if(next == null) {
-				System.out.println("but why???");
-			}
-			sb.append(next).append("\n");
-		}
-		return sb.toString();
-	}
+	// @Override public String toString() {
+	// 	StringBuilder sb = new StringBuilder();
+	// 	String headers = Arrays.toString(data_head);
+	// 	headers = headers.substring(1, headers.length() -1);
+	// 	sb.append(headers).append("\n");
+	// 	Iterator<Entry> itr = data_table.values().iterator();
+	// 	while(itr.hasNext()) {
+	// 		Entry next = itr.next();
+	// 		if(next == null) {
+	// 			System.out.println("but why???");
+	// 		}
+	// 		sb.append(next).append("\n");
+	// 	}
+	// 	return sb.toString();
+	// }
 	
 	// public static void printDatabase() throws FileNotFoundException {
 	// 	Database db = new Database("inventory_team1.csv");
@@ -165,7 +166,7 @@ public class Database {
 	// 	entry.prettyPrint();
 	// }
 	
-	Entry get(String productId) {
+	public Entry getEntry(String productId) {
 		return data_table.get(productId);
 	}
 }

@@ -17,20 +17,21 @@ public class BuyerEvent {
 		this.quantity = Integer.parseInt(array[4]);
 	}
 	
-	private static final Database DATABASE = new Database();
+	private static Database my_database;
 	//Class variables
 	private String date;
+	private String time;
 	private String email;
 	private String product_id;
 	private int quantity;
 	private String shipping_address;
 	
-	public static Database getDATABASE() {
-		return DATABASE;
-	}
-	
 	public String getDate() {
 		return date;
+	}
+
+	public CharSequence getTime() {
+		return time;
 	}
 	
 	public String getEmail() {
@@ -50,27 +51,28 @@ public class BuyerEvent {
 	}
 	
 	public static void main(String[] args) throws FileNotFoundException {
-		// Initialize database inventory from ccsv
-		Database db = new Database("inventory_team1.csv");
+		// Initialize database inventory from csv
+		my_database = new Database("inventory_team1.csv");
 		
 		File file = new File("buyer_event.csv");
 		Scanner scanner = new Scanner(file);
 		
 		// Reads corresponding input fields from csv and assigns them to object
 		Queue<BuyerEvent> events = new ArrayDeque<>();
-		scanner.nextLine();
+		
 		while(scanner.hasNextLine()) {
 			// Each buyer event (line of data in csv file) is stored as an 
 			// object
 			events.add(new BuyerEvent(scanner.nextLine()));
 		}
+		scanner.close();
 		System.out.println("Buyer Event Simulation Initiated...\n");
 	
 		while(!events.isEmpty()) {
 			BuyerEvent event = events.remove();
-			if(db.contains(event.getProduct_id())) {
-			Entry entry = db.get(event.getProduct_id());
-			entry.subtractQuantity(event.getQuantity());
+			if(my_database.contains(event.getProduct_id())) {
+			Entry entry = my_database.getEntry(event.getProduct_id());
+			entry.buyQuantity(event.getQuantity());
 			} else {
 				System.out.println("that product Id does not exist...");
 			}
@@ -114,11 +116,12 @@ public class BuyerEvent {
 	 * @param event
 	 */
 	static void updateQuantity(BuyerEvent event) {
-		Entry record = DATABASE.read(event.product_id);
+		Entry record = my_database.read(event.product_id);
 		if(record != null) {
 			System.out.println(
 			 "Product quantity before purchase: " + record.getQuantity());
-			record.subtractQuantity(event.quantity);
+			record.buyQuantity(event.quantity);
 		}
 	}
+
 }
