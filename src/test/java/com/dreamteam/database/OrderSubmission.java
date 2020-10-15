@@ -1,8 +1,9 @@
 package com.dreamteam.database;
 
-import javax.mail.*;
+import javax.mail.*; // This should cover all mail classes.
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+
 import java.util.Date;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
@@ -32,8 +33,11 @@ public class OrderSubmission {
 		}
 		checkEmail(host2, mailStoreType, toEmail, password);
 	}
-	
-	public static void SendMessage(MimeMessage msg, String from, String to, String text, String password, String subject) throws MessagingException
+
+
+	public static void SendMessage(MimeMessage msg, String from, String to,
+						String text, String password, String subject) throws MessagingException
+
 	{
 		msg.setFrom(new InternetAddress(from));
 		msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to));
@@ -51,16 +55,16 @@ public class OrderSubmission {
 			props2.put("mail.pop3.port", "995");
 			props2.put("mail.pop3.starttls.enable", "true");
 			Session emailSession = Session.getInstance(props2, null);
-			
+
 			Store store = emailSession.getStore("pop3s");
 			store.connect(host2, user, password);
-			
+
 			Folder emailFolder = store.getFolder("INBOX");
 			emailFolder.open(Folder.READ_ONLY);
-			
+
 			Message[] messages = emailFolder.getMessages();
 			System.out.println("Total number of messages: " + messages.length);
-			
+
 			for (int i = 0; i < messages.length; i++) {
 				Message message2 = messages[i];
 				System.out.println("-----------------------------------------------");
@@ -69,19 +73,19 @@ public class OrderSubmission {
 				System.out.println("From: " + message2.getFrom()[0]);
 				System.out.println("Text: " + message2.getContent().toString());
 			}
-			
-			emailFolder.close(false);
+
+			emailFolder.close(false); //TODO Should this be hardcoded?
 			store.close();
-			
-		} catch (NoSuchProviderException e) {
+
+		} catch (NoSuchProviderException e) { 
+
 			e.printStackTrace(); 
 		} catch (MessagingException e) {
 			e.printStackTrace();
 		} catch (Exception e) {
 			e.printStackTrace();
-		}	
-	}		
-			
 		}
-	
+	}
+}
+
 
