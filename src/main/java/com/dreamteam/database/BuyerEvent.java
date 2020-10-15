@@ -7,7 +7,7 @@ import java.util.Queue;
 import java.util.Scanner;
 
 public class BuyerEvent {
-	
+
 	public BuyerEvent(String buyerArgs) {
 		String[] array = buyerArgs.split(",");
 		this.date = array[0];
@@ -16,16 +16,17 @@ public class BuyerEvent {
 		this.product_id = array[3];
 		this.quantity = Integer.parseInt(array[4]);
 	}
-	
+
 	private static Database my_database;
 	//Class variables
 	private String date;
 	private String time;
+
 	private String email;
 	private String product_id;
 	private int quantity;
 	private String shipping_address;
-	
+
 	public String getDate() {
 		return date;
 	}
@@ -51,6 +52,7 @@ public class BuyerEvent {
 	}
 	
 	public static void main(String[] args) throws FileNotFoundException {
+
 		// Initialize database inventory from csv
 		my_database = new Database("files/inventory_team1.csv");
 		
@@ -59,20 +61,20 @@ public class BuyerEvent {
 		
 		// Reads corresponding input fields from csv and assigns them to object
 		Queue<BuyerEvent> events = new ArrayDeque<>();
-		
+
 		while(scanner.hasNextLine()) {
 			// Each buyer event (line of data in csv file) is stored as an 
 			// object
 			events.add(new BuyerEvent(scanner.nextLine()));
 		}
-		scanner.close();
+
 		System.out.println("Buyer Event Simulation Initiated...\n");
 	
 		while(!events.isEmpty()) {
 			BuyerEvent event = events.remove();
 			if(my_database.contains(event.getProduct_id())) {
-			Entry entry = my_database.getEntry(event.getProduct_id());
-			entry.buyQuantity(event.getQuantity());
+				Entry entry = my_database.getEntry(event.getProduct_id());
+				entry.buyQuantity(event.getQuantity());
 			} else {
 				System.out.println("that product Id does not exist...");
 			}

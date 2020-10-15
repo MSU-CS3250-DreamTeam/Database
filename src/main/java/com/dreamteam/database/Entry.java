@@ -9,7 +9,7 @@ public class Entry {
 		this.salePrice = salePrice;
 		this.sellerID = sellerID;
 	}
-	
+
 	public Entry(String[] product) {
 		this.productID = product[0];
 		this.quantity = Integer.parseInt(product[1]);
@@ -64,7 +64,7 @@ public class Entry {
 	public void setProductID(String productID) {
 		this.productID = productID;
 	}
-	
+
 	public boolean supplyQuantity(int increment) {
 		return setQuantity(getQuantity() + increment);
 	}
@@ -110,6 +110,7 @@ public class Entry {
 		System.out.println(s);
 		return s;
 	}
+	
 	@Override public String toString() {
 		return 
 		 productID + "," +

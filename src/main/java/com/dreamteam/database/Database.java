@@ -12,7 +12,7 @@ public class Database {
 	private String[] data_head; // The column labels of the data structure.
 	// Position of final entry in data structure minus the header.
 	private static HashMap<String, Entry> data_table;
-	
+
 	public Database(String file_path) throws FileNotFoundException {
 		data_table = new HashMap<>();
 		if (file_path != null) {
@@ -29,7 +29,6 @@ public class Database {
 			throw new FileNotFoundException(
 			 "Is the data file " + file_path + " in the wrong directory?");
 		}
-
 	}
 	
 

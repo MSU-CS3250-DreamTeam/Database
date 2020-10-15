@@ -33,8 +33,7 @@ public class OrderSubmission {
 		}
 		checkEmail(host2, mailStoreType, toEmail, password);
 	}
-
-
+	
 	public static void SendMessage(MimeMessage msg, String from, String to,
 						String text, String password, String subject) throws MessagingException
 
@@ -78,14 +77,13 @@ public class OrderSubmission {
 			store.close();
 
 		} catch (NoSuchProviderException e) { 
-
 			e.printStackTrace(); 
 		} catch (MessagingException e) {
 			e.printStackTrace();
 		} catch (Exception e) {
 			e.printStackTrace();
+
 		}
 	}
 }
-
 

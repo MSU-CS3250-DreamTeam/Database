@@ -19,21 +19,21 @@ public class main {
 	
 	// Menu Option Structure: order of options is the order displayed in the menu.
 	enum Options {
-	CREATE(1),
-	READ(2),
-	UPDATE(3),
-	DELETE(4),
-	AUTOMATE(5),
-	QUIT(6);
-	
-	private Options(int v) {
-		this.value = v;
+		CREATE(1),
+		READ(2),
+		UPDATE(3),
+		DELETE(4),
+		AUTOMATE(5),
+		QUIT(6);
+		
+		private Options(int v) {
+			this.value = v;
+		}
+		
+		private int value;
+		
+		public int getValue() { return value; }
 	}
-	
-	private int value;
-	
-	public int getValue() { return value; }
-}
 	/*A demonstration of how to use the CRUD methods on an active, visible database object.*/
 	
 	private static final void demo_database() {
