@@ -7,17 +7,17 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Scanner;
-// import java.io.*;
 
 /**
  *
  */
 public class main {
 	// Variable Declarations
-	static private final String SPREAD_SHEET = "inventory_team1.csv";
+	static private final String SPREAD_SHEET = "files/inventory_team1.csv";
 	static private Database new_database;
 	public static Scanner sc = new Scanner(System.in);
 	
+	// Menu Option Structure: order of options is the order displayed in the menu.
 	enum Options {
 	CREATE(1),
 	READ(2),
@@ -283,24 +283,4 @@ public class main {
 			e.printStackTrace();
 		}
 	}
-}
-
-// Menu Option Structure: order of options is the order displayed in the menu.
-
-// End main class.
-
-//	***************************************************************************
-
-// This was for testing dont know if we should do a iterator that iterates through 
-// each column by their category or do an array
-
-// String Product = line.next().getProduct();
-// p.print(Product + ", ");
-// int Quantity = line.next().getProduct();
-// p.print(Quantity + ", ");
-// double Wholesale = line.next().getProduct();
-// p.print(Wholesale + ", ");
-// double SalesPrice = line.next().getProduct();
-// p.print(SalesPrice + ", ");
-// String Supplier = line.next().getProduct();
-// p.print(Supplier + ", ");
+} // End main class. EOF

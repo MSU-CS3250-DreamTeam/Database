@@ -7,7 +7,7 @@ import java.util.Queue;
 import java.util.Scanner;
 
 public class BuyerEvent {
-	//Empty constructor
+	
 	public BuyerEvent(String buyerArgs) {
 		String[] array = buyerArgs.split(",");
 		this.date = array[0];
@@ -52,9 +52,9 @@ public class BuyerEvent {
 	
 	public static void main(String[] args) throws FileNotFoundException {
 		// Initialize database inventory from csv
-		my_database = new Database("inventory_team1.csv");
+		my_database = new Database("files/inventory_team1.csv");
 		
-		File file = new File("buyer_event.csv");
+		File file = new File("files/buyer_event.csv");
 		Scanner scanner = new Scanner(file);
 		
 		// Reads corresponding input fields from csv and assigns them to object
@@ -123,5 +123,4 @@ public class BuyerEvent {
 			record.buyQuantity(event.quantity);
 		}
 	}
-
 }

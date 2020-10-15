@@ -9,7 +9,7 @@ import org.junit.jupiter.api.BeforeAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DatabaseTest {
-  private static final String SPREAD_SHEET = "inventory_team1.csv";
+  private static final String SPREAD_SHEET = "files/inventory_team1.csv";
   private static Database new_database;
 
   @BeforeAll static void setup() throws FileNotFoundException {
@@ -19,7 +19,7 @@ public class DatabaseTest {
   }
 
   @Test void buyTest() throws FileNotFoundException {
-    File new_file = new File("buyer_event.csv");
+    File new_file = new File("files/buyer_event.csv");
     int quantity = 0;
 
     if (new_file.exists()) {
@@ -56,7 +56,7 @@ public class DatabaseTest {
   }
 
   @Test void supplyTest() throws FileNotFoundException {
-    File new_file = new File("supplier_event.csv");
+    File new_file = new File("files/supplier_event.csv");
     int quantity = 0;
 
     if (new_file.exists()) {
