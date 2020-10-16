@@ -2,15 +2,16 @@ package com.dreamteam.database;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.ArrayDeque;
-import java.util.Queue;
 import java.util.Scanner;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DatabaseTest {
   private static final String SPREAD_SHEET = "files/inventory_team1.csv";
   private static Database new_database;
+  private static Entry product_entry;
 
   @BeforeAll static void setup() throws FileNotFoundException {
 
@@ -35,7 +36,8 @@ public class DatabaseTest {
         };
 
         try {
-          quantity = Integer.parseInt(entry_row[1]) + new_database.read(data_row[0]).getQuantity();
+          product_entry = new_database.read(entry_row[0]);
+          quantity = Integer.parseInt(entry_row[1]) + product_entry.getQuantity();
           new_database.read(entry_row[0]).buyQuantity(Integer.parseInt(entry_row[1]));
           System.out.println("Updated Database Successfully"); // Executes if purchase is successful!
         } catch(NumberFormatException ex) {
@@ -72,7 +74,8 @@ public class DatabaseTest {
         };
 
         try {
-          quantity = Integer.parseInt(entry_row[1]) + new_database.read(data_row[0]).getQuantity();
+          product_entry = new_database.read(entry_row[0]);
+          quantity = Integer.parseInt(entry_row[1]) + product_entry.getQuantity();
           new_database.read(entry_row[0]).supplyQuantity(Integer.parseInt(entry_row[1]));
           System.out.println("Updated Database Successfully"); // Executes if purchase is successful!
         } catch(NumberFormatException ex) {

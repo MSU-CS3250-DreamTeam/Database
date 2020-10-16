@@ -20,6 +20,4 @@ public class SendEmailService {
         System.out.println("sent email");
     }
 
-
-
 }
