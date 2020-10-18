@@ -13,7 +13,8 @@ import java.util.Scanner;
 public class main {
 	// Variable Declarations
 	static private final String SPREAD_SHEET = "files/inventory_team1.csv";
-	static private Database new_database;
+	static private Database product_database;
+	static private Database order_database;
 	public static Scanner sc = new Scanner(System.in);
 	
 	// Menu Option Structure: order of options is the order displayed in the menu.
@@ -22,7 +23,7 @@ public class main {
 		READ(2),
 		UPDATE(3),
 		DELETE(4),
-		AUTOMATE(5),
+		PROCESS_ORDERS(5),
 		QUIT(6);
 		
 		private Options(int v) {
@@ -44,30 +45,30 @@ public class main {
 		String updated_product = "8XXKZRELM2JJ,25,370.51,623.94,SASERNVV";
 		
 		System.out.print("Retrieving a product. ");
-		new_database.read(existing_product_id);
+		product_database.read(existing_product_id);
 		
 		System.out.print("\nRemoving a product. ");
-		new_database.delete(existing_product_id);
-		new_database.display();
+		product_database.delete(existing_product_id);
+		product_database.display();
 		
 		System.out.print("Existing product should not be found: ");
-		new_database.read(existing_product_id);
+		product_database.read(existing_product_id);
 		
 		System.out.print("\nNew product should be found.");
-		new_database.create(fake_product);
-		new_database.display();
+		product_database.create(fake_product);
+		product_database.display();
 		
 		System.out.print("Retrieving a product. ");
-		new_database.read(fake_product);
+		product_database.read(fake_product);
 		
 		System.out.print("\nUpdating a product. ");
-		new_database.update(updated_product);
+		product_database.update(updated_product);
 		
 		System.out.print("\nRetrieving a product. ");
-		new_database.read(fake_product);
+		product_database.read(fake_product);
 		
 		System.out.print("\nRemoving fake product. ");
-		new_database.delete(fake_product);
+		product_database.delete(fake_product);
 	}
 
 	//	***************************************************************************
@@ -126,7 +127,7 @@ public class main {
 		System.out.println("-------------------------------------------------------------------");
 
 		// Initializes the database to the spreadsheet's columns.
-		new_database = new Database(SPREAD_SHEET);
+		product_database = new Database(SPREAD_SHEET);
 		
 		// For debugging. Disable in final project.
 		demo_database();
@@ -145,11 +146,11 @@ public class main {
 		
 		// Local Variable Declarations
 		Options user_choice;
-		String[] database_header = new String[new_database.get_column_size()];
-		String[] new_entry = new String[new_database.get_column_size()];
+		String[] database_header = new String[product_database.get_column_size()];
+		String[] new_entry = new String[product_database.get_column_size()];
 		Product existing_entry;
 		
-		database_header = new_database.get_data_head();
+		database_header = product_database.get_data_head();
 		
 		do {
 			
@@ -163,7 +164,7 @@ public class main {
 						System.out.print("Enter " + database_header[i] + ": ");
 						new_entry[i] = sc.nextLine();
 					}
-					Product record = new_database.create(new_entry);
+					Product record = product_database.create(new_entry);
 					
 					record.prettyPrint(); // Prints the object address in memory.
 					// Adds a new product.
@@ -172,7 +173,7 @@ public class main {
 				case READ:
 					
 					System.out.print("Enter " + database_header[0] + ": ");
-					existing_entry = new_database.read(sc.nextLine());
+					existing_entry = product_database.read(sc.nextLine());
 					
 					if(existing_entry != null) {
 						System.out.println(existing_entry);
@@ -186,7 +187,7 @@ public class main {
 				case UPDATE:
 					
 					System.out.print("Enter existing entry's " + database_header[0] + ": ");
-					existing_entry = new_database.read(sc.nextLine());
+					existing_entry = product_database.read(sc.nextLine());
 					
 					boolean is_simulation = true;
 					if(is_simulation) {
@@ -224,7 +225,7 @@ public class main {
 						Product newEntry = Product.parse(fields);
 					}
 					
-					new_database.update(existing_entry);
+					product_database.update(existing_entry);
 					existing_entry.prettyPrint(); // Prints the object address in memory.
 					// Updates a product
 					break;
@@ -232,16 +233,18 @@ public class main {
 				case DELETE:
 					
 					System.out.print("Enter " + database_header[0] + ": ");
-					new_database.delete(sc.nextLine());
-					new_database.display();
+					product_database.delete(sc.nextLine());
+					product_database.display();
 					
-					System.out.println(new_database); // Prints the object address in memory.
+					System.out.println(product_database); // Prints the object address in memory.
 					// Deletes a product
 					break;
 				
-				case AUTOMATE:
+				case PROCESS_ORDERS:
 					// TODO Process orders.
-					System.out.println(new_database); // Prints the object address in memory.
+					dailyAssetsReport();
+					dailyTopTenReport();
+					System.out.println(product_database); // Prints the object address in memory.
 					System.out.println("The selected option exists, but is not implemented yet.");
 					
 					break;
@@ -267,7 +270,7 @@ public class main {
 	 * 
 	 */
 	private static void dailyAssetsReport() {
-	
+		
 	}
 	
 	//	***************************************************************************	
