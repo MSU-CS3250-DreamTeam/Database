@@ -33,8 +33,10 @@ public class main {
 		
 		public int getValue() { return value; }
 	}
+		
+	//	***************************************************************************
+
 	/*A demonstration of how to use the CRUD methods on an active, visible database object.*/
-	
 	private static final void demo_database() {
 		
 		String existing_product_id = "8XXKZRELM2JJ";
@@ -67,6 +69,8 @@ public class main {
 		System.out.print("\nRemoving fake product. ");
 		new_database.delete(fake_product);
 	}
+
+	//	***************************************************************************
 	
 	/**
 	 * Prompt the user for a correct option of the existing menu.
@@ -108,8 +112,6 @@ public class main {
 	}
 	
 	//	***************************************************************************
-	// TODO Finish menu options. Each option should call the corresponding Database.java method.
-	// !!! Use these examples to use CRUD methods in the menu!
 	
 	/**
 	 * @param args
@@ -238,10 +240,10 @@ public class main {
 					break;
 				
 				case AUTOMATE:
-					
+					// TODO Process orders.
 					System.out.println(new_database); // Prints the object address in memory.
 					System.out.println("The selected option exists, but is not implemented yet.");
-					// What does this do?
+					
 					break;
 				
 				case QUIT:
@@ -257,9 +259,37 @@ public class main {
 			}
 		} while(user_choice != Options.QUIT);
 	}
+
+	//	***************************************************************************
+	// TODO create a file with a date stamp like daily-report-10-18.txt under 'files/reports'
+
+	/** TODO Write the networth of all assets to a daily report file.
+	 * 
+	 */
+	private static void dailyAssetsReport() {
 	
+	}
+	
+	//	***************************************************************************	
+
+	/**	TODO Write the top ten products and customers (by spending) to a daily report file
+	 * 
+	 */
+	private static void dailyTopTenReport() {
+
+	}
+		
+
+
 	//	***************************************************************************
 	
+	/**
+	 * 
+	 * @param customer
+	 * @param date
+	 * @param time
+	 * @throws IOException
+	 */
 	private static void updateCustomerHistory(String customer, String date, String time)
 	throws IOException {
 		String location = "customer_history.csv";

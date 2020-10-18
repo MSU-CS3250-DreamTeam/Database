@@ -139,6 +139,15 @@ public class Database {
 		Product newEntry = create(string);
 		return data_table.put(newEntry.getProductID(), newEntry);
 	}
+
+	// TODO Tally the sum of product quantities x their wholesale prices and return in countAssets().
+	/**
+	 * 
+	 * @return
+	 */
+	public double countAssets() {
+		return 0.0;
+	}
 	
 	// @Override public String toString() {
 	// 	StringBuilder sb = new StringBuilder();
@@ -163,7 +172,7 @@ public class Database {
 	// 	entry.prettyPrint();
 	// }
 	
-	public Product getEntry(String productId) {
-		return data_table.get(productId);
-	}
+	// public Product getEntry(String productId) {
+	// 	return data_table.get(productId);
+	// }
 }
