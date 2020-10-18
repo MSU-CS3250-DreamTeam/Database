@@ -18,7 +18,7 @@ public class Application {
 
 	@EventListener(ApplicationReadyEvent.class)
 	public void triggerWhenStarts () {
-		sendEmailService.sendEmail("arojas10@msudenver.edu", "We have Received your order.", "Order Confirmation");
+		sendEmailService.sendEmail("thedreamteamsoftware+customer@gmail.com", "We have Received your order.", "Order Confirmation");
 	}
-//this one
+
 }

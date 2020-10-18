@@ -6,9 +6,9 @@ import java.util.ArrayDeque;
 import java.util.Queue;
 import java.util.Scanner;
 
-public class BuyerEvent {
+public class BuySimulation {
 
-	public BuyerEvent(String buyerArgs) {
+	public BuySimulation(String buyerArgs) {
 		String[] array = buyerArgs.split(",");
 		this.date = array[0];
 		this.email = array[1];
@@ -60,20 +60,22 @@ public class BuyerEvent {
 		Scanner scanner = new Scanner(file);
 		
 		// Reads corresponding input fields from csv and assigns them to object
-		Queue<BuyerEvent> events = new ArrayDeque<>();
-
+		Queue<BuySimulation> events = new ArrayDeque<>();
 		while(scanner.hasNextLine()) {
+			scanner.nextLine(); // Throw out input stream so scanner moves to next line.
 			// Each buyer event (line of data in csv file) is stored as an 
 			// object
-			events.add(new BuyerEvent(scanner.nextLine()));
+			// events.add(new BuySimulation(scanner.nextLine())); TODO Throws number format exception for input string: "quantity"
 		}
+		
+		scanner.close();
 
 		System.out.println("Buyer Event Simulation Initiated...\n");
 	
-		while(!events.isEmpty()) {
-			BuyerEvent event = events.remove();
+		while(!events.isEmpty() || events == null) {
+			BuySimulation event = events.remove();
 			if(my_database.contains(event.getProduct_id())) {
-				Entry entry = my_database.getEntry(event.getProduct_id());
+				Product entry = my_database.getEntry(event.getProduct_id());
 				entry.buyQuantity(event.getQuantity());
 			} else {
 				System.out.println("that product Id does not exist...");
@@ -117,8 +119,8 @@ public class BuyerEvent {
 	 *
 	 * @param event
 	 */
-	static void updateQuantity(BuyerEvent event) {
-		Entry record = my_database.read(event.product_id);
+	static void updateQuantity(BuySimulation event) {
+		Product record = my_database.read(event.product_id);
 		if(record != null) {
 			System.out.println(
 			 "Product quantity before purchase: " + record.getQuantity());

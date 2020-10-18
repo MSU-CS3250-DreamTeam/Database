@@ -9,7 +9,7 @@ public class Database {
 	// Tentative data structure. We can change this.
 	private String[] data_head; // The column labels of the data structure.
 	// Position of final entry in data structure minus the header.
-	private static HashMap<String, Entry> data_table;
+	private static HashMap<String, Product> data_table;
 
 	public Database(String file_path) throws FileNotFoundException {
 		data_table = new HashMap<>();
@@ -19,7 +19,7 @@ public class Database {
 			this.data_head = dbScanner.nextLine().split(",");
 			while(dbScanner.hasNextLine()) {
 				String[] dbRow = dbScanner.nextLine().split(",");
-				Entry entry = new Entry(dbRow);
+				Product entry = new Product(dbRow);
 				data_table.put(entry.getProductID(), entry);
 			}
 			dbScanner.close();
@@ -44,7 +44,7 @@ public class Database {
 	 *  which we need to have enough of
 	 */
 	public Boolean canProcessOrder(String id, int attemptedQuantity) {
-		Entry entry = data_table.get(id);
+		Product entry = data_table.get(id);
 		if(entry != null) {
 			
 			return attemptedQuantity <= entry.getQuantity();
@@ -56,11 +56,11 @@ public class Database {
 		return data_table.containsKey(product_id);
 	}
 	
-	public Entry create(String entryString) {
+	public Product create(String entryString) {
 		return parseEntry(entryString.split(","));
 	}
 	
-	public Entry create(String[] entryString) {
+	public Product create(String[] entryString) {
 		return parseEntry(entryString);
 	}
 	
@@ -72,7 +72,7 @@ public class Database {
 	 * @return the old Entry if there was one.
 	 *  otherwise, null
 	 */
-	public Entry delete(String id) {
+	public Product delete(String id) {
 		return data_table.remove(id);
 	}
 	
@@ -103,9 +103,9 @@ public class Database {
 	}
 	
 	/** Create a new Entry from a String array. */
-	private static Entry parseEntry(String[] temp) {
+	private static Product parseEntry(String[] temp) {
 		String productID = temp[0] + "";
-		return Entry.getEntry(temp, productID);
+		return Product.getProduct(temp, productID);
 	}
 	
 	/**
@@ -115,7 +115,7 @@ public class Database {
 	 *
 	 * @return the entry of the database if found.
 	 */
-	public Entry read(String id) throws NullPointerException {
+	public Product read(String id) throws NullPointerException {
 		return data_table.get(id);
 	}
 	
@@ -131,12 +131,12 @@ public class Database {
 	 *
 	 * @return the old entry, in case we want to do something with it
 	 */
-	public Entry update(Entry newEntry) {
+	public Product update(Product newEntry) {
 		return data_table.put(newEntry.getProductID(), newEntry);
 	}
 	
-	public Entry update(String string) {
-		Entry newEntry = create(string);
+	public Product update(String string) {
+		Product newEntry = create(string);
 		return data_table.put(newEntry.getProductID(), newEntry);
 	}
 	
@@ -163,7 +163,7 @@ public class Database {
 	// 	entry.prettyPrint();
 	// }
 	
-	public Entry getEntry(String productId) {
+	public Product getEntry(String productId) {
 		return data_table.get(productId);
 	}
 }

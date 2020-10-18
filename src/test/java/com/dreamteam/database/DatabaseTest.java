@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class DatabaseTest {
   private static final String SPREAD_SHEET = "files/inventory_team1.csv";
   private static Database new_database;
-  private static Entry product_entry;
+  private static Product product_entry;
 
   @BeforeAll static void setup() throws FileNotFoundException {
 

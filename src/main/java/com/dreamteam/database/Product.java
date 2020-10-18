@@ -1,7 +1,7 @@
 package com.dreamteam.database;
 
-public class Entry {
-	public Entry(String productID, int quantity, double wholesalePrice, double salePrice,
+public class Product {
+	public Product(String productID, int quantity, double wholesalePrice, double salePrice,
 				 String sellerID) {
 		this.productID = productID;
 		this.quantity = quantity;
@@ -10,7 +10,7 @@ public class Entry {
 		this.sellerID = sellerID;
 	}
 
-	public Entry(String[] product) {
+	public Product(String[] product) {
 		this.productID = product[0];
 		this.quantity = Integer.parseInt(product[1]);
 		this.wholesalePrice = Double.parseDouble(product[2]);
@@ -24,12 +24,12 @@ public class Entry {
 	private String sellerID;
 	double wholesalePrice;
 
-	static Entry getEntry(String[] temp, String productID) {
+	static Product getProduct(String[] temp, String productID) {
 		int quantity = Integer.parseInt(temp[1]);
 		double wholesalePrice = Double.parseDouble(temp[2]);
 		double salePrice = Double.parseDouble(temp[3]);
 		String supplierID = temp[4];
-		return new Entry(productID, quantity, wholesalePrice, salePrice, supplierID);
+		return new Product(productID, quantity, wholesalePrice, salePrice, supplierID);
 	}
 
 	public String getProductID() {
@@ -50,15 +50,15 @@ public class Entry {
 		return wholesalePrice;
 	}
 	
-	public static Entry parse(String[] temp) {
+	public static Product parse(String[] temp) {
 		String productID = temp[0];
-		return getEntry(temp, productID);
+		return getProduct(temp, productID);
 	}
 	
 	/** Create a new Entry from a String array. */
-	public static Entry parseEntry(String[] temp) {
+	public static Product parseProduct(String[] temp) {
 		String productID = temp[0] + "";
-		return getEntry(temp, productID);
+		return getProduct(temp, productID);
 	}
 	
 	public void setProductID(String productID) {
@@ -100,7 +100,7 @@ public class Entry {
 	}
 	
 	public String prettyPrint() {
-		String s =  "Entry {" +
+		String s =  "Product {" +
 			   "  \n\tproductID = '" + productID + '\'' +
 			   ", \n\tquantity = " + quantity +
 			   ", \n\twholesalePrice = " + wholesalePrice +

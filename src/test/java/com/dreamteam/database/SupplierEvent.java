@@ -10,15 +10,19 @@ public class SupplierEvent {
     private String date;
     private String supplier_id;
     private String product_id;
-    private String quantity;
+    private int quantity;
+    // private String time;
+    private static Database my_database;
+    
 
     //Empty Constructor
     public SupplierEvent() {
 
     }
 
-    private static void updateQuantity() {
-        //
+    private static void updateQuantity(SupplierEvent event) {
+        if (my_database.read(event.product_id).supplyQuantity(event.quantity)) 
+            System.out.println("Updated Database Successfully"); // Executes if purchase is successful!
     }
 
     public String toString() {
@@ -48,14 +52,14 @@ public class SupplierEvent {
             event.date = data_row[0];
             event.supplier_id = data_row[1];
             event.product_id = data_row[2];
-            event.quantity =  data_row[3];
+            event.quantity =  Integer.parseInt(data_row[3]);
 
-            //updateQuantity();
+            // updateQuantity();
 
             //As of now, the program only reads from the csv and prints it.
             System.out.println(event.toString());
         }
-
+        scanner.close();
         System.out.println("Supplier Event Simulation Complete");
     }
 

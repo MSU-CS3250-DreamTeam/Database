@@ -1,6 +1,5 @@
 package com.dreamteam.database;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -146,7 +145,7 @@ public class main {
 		Options user_choice;
 		String[] database_header = new String[new_database.get_column_size()];
 		String[] new_entry = new String[new_database.get_column_size()];
-		Entry existing_entry;
+		Product existing_entry;
 		
 		database_header = new_database.get_data_head();
 		
@@ -162,7 +161,7 @@ public class main {
 						System.out.print("Enter " + database_header[i] + ": ");
 						new_entry[i] = sc.nextLine();
 					}
-					Entry record = new_database.create(new_entry);
+					Product record = new_database.create(new_entry);
 					
 					record.prettyPrint(); // Prints the object address in memory.
 					// Adds a new product.
@@ -220,7 +219,7 @@ public class main {
 							System.out.print("Enter new entry's " + database_header[i] + ": ");
 							fields[i]  = sc.nextLine();
 						}
-						Entry newEntry = Entry.parse(fields);
+						Product newEntry = Product.parse(fields);
 					}
 					
 					new_database.update(existing_entry);
@@ -265,7 +264,6 @@ public class main {
 	throws IOException {
 		String location = "customer_history.csv";
 		
-		// if (customer != null) {}
 		try {
 			FileWriter writer = new FileWriter(location, true);
 			writer.append(customer); // we would append the order from the events into here

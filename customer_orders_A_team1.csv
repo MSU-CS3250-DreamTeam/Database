@@ -1,4 +1,4 @@
-date,cust_email,cust_location,product_id,product_quantity
+date,cust_email,cust_location,product_id,quantity
 2020-01-01,rau@yahoo.com,29947,RPNT781O56LN,1
 2020-01-01,rau@yahoo.com,29947,SZC1ET67RT1Q,1
 2020-01-01,spoeft@live.com,34506,51BK63YSS9N8,1
