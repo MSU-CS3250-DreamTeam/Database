@@ -270,7 +270,7 @@ public class main {
 	 * 
 	 */
 	private static void dailyAssetsReport() {
-		
+		product_database.countAssets();
 	}
 	
 	//	***************************************************************************	
@@ -295,7 +295,7 @@ public class main {
 	 */
 	private static void updateCustomerHistory(String customer, String date, String time)
 	throws IOException {
-		String location = "customer_history.csv";
+		String location = "files/customer_history.csv";
 		
 		try {
 			FileWriter writer = new FileWriter(location, true);
