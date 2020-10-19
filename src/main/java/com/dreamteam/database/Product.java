@@ -1,6 +1,13 @@
 package com.dreamteam.database;
 
-public class Product {
+public class Product extends DatabaseEntry {
+
+	private String productID;
+	private int quantity;
+	private double salePrice;
+	private String sellerID;
+	private double wholesalePrice;
+
 	public Product(String productID, int quantity, double wholesalePrice, double salePrice,
 				 String sellerID) {
 		this.productID = productID;
@@ -18,22 +25,19 @@ public class Product {
 		this.sellerID = product[4];
 	}
 
-	private String productID;
-	private int quantity;
-	private double salePrice;
-	private String sellerID;
-	double wholesalePrice;
 
-	static Product getProduct(String[] temp, String productID) {
-		int quantity = Integer.parseInt(temp[1]);
-		double wholesalePrice = Double.parseDouble(temp[2]);
-		double salePrice = Double.parseDouble(temp[3]);
-		String supplierID = temp[4];
-		return new Product(productID, quantity, wholesalePrice, salePrice, supplierID);
-	}
+
+	// TODO What is this and why have it?
+	// static Product getProduct(String[] temp, String productID) {
+	// 	int quantity = Integer.parseInt(temp[1]);
+	// 	double wholesalePrice = Double.parseDouble(temp[2]);
+	// 	double salePrice = Double.parseDouble(temp[3]);
+	// 	String supplierID = temp[4];
+	// 	return new Product(productID, quantity, wholesalePrice, salePrice, supplierID);
+	// }
 
 	public String getProductID() {
-		return productID;
+		return this.productID;
 	}
 	
 	public int getQuantity() { return quantity; }
@@ -50,16 +54,18 @@ public class Product {
 		return wholesalePrice;
 	}
 	
-	public static Product parse(String[] temp) {
-		String productID = temp[0];
-		return getProduct(temp, productID);
-	}
+	// TODO What is this and why have it?
+	// public static Product parse(String[] temp) {
+	// 	String productID = temp[0];
+	// 	return getProduct(temp, productID);
+	// }
 	
+	// TODO Does not the constructor already do this?
 	/** Create a new Entry from a String array. */
-	public static Product parseProduct(String[] temp) {
-		String productID = temp[0] + "";
-		return getProduct(temp, productID);
-	}
+	// public static Product parseProduct(String[] temp) {
+	// 	String productID = temp[0] + "";
+	// 	return getProduct(temp, productID);
+	// }
 	
 	public void setProductID(String productID) {
 		this.productID = productID;

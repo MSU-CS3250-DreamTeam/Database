@@ -5,11 +5,11 @@ import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.Scanner;
 
-public class Database {
+public class Database<E> {
 	// Tentative data structure. We can change this.
 	private String[] data_head; // The column labels of the data structure.
 	// Position of final entry in data structure minus the header.
-	private static HashMap<String, Product> data_table;
+	private static HashMap<String, DatabaseEntry> data_table;
 
 	public Database(String file_path) throws FileNotFoundException {
 		data_table = new HashMap<>();
@@ -19,8 +19,7 @@ public class Database {
 			this.data_head = dbScanner.nextLine().split(",");
 			while(dbScanner.hasNextLine()) {
 				String[] dbRow = dbScanner.nextLine().split(",");
-				Product entry = new Product(dbRow);
-				data_table.put(entry.getProductID(), entry);
+				create(dbRow);
 			}
 			dbScanner.close();
 		} else {
@@ -44,7 +43,7 @@ public class Database {
 	 *  which we need to have enough of
 	 */
 	public Boolean canProcessOrder(String id, int attemptedQuantity) {
-		Product entry = data_table.get(id);
+		DatabaseEntry entry = data_table.get(id);
 		if(entry != null) {
 			
 			return attemptedQuantity <= entry.getQuantity();
@@ -55,13 +54,19 @@ public class Database {
 	public boolean contains(String product_id) {
 		return data_table.containsKey(product_id);
 	}
-	
-	public Product create(String entryString) {
-		return parseEntry(entryString.split(","));
+
+	public void create(E new_entry) {
+		data_table.put(((DatabaseEntry) new_entry).getProductID(), (DatabaseEntry) new_entry);
 	}
 	
-	public Product create(String[] entryString) {
-		return parseEntry(entryString);
+	public void create(String entry_string) {
+		DatabaseEntry<E> new_entry = new DatabaseEntry<E>((E) entry_string.split(","));
+		data_table.put(new_entry.getProductID(), new_entry);
+	}
+	
+	public void create(String[] entry_string) {
+		DatabaseEntry<E> new_entry = new DatabaseEntry<E>((E)entry_string);
+		data_table.put(new_entry.getProductID(), new_entry);
 	}
 	
 	/**
@@ -72,27 +77,11 @@ public class Database {
 	 * @return the old Entry if there was one.
 	 *  otherwise, null
 	 */
-	public Product delete(String id) {
-		return data_table.remove(id);
+	public Boolean delete(String id) {
+		return (data_table.remove(id) != null );
 	}
 	
-	/**
-	 * Prints the entire database to console. May want to disable in finished project.
-	 * Also prints the number of current entries in database.
-	 */
-	public void display() {
-		// StringBuilder builder = new StringBuilder();
-		// for(int i = 0; i < data_head.length; i++) {
-		// 	builder.append(data_head[i])
-		// 		   .append(i < data_head.length - 1 ? "," : "");
-		// }
-		// for(Entry value: data_table.values()) {
-		// 	builder.append(value.toString());
-		// }
-		// System.out.println(builder.toString());
-		// System.out.println("\nThere are " + data_table.size() +
-		// 				   " entries recorded in the database.\n");
-	}
+
 	
 	public int get_column_size() {
 		return this.data_head.length;
@@ -103,10 +92,10 @@ public class Database {
 	}
 	
 	/** Create a new Entry from a String array. */
-	private static Product parseEntry(String[] temp) {
-		String productID = temp[0] + "";
-		return Product.getProduct(temp, productID);
-	}
+	// private static Product parseEntry(String[] temp) {
+	// 	String productID = temp[0] + "";
+	// 	return Product.getProduct(temp, productID);
+	// }
 	
 	/**
 	 * Read existing entry from database.
@@ -115,8 +104,8 @@ public class Database {
 	 *
 	 * @return the entry of the database if found.
 	 */
-	public Product read(String id) throws NullPointerException {
-		return data_table.get(id);
+	public E read(String id) throws NullPointerException {
+		return (E) data_table.get(id);
 	}
 	
 	public void set_data_head(String[] labels) {
@@ -126,19 +115,23 @@ public class Database {
 	/**
 	 * Find existing entry in database and update with new entry.
 	 *
-	 * @param newEntry
+	 * @param new_entry
 	 *  the new entry to overwrite the old one
 	 *
 	 * @return the old entry, in case we want to do something with it
 	 */
-	public Product update(Product newEntry) {
-		return data_table.put(newEntry.getProductID(), newEntry);
+	public boolean update(Product new_entry) {
+		return (data_table.put(new_entry.getProductID(), new_entry) != null);
+	}
+
+	public boolean update(Order new_entry) {
+		return (data_table.put(new_entry.getProductID(), new_entry) != null);
 	}
 	
-	public Product update(String string) {
-		Product newEntry = create(string);
-		return data_table.put(newEntry.getProductID(), newEntry);
-	}
+	// public boolean update(String string) {
+	// 	DatabaseEntry new_entry = read(string);
+	// 	return (data_table.put(new_entry.getProductID(), new_entry) != null);
+	// }
 
 	// TODO Tally the sum of product quantities x their wholesale prices and return in countAssets().
 	/**
@@ -165,14 +158,30 @@ public class Database {
 	// 	return sb.toString();
 	// }
 	
+	/**
+	 * Prints the entire database to console. May want to disable in finished project.
+	 * Also prints the number of current entries in database.
+	 */
+	public void display() {
+		System.out.println(this.data_table.size());
+		// StringBuilder builder = new StringBuilder();
+		// for(int i = 0; i < data_head.length; i++) {
+		// 	builder.append(data_head[i])
+		// 		   .append(i < data_head.length - 1 ? "," : "");
+		// }
+		// for(Entry value: data_table.values()) {
+		// 	builder.append(value.toString());
+		// }
+		// System.out.println(builder.toString());
+		// System.out.println("\nThere are " + data_table.size() +
+		// 				   " entries recorded in the database.\n");
+	}
+
 	// public static void printDatabase() throws FileNotFoundException {
 	// 	Database db = new Database("inventory_team1.csv");
 	// 	Entry entry = db.get("ULSGKCQO385Y");
 	// 	System.out.println(entry);
 	// 	entry.prettyPrint();
 	// }
-	
-	// public Product getEntry(String productId) {
-	// 	return data_table.get(productId);
-	// }
+
 }

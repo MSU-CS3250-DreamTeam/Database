@@ -21,7 +21,7 @@ public class SupplierEvent {
     }
 
     private static void updateQuantity(SupplierEvent event) {
-        if (my_database.read(event.product_id).supplyQuantity(event.quantity)) 
+        if (((Product) my_database.read(event.product_id)).supplyQuantity(event.quantity))
             System.out.println("Updated Database Successfully"); // Executes if purchase is successful!
     }
 

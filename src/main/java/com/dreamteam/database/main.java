@@ -13,8 +13,8 @@ import java.util.Scanner;
 public class main {
 	// Variable Declarations
 	static private final String SPREAD_SHEET = "files/inventory_team1.csv";
-	static private Database product_database;
-	static private Database order_database;
+	static private Database<Product> product_database;
+	static private Database<Order> order_database;
 	public static Scanner sc = new Scanner(System.in);
 	
 	// Menu Option Structure: order of options is the order displayed in the menu.
@@ -42,7 +42,7 @@ public class main {
 		
 		String existing_product_id = "8XXKZRELM2JJ";
 		String fake_product = "AGEXCVFG3344,3260,370.51,623.94,SASERNVV";
-		String updated_product = "8XXKZRELM2JJ,25,370.51,623.94,SASERNVV";
+		Product updated_product = new Product("8XXKZRELM2JJ,25,370.51,623.94,SASERNVV".split(","));
 		
 		System.out.print("Retrieving a product. ");
 		product_database.read(existing_product_id);
@@ -82,7 +82,6 @@ public class main {
 		
 		// Local Variable Declarations
 		int user_input;
-		int index;
 		
 		while(true) {
 			
@@ -127,10 +126,10 @@ public class main {
 		System.out.println("-------------------------------------------------------------------");
 
 		// Initializes the database to the spreadsheet's columns.
-		product_database = new Database(SPREAD_SHEET);
+		product_database = new Database<Product>(SPREAD_SHEET);
 		
 		// For debugging. Disable in final project.
-		demo_database();
+		// demo_database();
 		
 		// Call the menu for user to access and modify the database.
 		runMenu();
@@ -146,15 +145,16 @@ public class main {
 		
 		// Local Variable Declarations
 		Options user_choice;
-		String[] database_header = new String[product_database.get_column_size()];
+		// String[] database_header = new String[product_database.get_column_size()];
 		String[] new_entry = new String[product_database.get_column_size()];
 		Product existing_entry;
 		
-		database_header = product_database.get_data_head();
+		String[] database_header = product_database.get_data_head();
 		
 		do {
 			
 			user_choice = getOption();
+			product_database.display();
 			
 			switch(user_choice) {
 				
@@ -164,16 +164,16 @@ public class main {
 						System.out.print("Enter " + database_header[i] + ": ");
 						new_entry[i] = sc.nextLine();
 					}
-					Product record = product_database.create(new_entry);
+					product_database.create(new_entry);
 					
-					record.prettyPrint(); // Prints the object address in memory.
-					// Adds a new product.
+					Product new_product = ((Product) product_database.read(new_entry[0])); // Prints the object address in memory.
+					new_product.prettyPrint();
 					break;
 				
 				case READ:
 					
 					System.out.print("Enter " + database_header[0] + ": ");
-					existing_entry = product_database.read(sc.nextLine());
+					existing_entry = (Product) product_database.read(sc.nextLine());
 					
 					if(existing_entry != null) {
 						System.out.println(existing_entry);
@@ -187,7 +187,7 @@ public class main {
 				case UPDATE:
 					
 					System.out.print("Enter existing entry's " + database_header[0] + ": ");
-					existing_entry = product_database.read(sc.nextLine());
+					existing_entry = (Product) product_database.read(sc.nextLine());
 					
 					boolean is_simulation = true;
 					if(is_simulation) {
@@ -222,7 +222,7 @@ public class main {
 							System.out.print("Enter new entry's " + database_header[i] + ": ");
 							fields[i]  = sc.nextLine();
 						}
-						Product newEntry = Product.parse(fields);
+						// Product newEntry = Product.parse(fields);
 					}
 					
 					product_database.update(existing_entry);

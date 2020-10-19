@@ -62,7 +62,7 @@ public class BuyerEvent {
      * @param event
      */
     private static void updateQuantity(BuyerEvent event){
-        if (my_database.read(event.product_id).buyQuantity(event.quantity)) 
+        if (((Product) my_database.read(event.product_id)).buyQuantity(event.quantity))
             System.out.println("Updated Database Successfully"); // Executes if purchase is successful!
     }
 

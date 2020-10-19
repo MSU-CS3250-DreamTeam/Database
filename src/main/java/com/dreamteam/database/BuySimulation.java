@@ -75,7 +75,7 @@ public class BuySimulation {
 		while(!events.isEmpty() || events == null) {
 			BuySimulation event = events.remove();
 			if(my_database.contains(event.getProduct_id())) {
-				Product entry = my_database.read(event.getProduct_id());
+				Product entry = (Product) my_database.read(event.getProduct_id());
 				entry.buyQuantity(event.getQuantity());
 			} else {
 				System.out.println("that product Id does not exist...");
@@ -120,7 +120,7 @@ public class BuySimulation {
 	 * @param event
 	 */
 	static void updateQuantity(BuySimulation event) {
-		Product record = my_database.read(event.product_id);
+		Product record = (Product) my_database.read(event.product_id);
 		if(record != null) {
 			System.out.println(
 			 "Product quantity before purchase: " + record.getQuantity());
