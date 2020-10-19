@@ -2,6 +2,7 @@ package com.dreamteam.database;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -163,7 +164,10 @@ public class Database {
 			totalAssets += price * quantity;
 			it.remove();  // avoids a ConcurrentModificationException
 		}
-		System.out.println("The company's total assets are: $" + ((int) totalAssets));
+
+		NumberFormat formatter = NumberFormat.getCurrencyInstance();
+
+		System.out.println("The company's total assets are: " +  formatter.format(totalAssets));
 		return totalAssets;
 	}
 	
