@@ -13,8 +13,8 @@ import java.util.Scanner;
 public class main {
 	// Variable Declarations
 	static private final String SPREAD_SHEET = "files/inventory_team1.csv";
-	static private Database<Product> product_database;
-	static private Database<Order> order_database;
+	static private final ProductDatabase product_database = ProductDatabase.getProducts();
+	static private final OrderDatabase order_database = OrderDatabase.getOrders();
 	public static Scanner sc = new Scanner(System.in);
 	
 	// Menu Option Structure: order of options is the order displayed in the menu.
@@ -34,6 +34,27 @@ public class main {
 		
 		public int getValue() { return value; }
 	}
+	//	***************************************************************************
+	
+	/**
+	 * @param args
+	 *
+	 * @throws FileNotFoundException
+	 */
+	static public void main(String[] args) throws FileNotFoundException {
+		
+		// Welcome to DreamTeam DataBase
+		System.out.println("-------------------------------------------------------------------");
+		System.out.println("               Welcome to DreamTeam DataBase                       ");
+		System.out.println("-------------------------------------------------------------------");
+		
+		// For debugging. Disable in final project.
+		demo_database();
+		
+		// Call the menu for user to access and modify the database.
+		runMenu();
+
+	} // End main method.
 		
 	//	***************************************************************************
 
@@ -110,31 +131,6 @@ public class main {
 			System.out.println("That option does not exist.");
 		}
 	}
-	
-	//	***************************************************************************
-	
-	/**
-	 * @param args
-	 *
-	 * @throws FileNotFoundException
-	 */
-	static public void main(String[] args) throws FileNotFoundException {
-		
-		// Welcome to DreamTeam DataBase
-		System.out.println("-------------------------------------------------------------------");
-		System.out.println("               Welcome to DreamTeam DataBase                       ");
-		System.out.println("-------------------------------------------------------------------");
-
-		// Initializes the database to the spreadsheet's columns.
-		product_database = new Database<Product>(SPREAD_SHEET);
-		
-		// For debugging. Disable in final project.
-		// demo_database();
-		
-		// Call the menu for user to access and modify the database.
-		runMenu();
-
-	} // End main method.
 	
 	//	***************************************************************************
 	
@@ -270,7 +266,7 @@ public class main {
 	 * 
 	 */
 	private static void dailyAssetsReport() {
-		product_database.countAssets();
+		// order_database.countAssets();
 	}
 	
 	//	***************************************************************************	

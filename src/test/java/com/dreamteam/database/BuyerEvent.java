@@ -83,7 +83,7 @@ public class BuyerEvent {
     public static void main(String[] args) throws IOException {
 
         //Initialize database with original inventory
-        my_database = new Database("inventory_team1.csv");
+        my_database = null;//new Database("inventory_team1.csv");
 
         //CSV file that holds buyer event parameters
         File file = new File("customer_orders_A_team1.csv");

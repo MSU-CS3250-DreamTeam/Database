@@ -36,23 +36,15 @@ public class Product extends DatabaseEntry {
 	// 	return new Product(productID, quantity, wholesalePrice, salePrice, supplierID);
 	// }
 
-	public String getProductID() {
-		return this.productID;
-	}
+	public String getProductID() { return this.productID; }
 	
-	public int getQuantity() { return quantity; }
+	public int getQuantity() { return this.quantity; }
 	
-	public double getSalePrice() {
-		return salePrice;
-	}
+	public double getSalePrice() { return this.salePrice; }
 	
-	public String getSellerID() {
-		return sellerID;
-	}
+	public String getSellerID() { return this.sellerID; }
 	
-	public double getWholesalePrice() {
-		return wholesalePrice;
-	}
+	public double getWholesalePrice() { return this.wholesalePrice; }
 	
 	// TODO What is this and why have it?
 	// public static Product parse(String[] temp) {

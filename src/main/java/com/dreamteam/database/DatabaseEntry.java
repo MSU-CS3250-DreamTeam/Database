@@ -1,12 +1,8 @@
 package com.dreamteam.database;
 
-public class DatabaseEntry<E> {
+public abstract class DatabaseEntry {
     public DatabaseEntry() {
-
     }
-
-	public DatabaseEntry(E split) {
-	}
 
 	public String getProductID() {
         return "0000000000";

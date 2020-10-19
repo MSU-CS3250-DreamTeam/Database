@@ -9,13 +9,13 @@ import org.junit.jupiter.api.BeforeAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DatabaseTest {
-  private static final String SPREAD_SHEET = "files/inventory_team1.csv";
-  private static Database<Product> new_database;
+  // private static final String SPREAD_SHEET = "files/inventory_team1.csv";
+  private static ProductDatabase new_database = ProductDatabase.getProducts();
   private static Product product_entry;
 
   @BeforeAll static void setup() throws FileNotFoundException {
 
-    new_database = new Database<Product>(SPREAD_SHEET);
+    new_database = null;//new Database<Product>(SPREAD_SHEET);
 
   }
 

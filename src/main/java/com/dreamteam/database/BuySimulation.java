@@ -54,7 +54,7 @@ public class BuySimulation {
 	public static void main(String[] args) throws FileNotFoundException {
 
 		// Initialize database inventory from csv
-		my_database = new Database("files/inventory_team1.csv");
+		my_database = null;//new Database("files/inventory_team1.csv");
 		
 		File file = new File("files/buyer_event.csv");
 		Scanner scanner = new Scanner(file);
@@ -74,12 +74,8 @@ public class BuySimulation {
 	
 		while(!events.isEmpty() || events == null) {
 			BuySimulation event = events.remove();
-			if(my_database.contains(event.getProduct_id())) {
-				Product entry = (Product) my_database.read(event.getProduct_id());
-				entry.buyQuantity(event.getQuantity());
-			} else {
-				System.out.println("that product Id does not exist...");
-			}
+			Product entry = (Product) my_database.read(event.getProduct_id());
+			entry.buyQuantity(event.getQuantity());
 		}
 	}
 	
