@@ -14,11 +14,27 @@ public class OrderDatabase implements Database<Order> {
 	private static final OrderDatabase ORDERS = new OrderDatabase();
 	
 	private OrderDatabase() {
-		final String file_path = "files/customer_orders_A_team1.csv";
+		
+		final String file_path = "files/inventory_team1.csv";
+
 		try {
-			new OrderDatabase(file_path);
+
+			File inventory = new File(file_path);
+			data_table = new HashMap<>();
+			Scanner dbScanner = new Scanner(inventory);
+			this.data_head = dbScanner.nextLine().split(",");
+
+			while(dbScanner.hasNextLine()) {
+				String[] dbRow = dbScanner.nextLine().split(",");
+				create(dbRow);
+			}
+
+			dbScanner.close();
+
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
+			System.out.println(
+			 "Is the data file " + file_path + " in the wrong directory?");
 		}
 	}
 

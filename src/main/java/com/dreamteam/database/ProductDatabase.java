@@ -12,30 +12,30 @@ public class ProductDatabase implements Database<Product> {
 	private HashMap<String, Product> data_table;
 
 	private static final ProductDatabase PRODUCTS = new ProductDatabase();
-	
-	
+
     private ProductDatabase() {
+
 		final String file_path = "files/inventory_team1.csv";
+
 		try {
-			new ProductDatabase(file_path);
+
+			File inventory = new File(file_path);
+			this.data_table = new HashMap<>();
+			Scanner dbScanner = new Scanner(inventory);
+			this.data_head = dbScanner.nextLine().split(",");
+
+			while(dbScanner.hasNextLine()) {
+				String[] dbRow = dbScanner.nextLine().split(",");
+				create(dbRow);
+			}
+
+			dbScanner.close();
+
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 			System.out.println(
 			 "Is the data file " + file_path + " in the wrong directory?");
 		}
-	}
-
-    private ProductDatabase(String file_path) throws FileNotFoundException {
-		data_table = new HashMap<>();
-
-		File inventory = new File(file_path);
-		Scanner dbScanner = new Scanner(inventory);
-		this.data_head = dbScanner.nextLine().split(",");
-		while(dbScanner.hasNextLine()) {
-			String[] dbRow = dbScanner.nextLine().split(",");
-			create(dbRow);
-		}
-		dbScanner.close();
 
 	}
 
@@ -62,7 +62,7 @@ public class ProductDatabase implements Database<Product> {
 		try {
 			return this.data_table.containsKey(product_id);
 		} finally {
-			throw new NullPointerException("The data structure does not exist.");
+			throw new NullPointerException("The data structure data_table is not initialized.");
 		}
 		
 	}
