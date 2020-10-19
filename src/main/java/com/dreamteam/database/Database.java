@@ -11,17 +11,12 @@ public interface Database<E> {
 
 	public void create(E new_entry);
 	
-	public void create(String entry_string);
-	
 	public void create(String[] entry_string);
-	
-	/**
-	 * Delete existing entry from database.
-	 *
-	 * @param id
-	 *
-	 * @return the old Entry if there was one. otherwise, null
-	 */
+		
+    public default void create(String entry_string) {
+		create(entry_string.split(","));
+	}
+
 	public boolean delete(String id);
 	
 	public int get_column_size();

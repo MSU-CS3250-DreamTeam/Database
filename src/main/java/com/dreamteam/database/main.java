@@ -49,7 +49,7 @@ public class main {
 		System.out.println("-------------------------------------------------------------------");
 		
 		// For debugging. Disable in final project.
-		demo_database();
+		// demo_database(); TODO Remove or revise method.
 		
 		// Call the menu for user to access and modify the database.
 		runMenu();

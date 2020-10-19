@@ -7,9 +7,13 @@ import java.util.Scanner;
 
 public class ProductDatabase implements Database<Product> {
 	
-	private String[] data_head; // The column labels of the data structure.
+	// *** Class Variables */
+
+	private static String[] data_head; // The column labels of the data structure.
 	// Position of final entry in data structure minus the header.
-	private HashMap<String, Product> data_table;
+	private static HashMap<String, Product> data_table;
+
+	// *** Construction */
 
 	private static final ProductDatabase PRODUCTS = new ProductDatabase();
 
@@ -20,12 +24,13 @@ public class ProductDatabase implements Database<Product> {
 		try {
 
 			File inventory = new File(file_path);
-			this.data_table = new HashMap<>();
+			ProductDatabase.data_table = new HashMap<>();
 			Scanner dbScanner = new Scanner(inventory);
-			this.data_head = dbScanner.nextLine().split(",");
+			ProductDatabase.data_head = dbScanner.nextLine().split(",");
 
 			while(dbScanner.hasNextLine()) {
-				String[] dbRow = dbScanner.nextLine().split(",");
+				String dbRow = dbScanner.nextLine();
+				// System.out.println(dbRow);
 				create(dbRow);
 			}
 
@@ -41,9 +46,29 @@ public class ProductDatabase implements Database<Product> {
 
 	public static ProductDatabase getProducts() {
         return PRODUCTS;
-    }
+	}
 
-    	/**
+	// *** Getters */
+
+	@Override
+	public int get_column_size() {
+		return data_head.length;
+	}
+	
+	public String[] get_data_head() {
+		return data_head;
+	}
+
+	// *** Setters */
+		
+	@Override
+	public void set_data_head(String[] labels) {
+		data_head = labels;
+	}
+
+	// *** Class Methods (Alphabetical Order) */
+
+    /**
 	 * Check to see if we can make a sale
 	 *
 	 * @param attemptedQuantity
@@ -59,14 +84,13 @@ public class ProductDatabase implements Database<Product> {
 	}
 
 	private boolean contains(String product_id) {
-		try {
-			return this.data_table.containsKey(product_id);
-		} finally {
-			throw new NullPointerException("The data structure data_table is not initialized.");
-		}
+		// try {
+			return ProductDatabase.data_table.containsKey(product_id);
+		// } finally {
+		// 	throw new NullPointerException("The data structure data_table is not initialized.");
+		// }
 		
 	}
-
 	
     // TODO Tally the sum of product quantities x their wholesale prices and return in countAssets().
 	/**
@@ -79,19 +103,17 @@ public class ProductDatabase implements Database<Product> {
 
 	@Override
 	public void create(Product new_product) {
-		data_table.put(new_product.getProductID(), new_product);
+		if (!contains(new_product.getProductID())){
+			data_table.put(new_product.getProductID(), new_product);
+		} else {
+			System.out.println("Product already exists");
+		}
 	}
 
 	@Override
-    public void create(String entry_string) {
-		Product new_product = new Product((entry_string.split(",")));
-		data_table.put(new_product.getProductID(), new_product);
-	}
-	
-	@Override
 	public void create(String[] entry_string) {
 		Product new_product = new Product(entry_string);
-		data_table.put(new_product.getProductID(), new_product);
+		create(new_product);
 	}
 
     /**
@@ -105,7 +127,7 @@ public class ProductDatabase implements Database<Product> {
 	public boolean delete(String id) {
 		boolean isRemoved = false;
 		if (contains(id))
-			isRemoved = (this.data_table.remove(id) != null);
+			isRemoved = (data_table.remove(id) != null);
 		
 		return isRemoved;
     }
@@ -116,7 +138,7 @@ public class ProductDatabase implements Database<Product> {
 	 */
 	@Override
 	public void display() {
-		System.out.println(this.data_table.size());
+		System.out.println(data_table.size());
 	}
 
     /**
@@ -129,17 +151,12 @@ public class ProductDatabase implements Database<Product> {
 	@Override
 	public Product read(String id) {
 		if (contains(id)) {
-			return  this.data_table.get(id);
+			return data_table.get(id);
 		} else {
 			System.out.println("The product was not found.");
 			return new Product("000,000,000,000,000".split(","));
 		}
 		
-	}
-	
-	@Override
-	public void set_data_head(String[] labels) {
-		this.data_head = labels;
 	}
 
 	@Override
@@ -150,20 +167,6 @@ public class ProductDatabase implements Database<Product> {
 		
 		return isUpdated;
 	}
-
-
-	@Override
-	public int get_column_size() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public String[] get_data_head() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 
 }
 
