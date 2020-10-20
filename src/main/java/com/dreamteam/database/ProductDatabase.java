@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.Scanner;
+import java.text.NumberFormat;
+import java.util.Iterator;
 
 public class ProductDatabase implements Database<Product> {
 	
@@ -95,7 +97,26 @@ public class ProductDatabase implements Database<Product> {
 	 * @return
 	 */
 	public double countAssets() {
-		return 0.0;
+		Iterator<HashMap.Entry<String, Product>> it = data_table.entrySet().iterator();
+
+		double totalAssets = 0.00;
+		Product current;
+		double price;
+		int quantity;
+
+		while (it.hasNext()) {
+			HashMap.Entry<String, Product> pair = (HashMap.Entry<String, Product>)it.next();
+			current = (Product) pair.getValue();
+			price = current.getWholesalePrice();
+			quantity = current.getQuantity();
+			totalAssets += price * quantity;
+			it.remove();
+		}
+
+		NumberFormat formatter = NumberFormat.getCurrencyInstance();
+
+		System.out.println("The company's total assets are: " +  formatter.format(totalAssets));
+		return totalAssets;
 	}
 
 	@Override
