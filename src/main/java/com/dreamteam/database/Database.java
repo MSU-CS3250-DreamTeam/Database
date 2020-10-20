@@ -42,5 +42,4 @@ public interface Database<E> {
 	 */
 	public void display();
 
-
 }
