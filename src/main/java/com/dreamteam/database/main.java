@@ -149,8 +149,9 @@ public class main {
 		
 		do {
 			
-			user_choice = getOption();
 			product_database.display();
+			order_database.display();
+			user_choice = getOption();
 			
 			switch(user_choice) {
 				
@@ -237,11 +238,12 @@ public class main {
 					break;
 				
 				case PROCESS_ORDERS:
-					// TODO Process orders.
+					order_database.processOrders();
+
 					dailyAssetsReport();
-					dailyTopTenReport();
-					System.out.println(product_database); // Prints the object address in memory.
-					System.out.println("The selected option exists, but is not implemented yet.");
+					dailyTopTenReport(LocalDate.now().toString());
+					
+					System.out.println("The order log is processed.");
 					
 					break;
 				
@@ -266,7 +268,7 @@ public class main {
 	 * 
 	 */
 	private static void dailyAssetsReport() {
-		// order_database.countAssets();
+		product_database.countAssets();
 	}
 	
 	//	***************************************************************************	
@@ -274,11 +276,10 @@ public class main {
 	/**	TODO Write the top ten products and customers (by spending) to a daily report file
 	 * 
 	 */
-	private static void dailyTopTenReport() {
-
+	private static void dailyTopTenReport(String date) {
+		order_database.findTopCustomers(date);
+		order_database.findTopProducts(date);
 	}
-		
-
 
 	//	***************************************************************************
 	
@@ -291,7 +292,7 @@ public class main {
 	 */
 	private static void updateCustomerHistory(String customer, String date, String time)
 	throws IOException {
-		String location = "files/customer_history.csv";
+		String location = "files/supplier_history.csv";
 		
 		try {
 			FileWriter writer = new FileWriter(location, true);

@@ -1,13 +1,6 @@
 package com.dreamteam.database;
 
 public interface Database<E> {
-	
-	/**
-	 * Check to see if we can make a sale
-	 *
-	 * @param attemptedQuantity which we need to have enough of
-	 */
-	public boolean canProcessOrder(String id, int attemptedQuantity);
 
 	public void create(E new_entry);
 	
@@ -43,38 +36,11 @@ public interface Database<E> {
 	 */
 	public boolean update(E existing_entry);
 	
-	// public boolean update(String string) {
-	// 	DatabaseEntry new_entry = read(string);
-	// 	return (data_table.put(new_entry.getProductID(), new_entry) != null);
-	// }
-	
-	// @Override public String toString() {
-	// 	StringBuilder sb = new StringBuilder();
-	// 	String headers = Arrays.toString(data_head);
-	// 	headers = headers.substring(1, headers.length() -1);
-	// 	sb.append(headers).append("\n");
-	// 	Iterator<Entry> itr = data_table.values().iterator();
-	// 	while(itr.hasNext()) {
-	// 		Entry next = itr.next();
-	// 		if(next == null) {
-	// 			System.out.println("but why???");
-	// 		}
-	// 		sb.append(next).append("\n");
-	// 	}
-	// 	return sb.toString();
-	// }
-	
 	/**
 	 * Prints the entire database to console. May want to disable in finished
 	 * project. Also prints the number of current entries in database.
 	 */
 	public void display();
 
-	// public static void printDatabase() throws FileNotFoundException {
-	// 	Database db = new Database("inventory_team1.csv");
-	// 	Entry entry = db.get("ULSGKCQO385Y");
-	// 	System.out.println(entry);
-	// 	entry.prettyPrint();
-	// }
 
 }

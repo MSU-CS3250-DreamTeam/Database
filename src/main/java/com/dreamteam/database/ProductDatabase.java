@@ -26,11 +26,14 @@ public class ProductDatabase implements Database<Product> {
 			File inventory = new File(file_path);
 			ProductDatabase.data_table = new HashMap<>();
 			Scanner dbScanner = new Scanner(inventory);
-			ProductDatabase.data_head = dbScanner.nextLine().split(",");
+			
+			if (dbScanner.hasNextLine())
+				ProductDatabase.data_head = dbScanner.nextLine().split(",");
+			
+			String dbRow;
 
 			while(dbScanner.hasNextLine()) {
-				String dbRow = dbScanner.nextLine();
-				// System.out.println(dbRow);
+				dbRow = dbScanner.nextLine();
 				create(dbRow);
 			}
 
@@ -74,7 +77,6 @@ public class ProductDatabase implements Database<Product> {
 	 * @param attemptedQuantity
 	 *  which we need to have enough of
 	 */
-	@Override
 	public boolean canProcessOrder(String id, int attemptedQuantity) {
 		Product product = data_table.get(id);
 		if(product != null) {
@@ -84,12 +86,7 @@ public class ProductDatabase implements Database<Product> {
 	}
 
 	private boolean contains(String product_id) {
-		// try {
-			return ProductDatabase.data_table.containsKey(product_id);
-		// } finally {
-		// 	throw new NullPointerException("The data structure data_table is not initialized.");
-		// }
-		
+		return ProductDatabase.data_table.containsKey(product_id);
 	}
 	
     // TODO Tally the sum of product quantities x their wholesale prices and return in countAssets().
@@ -138,7 +135,7 @@ public class ProductDatabase implements Database<Product> {
 	 */
 	@Override
 	public void display() {
-		System.out.println(data_table.size());
+		System.out.println("The products database has " + ProductDatabase.data_table.size() + " products.");
 	}
 
     /**
@@ -168,5 +165,35 @@ public class ProductDatabase implements Database<Product> {
 		return isUpdated;
 	}
 
-}
+} // EOF
+
+
+	// public static void printDatabase() throws FileNotFoundException {
+	// 	Database db = new Database("inventory_team1.csv");
+	// 	Entry entry = db.get("ULSGKCQO385Y");
+	// 	System.out.println(entry);
+	// 	entry.prettyPrint();
+	// }
+
+	// @Override public String toString() {
+	// 	StringBuilder sb = new StringBuilder();
+	// 	String headers = Arrays.toString(data_head);
+	// 	headers = headers.substring(1, headers.length() -1);
+	// 	sb.append(headers).append("\n");
+	// 	Iterator<Entry> itr = data_table.values().iterator();
+	// 	while(itr.hasNext()) {
+	// 		Entry next = itr.next();
+	// 		if(next == null) {
+	// 			System.out.println("but why???");
+	// 		}
+	// 		sb.append(next).append("\n");
+	// 	}
+	// 	return sb.toString();
+	// }
+
+	// public boolean update(String string) {
+	// 	DatabaseEntry new_entry = read(string);
+	// 	return (data_table.put(new_entry.getProductID(), new_entry) != null);
+	// }
+	
 

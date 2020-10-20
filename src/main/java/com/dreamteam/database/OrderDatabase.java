@@ -2,30 +2,40 @@ package com.dreamteam.database;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Scanner;
 
 public class OrderDatabase implements Database<Order> {
-    // Tentative data structure. We can change this.
-	private String[] data_head; // The column labels of the data structure.
+	
+	// *** Class Variables */
+
+	private static String[] data_head; // The column labels of the data structure.
 	// Position of final entry in data structure minus the header.
-	private HashMap<String, Order> data_table;
+	private static HashMap<String, Order> data_table;
+
+	// *** Construction */
 
 	private static final OrderDatabase ORDERS = new OrderDatabase();
-	
+
 	private OrderDatabase() {
-		
-		final String file_path = "files/inventory_team1.csv";
+
+		final String file_path = "files/customer_history.csv";
 
 		try {
 
 			File inventory = new File(file_path);
 			data_table = new HashMap<>();
 			Scanner dbScanner = new Scanner(inventory);
-			this.data_head = dbScanner.nextLine().split(",");
 
-			while(dbScanner.hasNextLine()) {
-				String[] dbRow = dbScanner.nextLine().split(",");
+			if (dbScanner.hasNextLine())
+				OrderDatabase.data_head = dbScanner.nextLine().split(",");
+			
+			String dbRow;
+
+			while (dbScanner.hasNextLine()) {
+				dbRow = dbScanner.nextLine();
 				create(dbRow);
 			}
 
@@ -33,100 +43,165 @@ public class OrderDatabase implements Database<Order> {
 
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
-			System.out.println(
-			 "Is the data file " + file_path + " in the wrong directory?");
-		}
-	}
-
-    private OrderDatabase(String file_path) throws FileNotFoundException {
-		data_table = new HashMap<>();
-		if (file_path != null) {
-			File inventory = new File(file_path);
-			Scanner dbScanner = new Scanner(inventory);
-			this.data_head = dbScanner.nextLine().split(",");
-			while(dbScanner.hasNextLine()) {
-				String[] dbRow = dbScanner.nextLine().split(",");
-				create(dbRow);
-			}
-			dbScanner.close();
-		} else {
-			throw new FileNotFoundException(
-			 "Is the data file " + file_path + " in the wrong directory?");
+			System.out.println("Is the data file " + file_path + " in the wrong directory?");
 		}
 	}
 
 	public static OrderDatabase getOrders() {
-        return ORDERS;
-    }
-
-
-	@Override
-    public boolean update(Order existing_order) {
-		return (data_table.put(existing_order.getProductID(), existing_order) != null);
+		return ORDERS;
 	}
 
-	@Override
-	public boolean canProcessOrder(String id, int attemptedQuantity) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	private boolean contains(String product_id) {
-		// TODO Auto-generated method stub
-		return false;
-	}
+	// *** Getters */
 
 	@Override
-	public void create(Order new_entry) {
-		// TODO Auto-generated method stub
-
-	}
+	public int get_column_size() { return OrderDatabase.data_head.length; }
 
 	@Override
-	public void create(String entry_string) {
-		// TODO Auto-generated method stub
+	public String[] get_data_head() { return OrderDatabase.data_head; }
 
+	// *** Setters */
+
+	@Override
+	public void set_data_head(String[] labels) { OrderDatabase.data_head = labels; }
+
+	// *** Class Methods (Alphabetical Order) */
+
+	@Override
+	public void create(Order new_order) {
+		String unique_key = new_order.getOrderID();
+		OrderDatabase.data_table.put(unique_key, new_order);
 	}
 
 	@Override
 	public void create(String[] entry_string) {
-		// TODO Auto-generated method stub
-
+		Order new_order = new Order(entry_string);
+		create(new_order);
 	}
 
+	/**
+	 * Delete existing entry from database.
+	 *
+	 * @param id
+	 *
+	 * @return the old Entry if there was one. otherwise, null
+	 */
 	@Override
 	public boolean delete(String id) {
-		// TODO Auto-generated method stub
-		return false;
-	}
+		boolean isRemoved = false;
+		if (OrderDatabase.data_table.containsKey(id))
+			isRemoved = (OrderDatabase.data_table.remove(id) != null);
+		
+		return isRemoved;
+    }
 
-	@Override
-	public int get_column_size() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public String[] get_data_head() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Order read(String id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void set_data_head(String[] labels) {
-		// TODO Auto-generated method stub
-
-	}
-
+    /**
+	 * Prints the entire database to console. May want to disable in finished project.
+	 * Also prints the number of current entries in database.
+	 */
 	@Override
 	public void display() {
-		System.out.println(this.data_table.size());
+		System.out.println("The orders database has " + OrderDatabase.data_table.size() + " orders.");
+	}
+
+		
+	//	***************************************************************************	
+
+	/**	TODO Find the top ten products and customers (by spending) and return
+	 * 
+	 */
+	public String[] findTopProducts(String date) {
+		String[] products = new String[10];
+
+		return products;
+	}
+
+	/**	TODO Find the top ten customers (by spending) and return
+	 * 
+	 */
+	public String[] findTopCustomers(String date) {
+		String[] customers = new String[10];
+
+		return customers;
+	}
+
+	public void processOrders() {
+
+		String source_file_path = "files/customer_orders_A_team1.csv";
+		Order processed_order = null;
+		String unique_key;
+		String dbRow;
+		String[] rowArray;
+
+
+		try {
+
+			File inventory = new File(source_file_path);
+			Scanner dbScanner = new Scanner(inventory);
+			dbScanner.nextLine();
+
+			while (dbScanner.hasNextLine()) {
+				dbRow = dbScanner.nextLine();
+				create(dbRow);
+				rowArray = dbRow.split(",");
+				unique_key = rowArray[2] + "-" + rowArray[3] + "-" + rowArray[0];
+				processed_order = read(unique_key);
+				
+				try {
+					appendCustomerHistory(processed_order);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+
+			dbScanner.close();
+			System.out.println("The orders are processed and appended to history.");
+
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+			System.out.println("Is the data file " + source_file_path + " in the wrong directory?");
+		}
+	}
+
+    /**
+	 * Read existing entry from database.
+	 *
+	 * @param id
+	 *
+	 * @return the entry of the database if found.
+	 */
+	@Override
+	public Order read(String id) {
+		if (OrderDatabase.data_table.containsKey(id)) {
+			return OrderDatabase.data_table.get(id);
+		} else {
+			System.out.println("The order was not found.");
+			return new Order("000,000,000,000,000".split(","));
+		}
+		
+	}
+
+	//	***************************************************************************
+	
+	/**
+	 * 
+	 * @param order
+	 * @throws IOException
+	 */
+	private static void appendCustomerHistory(Order order)
+	throws IOException {
+		String location = "files/customer_history.csv";
+
+		FileWriter writer = new FileWriter(location, true);
+		writer.append(order.toString() + "\n");
+		
+		writer.flush();
+		writer.close();
 
 	}
+
+	@Override
+    public boolean update(Order existing_order) {
+		return (OrderDatabase.data_table.put(existing_order.getProductID(), existing_order) != null);
+	}
+
 }

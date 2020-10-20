@@ -81,6 +81,7 @@ public class Product extends DatabaseEntry {
 			System.out.println(
 				 "We need " + (-quantity) + " more of product " + productID +
 				 " to make the sale...");
+			
 			return false;
 		}
 	}
@@ -99,11 +100,11 @@ public class Product extends DatabaseEntry {
 	
 	public String prettyPrint() {
 		String s =  "Product {" +
-			   "  \n\tproductID = '" + productID + '\'' +
-			   ", \n\tquantity = " + quantity +
-			   ", \n\twholesalePrice = " + wholesalePrice +
-			   ", \n\tsalePrice = " + salePrice +
-			   ", \n\tsellerID = '" + sellerID + '\'' +
+			   "  \n\tproduct id: '" + productID + '\'' +
+			   ", \n\tquantity: " + quantity +
+			   ", \n\twholesale price: " + wholesalePrice +
+			   ", \n\tsale price: " + salePrice +
+			   ", \n\tseller id: '" + sellerID + '\'' +
 			   "\n}";
 		System.out.println(s);
 		return s;

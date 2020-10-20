@@ -12,7 +12,7 @@ public class SupplierEvent {
     private String product_id;
     private int quantity;
     // private String time;
-    private static Database my_database;
+    private static Database<Product> my_database;
     
 
     //Empty Constructor

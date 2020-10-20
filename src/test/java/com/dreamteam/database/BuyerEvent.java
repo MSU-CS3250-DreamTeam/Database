@@ -15,7 +15,7 @@ public class BuyerEvent {
     public String product_id;
     public int quantity;
     public String time;
-    private static Database my_database;
+    private static Database<Product> my_database;
 
     //Empty constructor
     public BuyerEvent() {
@@ -86,7 +86,7 @@ public class BuyerEvent {
         my_database = null;//new Database("inventory_team1.csv");
 
         //CSV file that holds buyer event parameters
-        File file = new File("customer_orders_A_team1.csv");
+        File file = new File("files/customer_orders_A_team1.csv");
         Scanner scanner = new Scanner(file);
 
         //This creates the csv file that the following buyerEvents will be stored into
