@@ -49,7 +49,7 @@ public class main {
 		System.out.println("-------------------------------------------------------------------");
 		
 		// For debugging. Disable in final project.
-		// demo_database(); TODO Remove or revise method.
+		demo_database(); //TODO Remove or revise method.
 		
 		// Call the menu for user to access and modify the database.
 		runMenu();
@@ -61,35 +61,56 @@ public class main {
 	/*A demonstration of how to use the CRUD methods on an active, visible database object.*/
 	private static final void demo_database() {
 		
+		System.out.println("\nTesting the product database.");
+		System.out.println("-----------------------------");
+
 		String existing_product_id = "8XXKZRELM2JJ";
-		String fake_product = "AGEXCVFG3344,3260,370.51,623.94,SASERNVV";
-		Product updated_product = new Product("8XXKZRELM2JJ,25,370.51,623.94,SASERNVV".split(","));
+		String new_product = "AGEXCVFG3344,3260,370.51,623.94,SASERNVV";
+		Product existing_product;
+		Product created_product;
+		// Product updated_product = new Product("AGEXCVFG3344,25,370.51,623.94,SASERNVV".split(","));
 		
-		System.out.print("Retrieving a product. ");
-		product_database.read(existing_product_id);
+		System.out.print("\nRetrieving a product: ");
+		existing_product = product_database.read(existing_product_id);
+		existing_product.prettyPrint();
 		
-		System.out.print("\nRemoving a product. ");
-		product_database.delete(existing_product_id);
+		System.out.print("\nRemoving a product: ");
+		if (product_database.delete(existing_product_id))
+			System.out.println("product removed.");
 		product_database.display();
 		
-		System.out.print("Existing product should not be found: ");
+		System.out.print("\nExisting product should not be found: ");
 		product_database.read(existing_product_id);
 		
-		System.out.print("\nNew product should be found.");
-		product_database.create(fake_product);
+		System.out.print("\nNew product should be found: ");
+		product_database.create(new_product);
 		product_database.display();
-		
-		System.out.print("Retrieving a product. ");
-		product_database.read(fake_product);
-		
-		System.out.print("\nUpdating a product. ");
-		product_database.update(updated_product);
+		created_product = product_database.read(new_product.split(",")[0]);
 		
 		System.out.print("\nRetrieving a product. ");
-		product_database.read(fake_product);
+		product_database.read(created_product.getProductID()).prettyPrint();
+
+		System.out.print("\nBuy quantity of 4000: ");
+		created_product.buyQuantity(4000);
+
+		System.out.print("\nOkay then. I'll buy 2337: ");
+		created_product.buyQuantity(2337);
+
+		System.out.print("\nUpdating product in the product database: ");
+		if (product_database.update(created_product));{
+			product_database.read(created_product.getProductID()).prettyPrint();
+		}
 		
-		System.out.print("\nRemoving fake product. ");
-		product_database.delete(fake_product);
+		System.out.print("\n\nRemoving dummy product: ");
+		if (product_database.delete(created_product.getProductID()))
+			System.out.println("product removed.");
+
+		product_database.create(existing_product);
+
+		System.out.println("\n\n-----------------------------");
+		System.out.println("      Testing complete.      ");
+		System.out.println("-----------------------------\n");
+
 	}
 
 	//	***************************************************************************
@@ -146,6 +167,10 @@ public class main {
 		Product existing_entry;
 		
 		String[] database_header = product_database.get_data_head();
+
+		System.out.println("\n-----------------------------");
+		System.out.println("       Launching Menu        ");
+		System.out.println("-----------------------------\n");
 		
 		do {
 			
@@ -163,18 +188,17 @@ public class main {
 					}
 					product_database.create(new_entry);
 					
-					Product new_product = ((Product) product_database.read(new_entry[0])); // Prints the object address in memory.
+					Product new_product = product_database.read(new_entry[0]); // Prints the object address in memory.
 					new_product.prettyPrint();
-					
+
 					break;
 				
 				case READ:
 					
 					System.out.print("Enter " + database_header[0] + ": ");
-					existing_entry = (Product) product_database.read(sc.nextLine());
+					existing_entry = product_database.read(sc.nextLine());
 					
 					if(existing_entry != null) {
-						System.out.println(existing_entry);
 						existing_entry.prettyPrint();
 					}
 					
@@ -183,7 +207,7 @@ public class main {
 				case UPDATE:
 					
 					System.out.print("Enter existing entry's " + database_header[0] + ": ");
-					existing_entry = (Product) product_database.read(sc.nextLine());
+					existing_entry = product_database.read(sc.nextLine());
 					
 					boolean is_simulation = true;
 					if(is_simulation) {

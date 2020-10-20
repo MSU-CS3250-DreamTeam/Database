@@ -2,18 +2,44 @@ package com.dreamteam.database;
 
 public interface Database<E> {
 
+	// TODO javadoc; methods in the interface don't not require a javadoc where @override is used.
+	/**
+	 * 
+	 * @param new_entry
+	 */
 	public void create(E new_entry);
 	
+	/**
+	 * 
+	 * @param entry_string
+	 */
 	public void create(String[] entry_string);
-		
+	
+	/**
+	 * 
+	 * @param entry_string
+	 */
     public default void create(String entry_string) {
 		create(entry_string.split(","));
 	}
 
+	/**
+	 * 
+	 * @param id
+	 * @return
+	 */
 	public boolean delete(String id);
 	
-	public int get_column_size();
+	/**
+	 * 
+	 * @return
+	 */
+	public default int get_column_size() { return get_data_head().length; }
 	
+	/**
+	 * 
+	 * @return
+	 */
 	public String[] get_data_head();
 	
 	/**
@@ -37,8 +63,7 @@ public interface Database<E> {
 	public boolean update(E existing_entry);
 	
 	/**
-	 * Prints the entire database to console. May want to disable in finished
-	 * project. Also prints the number of current entries in database.
+	 *  Prints the number of current entries in the database.
 	 */
 	public void display();
 

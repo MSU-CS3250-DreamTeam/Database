@@ -2,75 +2,50 @@ package com.dreamteam.database;
 
 public class Product extends DatabaseEntry {
 
-	private String productID;
-	private int quantity;
-	private double salePrice;
-	private String sellerID;
-	private double wholesalePrice;
+	/** Member Variables */
 
-	public Product(String productID, int quantity, double wholesalePrice, double salePrice,
-				 String sellerID) {
-		this.productID = productID;
+	private String product_id;
+	private int quantity;
+	private int capacity;
+	private double wholesale_cost;
+	private double sale_price;
+	private String supplier_id;
+
+	/** Construction */
+
+	public Product(String id, int quantity, double cost, double price,
+				 String seller_id) {
+		this.product_id = id;
 		this.quantity = quantity;
-		this.wholesalePrice = wholesalePrice;
-		this.salePrice = salePrice;
-		this.sellerID = sellerID;
+		this.capacity = quantity;
+		this.wholesale_cost = cost;
+		this.sale_price = price;
+		this.supplier_id = seller_id;
 	}
 
 	public Product(String[] product) {
-		this.productID = product[0];
-		this.quantity = Integer.parseInt(product[1]);
-		this.wholesalePrice = Double.parseDouble(product[2]);
-		this.salePrice = Double.parseDouble(product[3]);
-		this.sellerID = product[4];
+		this(product[0], Integer.parseInt(product[1]), 
+				Double.parseDouble(product[2]), Double.parseDouble(product[3]), product[4]);
 	}
 
+	 /** Getters */
 
-
-	// TODO What is this and why have it?
-	// static Product getProduct(String[] temp, String productID) {
-	// 	int quantity = Integer.parseInt(temp[1]);
-	// 	double wholesalePrice = Double.parseDouble(temp[2]);
-	// 	double salePrice = Double.parseDouble(temp[3]);
-	// 	String supplierID = temp[4];
-	// 	return new Product(productID, quantity, wholesalePrice, salePrice, supplierID);
-	// }
-
-	public String getProductID() { return this.productID; }
+	public String getProductID() { return this.product_id; }
 	
 	public int getQuantity() { return this.quantity; }
 	
-	public double getSalePrice() { return this.salePrice; }
+	public int getCapacity() { return this.capacity; }
+		
+	public double getWholesaleCost() { return this.wholesale_cost; }
 	
-	public String getSellerID() { return this.sellerID; }
+	public double getSalePrice() { return this.sale_price; }
 	
-	public double getWholesalePrice() { return this.wholesalePrice; }
-	
-	// TODO What is this and why have it?
-	// public static Product parse(String[] temp) {
-	// 	String productID = temp[0];
-	// 	return getProduct(temp, productID);
-	// }
-	
-	// TODO Does not the constructor already do this?
-	/** Create a new Entry from a String array. */
-	// public static Product parseProduct(String[] temp) {
-	// 	String productID = temp[0] + "";
-	// 	return getProduct(temp, productID);
-	// }
-	
-	public void setProductID(String productID) {
-		this.productID = productID;
-	}
+	public String getSupplierID() { return this.supplier_id; }
 
-	public boolean supplyQuantity(int increment) {
-		return setQuantity(getQuantity() + increment);
-	}
+	/** Setters */
 	
-	public boolean buyQuantity(int increment) {
-		return setQuantity(getQuantity() - increment);
-	}
-	
+	public void setProductID(String productID) { this.product_id = productID; }
+		
 	private boolean setQuantity(int quantity) {
 		if(quantity >= 0) {
 			this.quantity = quantity;
@@ -79,43 +54,70 @@ public class Product extends DatabaseEntry {
 			return true;
 		} else {
 			System.out.println(
-				 "We need " + (-quantity) + " more of product " + productID +
+				 "We need " + (-quantity) + " more of product " + product_id +
 				 " to make the sale...");
 			
 			return false;
 		}
 	}
+
+	public void setCapacity(int quantity_limit) { this.capacity = quantity_limit; }
+		
+	public void setSalePrice(double salePrice) { this.sale_price = salePrice; }
 	
-	public void setSalePrice(double salePrice) {
-		this.salePrice = salePrice;
+	public void setWholesaleCost(double wholesalePrice) { this.wholesale_cost = wholesalePrice; }
+
+	public void setSupplierID(String sellerID) { this.supplier_id = sellerID; }
+
+	/** Class Methods (Alphabetical Order) */
+	// TODO javadoc of Class Methods.
+	
+	/**
+	 * 
+	 * @param increment
+	 * @return
+	 */
+	public boolean buyQuantity(int increment) {
+		return setQuantity(getQuantity() - increment);
 	}
-	
-	public void setSellerID(String sellerID) {
-		this.sellerID = sellerID;
-	}
-	
-	public void setWholesalePrice(double wholesalePrice) {
-		this.wholesalePrice = wholesalePrice;
-	}
-	
+
+	/**
+	 * 
+	 * @return
+	 */
 	public String prettyPrint() {
-		String s =  "Product {" +
-			   "  \n\tproduct id: '" + productID + '\'' +
-			   ", \n\tquantity: " + quantity +
-			   ", \n\twholesale price: " + wholesalePrice +
-			   ", \n\tsale price: " + salePrice +
-			   ", \n\tseller id: '" + sellerID + '\'' +
-			   "\n}";
+		String regex = ", \n\t\t";
+		String s =  "\nProduct:\t" +
+			   "{ product id:\t\t\"" + product_id + '\'' +
+			   regex + "  quantity:\t\t" + quantity +
+			   regex + "  wholesale cost:\t$" + wholesale_cost +
+			   regex + "  sale price:\t\t$" + sale_price +
+			   regex + "  supplier id:\t\t\"" + supplier_id + '\"' + "\t}\n";
+
 		System.out.println(s);
 		return s;
 	}
 	
+	/**
+	 * 
+	 * @return
+	 */
 	@Override public String toString() {
 		return 
-		 productID + "," +
+		 product_id + "," +
 		 quantity + "," +
-		 wholesalePrice + "," +
-		 salePrice + "," +
-		 sellerID + ",";
+		 wholesale_cost + "," +
+		 sale_price + "," +
+		 supplier_id + ",";
 	}
+
+	/**
+	 * 
+	 * @param increment
+	 * @return
+	 */
+	public boolean supplyQuantity(int increment) {
+		return setQuantity(getQuantity() + increment);
+	}
+
 }

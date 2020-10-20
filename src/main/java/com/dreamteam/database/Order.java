@@ -4,7 +4,8 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class Order extends DatabaseEntry {
-    // class variables
+
+	/** Member Variables */
     private String date;
 	private String process_time;
     private String customer_email;
@@ -14,6 +15,8 @@ public class Order extends DatabaseEntry {
     private int quantity;
     
     private DateTimeFormatter time_formatter = DateTimeFormatter.ofPattern("kk:mm:ss");
+
+    /** Construction */
 
     public Order(String[] order) {
         int index = 0;
@@ -51,16 +54,17 @@ public class Order extends DatabaseEntry {
     
     public String getOrderID() { return this.order_id; }
 
-    // *** Class Methods (Alphabetical Order) */
+    /** Class Methods (Alphabetical Order) */
 
     public String prettyPrint() {
-		String s =  "Order {" +
-			   ", \n\tdate: " + this.date +
-			   ", \n\tcustomer email: " + this.customer_email +
-               ", \n\tcustomer location: '" + this.customer_location + '\'' +
-               ", \n\tproduct id: '" + this.product_id + '\'' +
-			   ", \n\tquantity: " + this.quantity +
-			   "\n}";
+        String regex = ", \n\t";
+		String s =  "Order:\t" +
+			   "{ date:\t\t" + this.date +
+			   regex + "  customer email:\t\t" + this.customer_email +
+               regex + "  customer location:\t\"" + this.customer_location + '\"' +
+               regex + "  product id:\t\t\"" + this.product_id + '\"' +
+               regex + "  quantity:\t\t" + this.quantity + "\t}\n";
+               
 		System.out.println(s);
 		return s;
 	}

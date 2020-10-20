@@ -9,13 +9,13 @@ import java.util.Scanner;
 
 public class OrderDatabase implements Database<Order> {
 	
-	// *** Class Variables */
+	/** Member Variables */
 
 	private static String[] data_head; // The column labels of the data structure.
 	// Position of final entry in data structure minus the header.
 	private static HashMap<String, Order> data_table;
 
-	// *** Construction */
+	/** Construction */
 
 	private static final OrderDatabase ORDERS = new OrderDatabase();
 
@@ -47,24 +47,43 @@ public class OrderDatabase implements Database<Order> {
 		}
 	}
 
+	/** Getters */
+
+	/**
+	 * 
+	 * @return a reference to the OrderDatabase instance.
+	 */
 	public static OrderDatabase getOrders() {
 		return ORDERS;
 	}
 
-	// *** Getters */
-
-	@Override
-	public int get_column_size() { return OrderDatabase.data_head.length; }
-
 	@Override
 	public String[] get_data_head() { return OrderDatabase.data_head; }
 
-	// *** Setters */
+	/** Setters */
 
 	@Override
 	public void set_data_head(String[] labels) { OrderDatabase.data_head = labels; }
 
-	// *** Class Methods (Alphabetical Order) */
+	/** Class Methods (Alphabetical Order) */
+	// TODO javadoc for class methods without @override.
+
+	/**
+	 * 
+	 * @param order
+	 * @throws IOException
+	 */
+	private static void appendCustomerHistory(Order order)
+	throws IOException {
+		String location = "files/customer_history.csv";
+
+		FileWriter writer = new FileWriter(location, true);
+		writer.append(order.toString() + "\n");
+		
+		writer.flush();
+		writer.close();
+
+	}
 
 	@Override
 	public void create(Order new_order) {
@@ -78,13 +97,6 @@ public class OrderDatabase implements Database<Order> {
 		create(new_order);
 	}
 
-	/**
-	 * Delete existing entry from database.
-	 *
-	 * @param id
-	 *
-	 * @return the old Entry if there was one. otherwise, null
-	 */
 	@Override
 	public boolean delete(String id) {
 		boolean isRemoved = false;
@@ -94,20 +106,17 @@ public class OrderDatabase implements Database<Order> {
 		return isRemoved;
     }
 
-    /**
-	 * Prints the entire database to console. May want to disable in finished project.
-	 * Also prints the number of current entries in database.
-	 */
 	@Override
 	public void display() {
 		System.out.println("The orders database has " + OrderDatabase.data_table.size() + " orders.");
 	}
 
-		
-	//	***************************************************************************	
+	//TODO Find the top ten products and customers (by spending) and return
 
-	/**	TODO Find the top ten products and customers (by spending) and return
+	/**
 	 * 
+	 * @param date
+	 * @return a string array of top product's ids to use in reports/etc.
 	 */
 	public String[] findTopProducts(String date) {
 		String[] products = new String[10];
@@ -115,8 +124,11 @@ public class OrderDatabase implements Database<Order> {
 		return products;
 	}
 
-	/**	TODO Find the top ten customers (by spending) and return
+	//TODO Find the top ten customers (by spending) and return
+	/**
 	 * 
+	 * @param date
+	 * @return @return a string array of top customer's ids to use in reports/etc.
 	 */
 	public String[] findTopCustomers(String date) {
 		String[] customers = new String[10];
@@ -124,6 +136,9 @@ public class OrderDatabase implements Database<Order> {
 		return customers;
 	}
 
+	/**
+	 * 
+	 */
 	public void processOrders() {
 
 		String source_file_path = "files/customer_orders_A_team1.csv";
@@ -178,7 +193,7 @@ public class OrderDatabase implements Database<Order> {
 						string_head += value + ",";
 				}
 
-				fWriter.write(string_head);
+				fWriter.write(string_head + '\n');
 				fWriter.close();
 
 			} catch (IOException e1) {
@@ -193,13 +208,6 @@ public class OrderDatabase implements Database<Order> {
 		}
 	}
 
-    /**
-	 * Read existing entry from database.
-	 *
-	 * @param id
-	 *
-	 * @return the entry of the database if found.
-	 */
 	@Override
 	public Order read(String id) {
 		if (OrderDatabase.data_table.containsKey(id)) {
@@ -209,25 +217,6 @@ public class OrderDatabase implements Database<Order> {
 			return new Order("000,000,000,000,000".split(","));
 		}
 		
-	}
-
-	//	***************************************************************************
-	
-	/**
-	 * 
-	 * @param order
-	 * @throws IOException
-	 */
-	private static void appendCustomerHistory(Order order)
-	throws IOException {
-		String location = "files/customer_history.csv";
-
-		FileWriter writer = new FileWriter(location, true);
-		writer.append(order.toString() + "\n");
-		
-		writer.flush();
-		writer.close();
-
 	}
 
 	@Override

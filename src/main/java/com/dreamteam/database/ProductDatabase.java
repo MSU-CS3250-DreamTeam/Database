@@ -9,13 +9,13 @@ import java.util.Iterator;
 
 public class ProductDatabase implements Database<Product> {
 	
-	// *** Class Variables */
+	/** Member Variables */
 
 	private static String[] data_head; // The column labels of the data structure.
 	// Position of final entry in data structure minus the header.
 	private static HashMap<String, Product> data_table;
 
-	// *** Construction */
+	/** Construction */
 
 	private static final ProductDatabase PRODUCTS = new ProductDatabase();
 
@@ -49,29 +49,26 @@ public class ProductDatabase implements Database<Product> {
 
 	}
 
+	/** Getters */
+
+	/**
+	 * 
+	 * @return a reference to the ProductDatabase instance.
+	 */
 	public static ProductDatabase getProducts() {
         return PRODUCTS;
 	}
-
-	// *** Getters */
-
-	@Override
-	public int get_column_size() {
-		return data_head.length;
-	}
 	
-	public String[] get_data_head() {
-		return data_head;
-	}
+	@Override
+	public String[] get_data_head() { return data_head; }
 
-	// *** Setters */
+	/** Setters */
 		
 	@Override
-	public void set_data_head(String[] labels) {
-		data_head = labels;
-	}
+	public void set_data_head(String[] labels) { ProductDatabase.data_head = labels; }
 
-	// *** Class Methods (Alphabetical Order) */
+	/** Class Methods (Alphabetical Order) */
+	// TODO javadoc for class methods without @override.
 
     /**
 	 * Check to see if we can make a sale
@@ -87,11 +84,15 @@ public class ProductDatabase implements Database<Product> {
 		return false;
 	}
 
+	/**
+	 * 
+	 * @param product_id
+	 * @return
+	 */
 	private boolean contains(String product_id) {
 		return ProductDatabase.data_table.containsKey(product_id);
 	}
 	
-    // TODO Tally the sum of product quantities x their wholesale prices and return in countAssets().
 	/**
 	 * 
 	 * @return
@@ -107,7 +108,7 @@ public class ProductDatabase implements Database<Product> {
 		while (it.hasNext()) {
 			HashMap.Entry<String, Product> pair = (HashMap.Entry<String, Product>)it.next();
 			current = (Product) pair.getValue();
-			price = current.getWholesalePrice();
+			price = current.getWholesaleCost();
 			quantity = current.getQuantity();
 			totalAssets += price * quantity;
 			it.remove();
@@ -134,13 +135,6 @@ public class ProductDatabase implements Database<Product> {
 		create(new_product);
 	}
 
-    /**
-	 * Delete existing entry from database.
-	 *
-	 * @param id
-	 *
-	 * @return the old Entry if there was one. otherwise, null
-	 */
 	@Override
 	public boolean delete(String id) {
 		boolean isRemoved = false;
@@ -150,22 +144,11 @@ public class ProductDatabase implements Database<Product> {
 		return isRemoved;
     }
 
-    /**
-	 * Prints the entire database to console. May want to disable in finished project.
-	 * Also prints the number of current entries in database.
-	 */
 	@Override
 	public void display() {
 		System.out.println("The products database has " + ProductDatabase.data_table.size() + " products.");
 	}
 
-    /**
-	 * Read existing entry from database.
-	 *
-	 * @param id
-	 *
-	 * @return the entry of the database if found.
-	 */
 	@Override
 	public Product read(String id) {
 		if (contains(id)) {
@@ -186,35 +169,4 @@ public class ProductDatabase implements Database<Product> {
 		return isUpdated;
 	}
 
-} // EOF
-
-
-	// public static void printDatabase() throws FileNotFoundException {
-	// 	Database db = new Database("inventory_team1.csv");
-	// 	Entry entry = db.get("ULSGKCQO385Y");
-	// 	System.out.println(entry);
-	// 	entry.prettyPrint();
-	// }
-
-	// @Override public String toString() {
-	// 	StringBuilder sb = new StringBuilder();
-	// 	String headers = Arrays.toString(data_head);
-	// 	headers = headers.substring(1, headers.length() -1);
-	// 	sb.append(headers).append("\n");
-	// 	Iterator<Entry> itr = data_table.values().iterator();
-	// 	while(itr.hasNext()) {
-	// 		Entry next = itr.next();
-	// 		if(next == null) {
-	// 			System.out.println("but why???");
-	// 		}
-	// 		sb.append(next).append("\n");
-	// 	}
-	// 	return sb.toString();
-	// }
-
-	// public boolean update(String string) {
-	// 	DatabaseEntry new_entry = read(string);
-	// 	return (data_table.put(new_entry.getProductID(), new_entry) != null);
-	// }
-	
-
+}
