@@ -131,6 +131,8 @@ public class OrderDatabase implements Database<Order> {
 		String unique_key;
 		String dbRow;
 		String[] rowArray;
+		Product existing_product;
+		ProductDatabase products = ProductDatabase.getProducts();
 
 
 		try {
@@ -145,11 +147,22 @@ public class OrderDatabase implements Database<Order> {
 				rowArray = dbRow.split(",");
 				unique_key = rowArray[2] + "-" + rowArray[3] + "-" + rowArray[0];
 				processed_order = read(unique_key);
-				
-				try {
-					appendCustomerHistory(processed_order);
-				} catch (IOException e) {
-					e.printStackTrace();
+
+				existing_product = products.read(processed_order.getProductID());
+
+				if (existing_product.buyQuantity(processed_order.getQuantity())) {
+					if (products.update(existing_product)) {
+						
+						try {
+							appendCustomerHistory(processed_order);
+						} catch (IOException e) {
+							e.printStackTrace();
+							System.out.println(processed_order.getOrderID() + " could not be written to file.");
+						}
+
+					} else {
+						System.out.println(processed_order.getOrderID() + " could not be processed.");
+					}
 				}
 			}
 

@@ -165,6 +165,7 @@ public class main {
 					
 					Product new_product = ((Product) product_database.read(new_entry[0])); // Prints the object address in memory.
 					new_product.prettyPrint();
+					
 					break;
 				
 				case READ:
@@ -177,8 +178,6 @@ public class main {
 						existing_entry.prettyPrint();
 					}
 					
-					//System.out.println(new_database); // Prints the object address in memory.
-					// Retrieves a product and displays it.
 					break;
 				
 				case UPDATE:
@@ -219,22 +218,18 @@ public class main {
 							System.out.print("Enter new entry's " + database_header[i] + ": ");
 							fields[i]  = sc.nextLine();
 						}
-						// Product newEntry = Product.parse(fields);
+						existing_entry = new Product(fields);
 					}
 					
 					product_database.update(existing_entry);
-					existing_entry.prettyPrint(); // Prints the object address in memory.
-					// Updates a product
+					existing_entry.prettyPrint();
 					break;
 				
 				case DELETE:
 					
 					System.out.print("Enter " + database_header[0] + ": ");
 					product_database.delete(sc.nextLine());
-					product_database.display();
-					
-					System.out.println(product_database); // Prints the object address in memory.
-					// Deletes a product
+
 					break;
 				
 				case PROCESS_ORDERS:
@@ -243,7 +238,7 @@ public class main {
 					dailyAssetsReport();
 					dailyTopTenReport(LocalDate.now().toString());
 					
-					System.out.println("The order log is processed.");
+					System.out.println("Simulation processed.");
 					
 					break;
 				
