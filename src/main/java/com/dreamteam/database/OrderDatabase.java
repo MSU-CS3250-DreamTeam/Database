@@ -167,6 +167,24 @@ public class OrderDatabase implements Database<Order> {
 			}
 
 			dbScanner.close();
+
+			try {
+				FileWriter fWriter = new FileWriter(source_file_path, false);
+				
+				String string_head = "";
+
+				for (String value : OrderDatabase.data_head){
+					if (!value.equals("time"))
+						string_head += value + ",";
+				}
+
+				fWriter.write(string_head);
+				fWriter.close();
+
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+
 			System.out.println("The orders are processed and appended to history.");
 
 		} catch (FileNotFoundException e) {
