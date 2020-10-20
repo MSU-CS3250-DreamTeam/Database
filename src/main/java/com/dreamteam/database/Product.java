@@ -47,18 +47,25 @@ public class Product extends DatabaseEntry {
 	public void setProductID(String productID) { this.product_id = productID; }
 		
 	private boolean setQuantity(int quantity) {
+
 		if(quantity >= 0) {
 			this.quantity = quantity;
-			System.out
-				 .println("Product quantity after purchase: " + quantity + "\n");
-			return true;
+			System.out.println("Product quantity after transaction: " + quantity + ".");
+		
 		} else {
-			System.out.println(
-				 "We need " + (-quantity) + " more of product " + product_id +
-				 " to make the sale...");
+			int attempted_quantity = getQuantity() - quantity;
+
+			System.out.print("\n\t\tYou attempted to purchase " + attempted_quantity + ". " +
+								"\n\t\tWe need " + (-quantity) + " more of product " + product_id +
+								" to make the sale, so we are restocking the product now.");
 			
-			return false;
+			if (restock()) {
+				System.out.print("\t\tSuccess. ");
+				buyQuantity(attempted_quantity);
+			}
 		}
+
+		return getQuantity() == quantity;
 	}
 
 	public void setCapacity(int quantity_limit) { this.capacity = quantity_limit; }
@@ -78,6 +85,7 @@ public class Product extends DatabaseEntry {
 	 * @return
 	 */
 	public boolean buyQuantity(int increment) {
+		System.out.print("Buy Transaction: ");
 		return setQuantity(getQuantity() - increment);
 	}
 
@@ -97,6 +105,25 @@ public class Product extends DatabaseEntry {
 		System.out.println(s);
 		return s;
 	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	private boolean restock() {
+		System.out.print("\n\t\tRestock ");
+		return supplyQuantity(getCapacity());
+	}
+	
+	/**
+	 * 
+	 * @param increment
+	 * @return
+	 */
+	public boolean supplyQuantity(int increment) {
+		System.out.print("Supply Transaction: ");
+		return setQuantity(getQuantity() + increment);
+	}
 	
 	/**
 	 * 
@@ -109,15 +136,6 @@ public class Product extends DatabaseEntry {
 		 wholesale_cost + "," +
 		 sale_price + "," +
 		 supplier_id + ",";
-	}
-
-	/**
-	 * 
-	 * @param increment
-	 * @return
-	 */
-	public boolean supplyQuantity(int increment) {
-		return setQuantity(getQuantity() + increment);
 	}
 
 }

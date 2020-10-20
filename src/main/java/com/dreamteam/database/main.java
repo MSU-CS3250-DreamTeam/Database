@@ -12,7 +12,6 @@ import java.util.Scanner;
  */
 public class main {
 	// Variable Declarations
-	static private final String SPREAD_SHEET = "files/inventory_team1.csv";
 	static private final ProductDatabase product_database = ProductDatabase.getProducts();
 	static private final OrderDatabase order_database = OrderDatabase.getOrders();
 	public static Scanner sc = new Scanner(System.in);
@@ -93,9 +92,6 @@ public class main {
 		System.out.print("\nBuy quantity of 4000: ");
 		created_product.buyQuantity(4000);
 
-		System.out.print("\nOkay then. I'll buy 2337: ");
-		created_product.buyQuantity(2337);
-
 		System.out.print("\nUpdating product in the product database: ");
 		if (product_database.update(created_product));{
 			product_database.read(created_product.getProductID()).prettyPrint();
@@ -104,6 +100,7 @@ public class main {
 		System.out.print("\n\nRemoving dummy product: ");
 		if (product_database.delete(created_product.getProductID()))
 			System.out.println("product removed.");
+		product_database.display();
 
 		product_database.create(existing_product);
 
