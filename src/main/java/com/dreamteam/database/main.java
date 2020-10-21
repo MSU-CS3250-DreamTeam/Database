@@ -1,6 +1,5 @@
 package com.dreamteam.database;
 
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDate;
@@ -40,7 +39,7 @@ public class main {
 	 *
 	 * @throws FileNotFoundException
 	 */
-	static public void main(String[] args) throws FileNotFoundException {
+	static public void main(String[] args) {
 		
 		// Welcome to DreamTeam DataBase
 		System.out.println("-------------------------------------------------------------------");

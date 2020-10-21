@@ -111,16 +111,28 @@ public class OrderDatabase implements Database<Order> {
 		System.out.println("The orders database has " + OrderDatabase.data_table.size() + " orders.");
 	}
 
-	//TODO Find the top ten products and customers (by spending) and return
+	// TODO Find matching orders by date and put in the returning hashmap.
+	/**
+	 * 
+	 * @param date
+	 * @return
+	 */
+	private HashMap<String,Order> findDailyOrders(String date) {
+		HashMap<String,Order> orders = new HashMap<>(); // orders<order_id, order>
 
+		return orders;
+	} 
+
+	//TODO Find the top ten products and customers (by spending) and return
 	/**
 	 * 
 	 * @param date
 	 * @return a string array of top product's ids to use in reports/etc.
 	 */
-	public String[] findTopProducts(String date) {
-		String[] products = new String[10];
-
+	public Order[] findTopProducts(String date) {
+		Order[] products = new Order[10];
+		HashMap<String,Order> date_orders = findDailyOrders(date);
+		
 		return products;
 	}
 
@@ -130,8 +142,9 @@ public class OrderDatabase implements Database<Order> {
 	 * @param date
 	 * @return @return a string array of top customer's ids to use in reports/etc.
 	 */
-	public String[] findTopCustomers(String date) {
-		String[] customers = new String[10];
+	public Order[] findTopCustomers(String date) {
+		Order[] customers = new Order[10];
+		HashMap<String,Order> date_orders = findDailyOrders(date);
 
 		return customers;
 	}
