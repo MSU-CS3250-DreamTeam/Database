@@ -9,13 +9,13 @@ import org.junit.jupiter.api.BeforeAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DatabaseTest {
-  private static final String SPREAD_SHEET = "files/inventory_team1.csv";
-  private static Database new_database;
+  // private static final String SPREAD_SHEET = "files/inventory_team1.csv";
+  private static ProductDatabase new_database = ProductDatabase.getProducts();
   private static Product product_entry;
 
   @BeforeAll static void setup() throws FileNotFoundException {
 
-    new_database = new Database(SPREAD_SHEET);
+    new_database = null;//new Database<Product>(SPREAD_SHEET);
 
   }
 
@@ -36,9 +36,9 @@ public class DatabaseTest {
         };
 
         try {
-          product_entry = new_database.read(entry_row[0]);
+          product_entry = (Product) new_database.read(entry_row[0]);
           quantity = Integer.parseInt(entry_row[1]) + product_entry.getQuantity();
-          new_database.read(entry_row[0]).buyQuantity(Integer.parseInt(entry_row[1]));
+          ((Product) new_database.read(entry_row[0])).buyQuantity(Integer.parseInt(entry_row[1]));
           System.out.println("Updated Database Successfully"); // Executes if purchase is successful!
         } catch(NumberFormatException ex) {
           System.err.println(ex.getMessage());
@@ -74,18 +74,18 @@ public class DatabaseTest {
         };
 
         try {
-          product_entry = new_database.read(entry_row[0]);
+          product_entry = (Product) new_database.read(entry_row[0]);
           quantity = Integer.parseInt(entry_row[1]) + product_entry.getQuantity();
-          new_database.read(entry_row[0]).supplyQuantity(Integer.parseInt(entry_row[1]));
+          ((Product) new_database.read(entry_row[0])).supplyQuantity(Integer.parseInt(entry_row[1]));
           System.out.println("Updated Database Successfully"); // Executes if purchase is successful!
         } catch(NumberFormatException ex) {
           System.err.println(ex.getMessage());
           new_database.create(entry_row);
-          quantity = new_database.read(data_row[0]).getQuantity();
+          quantity = ((Product) new_database.read(data_row[0])).getQuantity();
         }
         
 
-        assertEquals(Integer.toString(quantity), new_database.read(entry_row[0]).getQuantity());
+        assertEquals(Integer.toString(quantity), ((Product) new_database.read(entry_row[0])).getQuantity());
 
       }
 

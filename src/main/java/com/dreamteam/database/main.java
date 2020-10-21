@@ -1,6 +1,5 @@
 package com.dreamteam.database;
 
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDate;
@@ -12,9 +11,8 @@ import java.util.Scanner;
  */
 public class main {
 	// Variable Declarations
-	static private final String SPREAD_SHEET = "files/inventory_team1.csv";
-	static private Database product_database;
-	static private Database order_database;
+	static private final ProductDatabase product_database = ProductDatabase.getProducts();
+	static private final OrderDatabase order_database = OrderDatabase.getOrders();
 	public static Scanner sc = new Scanner(System.in);
 	
 	// Menu Option Structure: order of options is the order displayed in the menu.
@@ -34,41 +32,81 @@ public class main {
 		
 		public int getValue() { return value; }
 	}
+	//	***************************************************************************
+	
+	/**
+	 * @param args
+	 *
+	 * @throws FileNotFoundException
+	 */
+	static public void main(String[] args) {
+		
+		// Welcome to DreamTeam DataBase
+		System.out.println("-------------------------------------------------------------------");
+		System.out.println("               Welcome to DreamTeam DataBase                       ");
+		System.out.println("-------------------------------------------------------------------");
+		
+		// For debugging. Disable in final project.
+		demo_database(); //TODO Remove or revise method.
+		
+		// Call the menu for user to access and modify the database.
+		runMenu();
+
+	} // End main method.
 		
 	//	***************************************************************************
 
 	/*A demonstration of how to use the CRUD methods on an active, visible database object.*/
 	private static final void demo_database() {
 		
+		System.out.println("\nTesting the product database.");
+		System.out.println("-----------------------------");
+
 		String existing_product_id = "8XXKZRELM2JJ";
-		String fake_product = "AGEXCVFG3344,3260,370.51,623.94,SASERNVV";
-		String updated_product = "8XXKZRELM2JJ,25,370.51,623.94,SASERNVV";
+		String new_product = "AGEXCVFG3344,3260,370.51,623.94,SASERNVV";
+		Product existing_product;
+		Product created_product;
+		// Product updated_product = new Product("AGEXCVFG3344,25,370.51,623.94,SASERNVV".split(","));
 		
-		System.out.print("Retrieving a product. ");
-		product_database.read(existing_product_id);
+		System.out.print("\nRetrieving a product: ");
+		existing_product = product_database.read(existing_product_id);
+		existing_product.prettyPrint();
 		
-		System.out.print("\nRemoving a product. ");
-		product_database.delete(existing_product_id);
+		System.out.print("\nRemoving a product: ");
+		if (product_database.delete(existing_product_id))
+			System.out.println("product removed.");
 		product_database.display();
 		
-		System.out.print("Existing product should not be found: ");
+		System.out.print("\nExisting product should not be found: ");
 		product_database.read(existing_product_id);
 		
-		System.out.print("\nNew product should be found.");
-		product_database.create(fake_product);
+		System.out.print("\nNew product should be found: ");
+		product_database.create(new_product);
 		product_database.display();
-		
-		System.out.print("Retrieving a product. ");
-		product_database.read(fake_product);
-		
-		System.out.print("\nUpdating a product. ");
-		product_database.update(updated_product);
+		created_product = product_database.read(new_product.split(",")[0]);
 		
 		System.out.print("\nRetrieving a product. ");
-		product_database.read(fake_product);
+		product_database.read(created_product.getProductID()).prettyPrint();
+
+		System.out.print("\nBuy quantity of 4000: ");
+		created_product.buyQuantity(4000);
+
+		System.out.print("\nUpdating product in the product database: ");
+		if (product_database.update(created_product));{
+			product_database.read(created_product.getProductID()).prettyPrint();
+		}
 		
-		System.out.print("\nRemoving fake product. ");
-		product_database.delete(fake_product);
+		System.out.print("\n\nRemoving dummy product: ");
+		if (product_database.delete(created_product.getProductID()))
+			System.out.println("product removed.");
+		product_database.display();
+
+		product_database.create(existing_product);
+
+		System.out.println("\n\n-----------------------------");
+		System.out.println("      Testing complete.      ");
+		System.out.println("-----------------------------\n");
+
 	}
 
 	//	***************************************************************************
@@ -82,7 +120,6 @@ public class main {
 		
 		// Local Variable Declarations
 		int user_input;
-		int index;
 		
 		while(true) {
 			
@@ -115,45 +152,26 @@ public class main {
 	//	***************************************************************************
 	
 	/**
-	 * @param args
-	 *
-	 * @throws FileNotFoundException
-	 */
-	static public void main(String[] args) throws FileNotFoundException {
-		
-		// Welcome to DreamTeam DataBase
-		System.out.println("-------------------------------------------------------------------");
-		System.out.println("               Welcome to DreamTeam DataBase                       ");
-		System.out.println("-------------------------------------------------------------------");
-
-		// Initializes the database to the spreadsheet's columns.
-		product_database = new Database(SPREAD_SHEET);
-		
-		// For debugging. Disable in final project.
-		demo_database();
-		
-		// Call the menu for user to access and modify the database.
-		runMenu();
-
-	} // End main method.
-	
-	//	***************************************************************************
-	
-	/**
 	 * Loops through the options of a menu for the user to access and modify the database.
 	 */
 	public static void runMenu() {
 		
 		// Local Variable Declarations
 		Options user_choice;
-		String[] database_header = new String[product_database.get_column_size()];
+		// String[] database_header = new String[product_database.get_column_size()];
 		String[] new_entry = new String[product_database.get_column_size()];
 		Product existing_entry;
 		
-		database_header = product_database.get_data_head();
+		String[] database_header = product_database.get_data_head();
+
+		System.out.println("\n-----------------------------");
+		System.out.println("       Launching Menu        ");
+		System.out.println("-----------------------------\n");
 		
 		do {
 			
+			product_database.display();
+			order_database.display();
 			user_choice = getOption();
 			
 			switch(user_choice) {
@@ -164,10 +182,11 @@ public class main {
 						System.out.print("Enter " + database_header[i] + ": ");
 						new_entry[i] = sc.nextLine();
 					}
-					Product record = product_database.create(new_entry);
+					product_database.create(new_entry);
 					
-					record.prettyPrint(); // Prints the object address in memory.
-					// Adds a new product.
+					Product new_product = product_database.read(new_entry[0]); // Prints the object address in memory.
+					new_product.prettyPrint();
+
 					break;
 				
 				case READ:
@@ -176,12 +195,9 @@ public class main {
 					existing_entry = product_database.read(sc.nextLine());
 					
 					if(existing_entry != null) {
-						System.out.println(existing_entry);
 						existing_entry.prettyPrint();
 					}
 					
-					//System.out.println(new_database); // Prints the object address in memory.
-					// Retrieves a product and displays it.
 					break;
 				
 				case UPDATE:
@@ -222,30 +238,27 @@ public class main {
 							System.out.print("Enter new entry's " + database_header[i] + ": ");
 							fields[i]  = sc.nextLine();
 						}
-						Product newEntry = Product.parse(fields);
+						existing_entry = new Product(fields);
 					}
 					
 					product_database.update(existing_entry);
-					existing_entry.prettyPrint(); // Prints the object address in memory.
-					// Updates a product
+					existing_entry.prettyPrint();
 					break;
 				
 				case DELETE:
 					
 					System.out.print("Enter " + database_header[0] + ": ");
 					product_database.delete(sc.nextLine());
-					product_database.display();
-					
-					System.out.println(product_database); // Prints the object address in memory.
-					// Deletes a product
+
 					break;
 				
 				case PROCESS_ORDERS:
-					// TODO Process orders.
+					order_database.processOrders();
+
 					dailyAssetsReport();
-					dailyTopTenReport();
-					System.out.println(product_database); // Prints the object address in memory.
-					System.out.println("The selected option exists, but is not implemented yet.");
+					dailyTopTenReport(LocalDate.now().toString());
+					
+					System.out.println("Simulation processed.");
 					
 					break;
 				
@@ -278,11 +291,10 @@ public class main {
 	/**	TODO Write the top ten products and customers (by spending) to a daily report file
 	 * 
 	 */
-	private static void dailyTopTenReport() {
-
+	private static void dailyTopTenReport(String date) {
+		order_database.findTopCustomers(date);
+		order_database.findTopProducts(date);
 	}
-		
-
 
 	//	***************************************************************************
 	
@@ -295,7 +307,7 @@ public class main {
 	 */
 	private static void updateCustomerHistory(String customer, String date, String time)
 	throws IOException {
-		String location = "files/customer_history.csv";
+		String location = "files/supplier_history.csv";
 		
 		try {
 			FileWriter writer = new FileWriter(location, true);
