@@ -122,6 +122,7 @@ public class Product extends DatabaseEntry {
 	 */
 	public boolean supplyQuantity(int increment) {
 		System.out.print("Supply Transaction: ");
+		ProductDatabase.getProducts().appendSupplierHistory(this, increment);
 		return setQuantity(getQuantity() + increment);
 	}
 	
