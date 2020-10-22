@@ -1,7 +1,9 @@
 package com.dreamteam.database;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Scanner;
@@ -251,8 +253,8 @@ public class main {
 				case PROCESS_ORDERS:
 					order_database.processOrders();
 
-					dailyAssetsReport();
-					dailyTopTenReport(LocalDate.now().toString());
+					dailyAssetsReport("2020-01-23");
+					dailyTopTenReport("2020-01-23");
 					
 					System.out.println("Simulation processed.");
 					
@@ -278,9 +280,26 @@ public class main {
 	/** TODO Write the networth of all assets to a daily report file.
 	 * 
 	 */
-	private static void dailyAssetsReport() {
+	
+	private static void dailyAssetsReport(String date) {
 		product_database.countAssets();
+		order_database.findDailyOrders(date);
+		NumberFormat formatter = NumberFormat.getCurrencyInstance(); //to format the print statements in dollar form
+
+		File myObj = new File("files\\dailyreport_" + date + ".txt");	
+		FileWriter myWriter;
+		try {
+			myWriter = new FileWriter("files\\dailyreport_" + date + ".txt");
+			myWriter.write("The company's total value in assets for "  + date + " is " + formatter.format(product_database.countAssets()) + "\n");
+			myWriter.write("The total number of customer orders for "  + date + " is " + order_database.findDailyOrders(date).toString() + "\n");
+			myWriter.write("The total dollar amount of all orders for "  + date + " is " + formatter.format(order_database.countSales(date)) + "\n");
+			myWriter.close();
+			System.out.println("Successfully wrote to the file."); 
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
+
 	
 	//	***************************************************************************	
 
