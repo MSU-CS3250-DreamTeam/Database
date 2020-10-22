@@ -47,7 +47,7 @@ public class main {
 		System.out.println("-------------------------------------------------------------------");
 		
 		// For debugging. Disable in final project.
-		demo_database(); //TODO Remove or revise method.
+		demo_database();
 		
 		// Call the menu for user to access and modify the database.
 		runMenu();
@@ -91,10 +91,8 @@ public class main {
 		System.out.print("\nBuy quantity of 4000: ");
 		created_product.buyQuantity(4000);
 
-		System.out.print("\nUpdating product in the product database: ");
-		if (product_database.update(created_product));{
-			product_database.read(created_product.getProductID()).prettyPrint();
-		}
+		System.out.print("\nRetrieving updated product in the product database: ");
+		product_database.read(created_product.getProductID()).prettyPrint();
 		
 		System.out.print("\n\nRemoving dummy product: ");
 		if (product_database.delete(created_product.getProductID()))
