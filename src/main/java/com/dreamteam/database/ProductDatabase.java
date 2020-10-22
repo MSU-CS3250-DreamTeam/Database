@@ -110,7 +110,7 @@ public class ProductDatabase implements Database<Product> {
 		int quantity;
 
 		while (it.hasNext()) {
-			HashMap.Entry<String, Product> pair = (HashMap.Entry<String, Product>) it.next();
+			HashMap.Entry<String, Product> pair = (HashMap.Entry<String, Product>)it.next();
 			current = (Product) pair.getValue();
 			price = current.getWholesaleCost();
 			quantity = current.getQuantity();
@@ -123,7 +123,8 @@ public class ProductDatabase implements Database<Product> {
 		System.out.println("The company's total assets are: " + formatter.format(totalAssets));
 		return totalAssets;
 	}
-
+	
+	
 	@Override
 	public void create(Product new_product) {
 		if (!contains(new_product.getProductID())) {

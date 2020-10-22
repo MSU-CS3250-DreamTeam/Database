@@ -4,6 +4,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.*;
+import java.nio.file.Paths;
+import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.Scanner;
 
@@ -84,6 +87,15 @@ public class OrderDatabase implements Database<Order> {
 
 	}
 
+	public static double countSales(String date) {
+		 //INCOMPLETE - unsure of how to implement
+		double totalSales = 0.00;
+		NumberFormat formatter = NumberFormat.getCurrencyInstance();
+		System.out.println("The company's total assets are: " +  formatter.format(totalSales));
+		return totalSales;
+	}
+	
+	
 	@Override
 	public void create(Order new_order) {
 		String unique_key = new_order.getOrderID();
@@ -116,7 +128,7 @@ public class OrderDatabase implements Database<Order> {
 	 * @param date
 	 * @return
 	 */
-	private HashMap<String,Order> findDailyOrders(String date) {
+	public HashMap<String,Order> findDailyOrders(String date) {
 		HashMap<String,Order> orders = new HashMap<>(); // orders<order_id, order>
 
 		return orders;
