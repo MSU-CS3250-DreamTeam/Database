@@ -85,7 +85,7 @@ public class Product extends DatabaseEntry {
 	 * @return
 	 */
 	public boolean buyQuantity(int increment) {
-		System.out.print("Buy Transaction: ");
+		System.out.print("Buy Transaction of " + increment + ". ");
 		return setQuantity(getQuantity() - increment);
 	}
 
@@ -121,7 +121,7 @@ public class Product extends DatabaseEntry {
 	 * @return
 	 */
 	public boolean supplyQuantity(int increment) {
-		System.out.print("Supply Transaction: ");
+		System.out.print("Supply Transaction of " + increment + ". ");
 		ProductDatabase.getProducts().appendSupplierHistory(this, increment);
 		return setQuantity(getQuantity() + increment);
 	}
