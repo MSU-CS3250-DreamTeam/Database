@@ -12,7 +12,6 @@ public class OrderDatabase implements Database<Order> {
 	/** Member Variables */
 
 	private static String[] data_head; // The column labels of the data structure.
-	// Position of final entry in data structure minus the header.
 	private static HashMap<String, Order> data_table;
 
 	/** Construction */

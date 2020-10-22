@@ -15,7 +15,6 @@ public class ProductDatabase implements Database<Product> {
 	/** Member Variables */
 
 	private static String[] data_head; // The column labels of the data structure.
-	// Position of final entry in data structure minus the header.
 	private static HashMap<String, Product> data_table;
 
 	/** Construction */
