@@ -5,27 +5,52 @@ import java.io.FileNotFoundException;
 import java.util.Scanner;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInfo;
+import org.junit.jupiter.api.TestReporter;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DatabaseTest {
-  // private static final String SPREAD_SHEET = "files/inventory_team1.csv";
-  private static ProductDatabase new_database = ProductDatabase.getProducts();
-  private static Product product_entry;
+  
+  private static ProductDatabase product_database;
 
-  @BeforeAll static void setup() throws FileNotFoundException {
-
-    new_database = null;//new Database<Product>(SPREAD_SHEET);
-
+  @BeforeAll public static void setup() {
+    product_database = ProductDatabase.getProducts();
   }
 
-  @Test void buyTest() throws FileNotFoundException {
-    File new_file = new File("files/buyer_event.csv");
+  
+  @AfterAll public static void end(TestInfo testInfo) {
+    // System.out.print(testInfo);
+  }
+
+  @Test void buyTest(TestReporter reporter) throws FileNotFoundException {
+    try {
+      executeTransactions("files/buyer_event.csv", -1, reporter);
+    } catch (FileNotFoundException e) {
+      System.err.println(e);
+    }
+  }
+
+  @Test void supplyTest(TestReporter reporter) {
+    try {
+      executeTransactions("files/supplier_event.csv", 1, reporter);
+    } catch (FileNotFoundException e) {
+      System.err.println(e);
+    }
+  }
+
+  private void executeTransactions(String file_path, int math_sign, TestReporter reporter) throws FileNotFoundException {
+    
+    File existing_file = new File(file_path);
     int quantity = 0;
+    Product product;
+    Product product_entry;
 
-    if (new_file.exists()) {
+    if (existing_file.exists()) {
 
-      Scanner data_input = new Scanner(new_file);
+      Scanner data_input = new Scanner(existing_file);
       data_input.nextLine(); // Return and throw away column headers of file.
 
       while (data_input.hasNextLine()) {
@@ -36,65 +61,35 @@ public class DatabaseTest {
         };
 
         try {
-          product_entry = (Product) new_database.read(entry_row[0]);
-          quantity = Integer.parseInt(entry_row[1]) + product_entry.getQuantity();
-          ((Product) new_database.read(entry_row[0])).buyQuantity(Integer.parseInt(entry_row[1]));
+          product_entry = product_database.read(entry_row[0]);
+          quantity = product_entry.getQuantity() + math_sign * Integer.parseInt(entry_row[1]);
+          product = product_database.read(entry_row[0]);
+
+          if (math_sign > 0) {
+            product.supplyQuantity(Integer.parseInt(entry_row[1]));
+          } else {
+            product.buyQuantity(Integer.parseInt(entry_row[1]));
+          }
+
           System.out.println("Updated Database Successfully"); // Executes if purchase is successful!
         } catch(NumberFormatException ex) {
           System.err.println(ex.getMessage());
-          new_database.create(entry_row);
-          quantity = new_database.read(data_row[0]).getQuantity();
+          product_database.create(entry_row);
+          product = product_database.read(data_row[0]);
+          quantity = product.getQuantity();
         }
 
-        assertEquals(Integer.toString(quantity), new_database.read(entry_row[0]).getQuantity());
+        assertEquals(quantity, product_database.read(entry_row[0]).getQuantity());
+        reporter.publishEntry(product.getProductID() + "'s transaction passed:" 
+                    + quantity + " = " + product.getQuantity());
 
       }
 
       data_input.close();
 
     } else {
-        throw new FileNotFoundException("Is the data file in the wrong directory?");
+        throw new FileNotFoundException("Is the data file in the wrong directory:" + file_path);
     }
-  }
-
-  @Test void supplyTest() throws FileNotFoundException {
-    File new_file = new File("files/supplier_event.csv");
-    int quantity = 0;
-
-    if (new_file.exists()) {
-
-      Scanner data_input = new Scanner(new_file);
-      data_input.nextLine(); // Return and throw away column headers of file.
-
-      while (data_input.hasNextLine()) {
-
-        String[] data_row = data_input.nextLine().split(",");
-        String[] entry_row = new String[]{
-                data_row[2],data_row[3]
-        };
-
-        try {
-          product_entry = (Product) new_database.read(entry_row[0]);
-          quantity = Integer.parseInt(entry_row[1]) + product_entry.getQuantity();
-          ((Product) new_database.read(entry_row[0])).supplyQuantity(Integer.parseInt(entry_row[1]));
-          System.out.println("Updated Database Successfully"); // Executes if purchase is successful!
-        } catch(NumberFormatException ex) {
-          System.err.println(ex.getMessage());
-          new_database.create(entry_row);
-          quantity = ((Product) new_database.read(data_row[0])).getQuantity();
-        }
-        
-
-        assertEquals(Integer.toString(quantity), ((Product) new_database.read(entry_row[0])).getQuantity());
-
-      }
-
-      data_input.close();
-
-    } else {
-        throw new FileNotFoundException("Is the data file in the wrong directory?");
-    }
-      
   }
   
 }

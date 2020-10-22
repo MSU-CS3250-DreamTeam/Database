@@ -2,7 +2,7 @@ package com.dreamteam.database;
 
 public interface Database<E> {
 
-	// TODO javadoc; methods in the interface don't not require a javadoc where @override is used.
+	// TODO javadoc; methods in the interface do not require a javadoc where @override is used.
 	/**
 	 * 
 	 * @param new_entry
