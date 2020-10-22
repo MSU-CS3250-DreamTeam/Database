@@ -209,7 +209,6 @@ public class main {
 						System.out.println("Are you buying? y/n");
 						Boolean isBuyer = (("y".equals(sc.nextLine())) ? true : false);
 						
-						// new_entry = existing_entry;
 						System.out.print("Enter the desired quantity: ");
 						int requestQuantity = Integer.parseInt(sc.nextLine());
 						
@@ -239,7 +238,6 @@ public class main {
 						existing_entry = new Product(fields);
 					}
 					
-					product_database.update(existing_entry);
 					existing_entry.prettyPrint();
 					break;
 				
