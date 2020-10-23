@@ -4,8 +4,8 @@ target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
-customer_orders_A_team1.csv
-customer_history.csv
+files/customer_orders_A_team1.csv
+files/customer_history.csv
 files/reports/
 
 ### STS ###
@@ -22,6 +22,7 @@ files/reports/
 *.iws
 *.iml
 *.ipr
+*.DS_Store
 
 ### NetBeans ###
 /nbproject/private/
