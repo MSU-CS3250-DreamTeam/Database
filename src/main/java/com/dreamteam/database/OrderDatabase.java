@@ -86,15 +86,15 @@ public class OrderDatabase implements Database<Order> {
 		writer.close();
 	}
 
-	public static int countDailyOrders(HashMap<String,Order> database) { //
-		return database.size();
+	public static int countDailyOrders(String date) {
+		return findDailyOrders(date).size();
 	}
 
 	public static double countSales(String date) {
 		ProductDatabase product_database = ProductDatabase.getProducts();
 		NumberFormat formatter = NumberFormat.getCurrencyInstance();
 
-		Iterator<HashMap.Entry<String,Order>> it = OrderDatabase.findDailyOrders(date).entrySet().iterator();
+		Iterator<HashMap.Entry<String,Order>> it = findDailyOrders(date).entrySet().iterator();
 
 		double totalSales = 0.00;
 		Order current;
@@ -111,7 +111,7 @@ public class OrderDatabase implements Database<Order> {
 			totalSales += price * quantity;
 		}
 
-		System.out.println("The company's total assets are: " + formatter.format(totalSales));
+		System.out.println("The company's total sale for " + date + " are: " + formatter.format(totalSales));
 		return totalSales;
 	}
 

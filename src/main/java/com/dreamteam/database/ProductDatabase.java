@@ -110,8 +110,8 @@ public class ProductDatabase implements Database<Product> {
 		int quantity;
 
 		while (it.hasNext()) {
-			HashMap.Entry<String, Product> pair = (HashMap.Entry<String, Product>)it.next();
-			current = (Product) pair.getValue();
+			HashMap.Entry<String, Product> pair = it.next();
+			current = pair.getValue();
 			price = current.getWholesaleCost();
 			quantity = current.getQuantity();
 			totalAssets += price * quantity;

@@ -314,7 +314,7 @@ public class main {
 		try {
 			FileWriter myWriter = new FileWriter("files\\dailyreport_" + date + ".txt");
 			myWriter.write("The company's total value in assets for "  + date + " is " + formatter.format(product_database.countAssets()) + "\n");
-			myWriter.write("The total number of customer orders for "  + date + " is " + OrderDatabase.countDailyOrders(order_database.findDailyOrders(date)) + "\n");
+			myWriter.write("The total number of customer orders for "  + date + " is " + OrderDatabase.countDailyOrders(date) + "\n");
 			myWriter.write("The total dollar amount of all orders for "  + date + " is " + formatter.format(OrderDatabase.countSales(date)) + "\n");
 			myWriter.close();
 			System.out.println("Successfully wrote to the file.");
