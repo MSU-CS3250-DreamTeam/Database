@@ -147,9 +147,14 @@ public class OrderDatabase implements Database<Order> {
 	 * @param date
 	 * @return
 	 */
-	public static HashMap<String,Order> findDailyOrders(String date) {
-		HashMap<String,Order> orders = new HashMap<>(); // orders<order_id, order>
 
+	public static HashMap<String,Order> findDailyOrders(String date) {
+
+		HashMap<String,Order> orders = new HashMap<>(); // orders<order_id, order>
+		for (Order order:data_table.values()) {
+			if (order.getDate().equals(date))
+				orders.put(order.getOrderID(), order);
+		} 
 		return orders;
 	} 
 

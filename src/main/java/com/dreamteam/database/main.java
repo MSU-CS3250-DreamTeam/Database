@@ -1,5 +1,6 @@
 package com.dreamteam.database;
 
+
 import java.io.*;
 import java.time.*;
 import java.io.File;
@@ -215,7 +216,6 @@ public class main {
 						System.out.println("Are you buying? y/n");
 						Boolean isBuyer = (("y".equals(sc.nextLine())) ? true : false);
 						
-						// new_entry = existing_entry;
 						System.out.print("Enter the desired quantity: ");
 						int requestQuantity = Integer.parseInt(sc.nextLine());
 						
@@ -245,7 +245,6 @@ public class main {
 						existing_entry = new Product(fields);
 					}
 					
-					product_database.update(existing_entry);
 					existing_entry.prettyPrint();
 					break;
 				
@@ -258,6 +257,9 @@ public class main {
 				
 				case PROCESS_ORDERS:
 					order_database.processOrders();
+
+					dailyAssetsReport("2020-01-23");
+					dailyTopTenReport("2020-01-23");
 
 					System.out.println("Simulation processed.");
 					
@@ -295,6 +297,7 @@ public class main {
 	/** TODO Write the networth of all assets to a daily report file.
 	 * 
 	 */
+
 	public static void dailyAssetsReport(String date) {  //prints out report to console and txt file with assets in product_database and customer orders and sales in order_database
 		NumberFormat formatter = NumberFormat.getCurrencyInstance(); //to format the print statements in dollar form
 		try {
@@ -320,6 +323,7 @@ public class main {
 			e.printStackTrace();
 		}
 	}
+
 	
 	//	***************************************************************************	
 
