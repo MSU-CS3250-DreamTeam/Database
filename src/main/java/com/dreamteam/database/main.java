@@ -1,7 +1,12 @@
 package com.dreamteam.database;
 
+import java.io.*;
+import java.time.*;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Scanner;
@@ -22,7 +27,8 @@ public class main {
 		UPDATE(3),
 		DELETE(4),
 		PROCESS_ORDERS(5),
-		QUIT(6);
+		REPORTS(6),
+		QUIT(7);
 		
 		private Options(int v) {
 			this.value = v;
@@ -253,11 +259,20 @@ public class main {
 				case PROCESS_ORDERS:
 					order_database.processOrders();
 
-					dailyAssetsReport();
-					dailyTopTenReport(LocalDate.now().toString());
-					
 					System.out.println("Simulation processed.");
 					
+					break;
+
+				case REPORTS:
+
+					System.out.println("For which date would you like reports?");
+					String date = sc.nextLine();
+
+					System.out.println("Reports generating...");
+
+					dailyAssetsReport(date);
+					dailyTopTenReport(date);
+
 					break;
 				
 				case QUIT:
@@ -280,8 +295,30 @@ public class main {
 	/** TODO Write the networth of all assets to a daily report file.
 	 * 
 	 */
-	private static void dailyAssetsReport() {
-		product_database.countAssets();
+	public static void dailyAssetsReport(String date) {  //prints out report to console and txt file with assets in product_database and customer orders and sales in order_database
+		NumberFormat formatter = NumberFormat.getCurrencyInstance(); //to format the print statements in dollar form
+		try {
+			File myObj = new File("files\\dailyreport_" + date + ".txt");
+			if (myObj.createNewFile()) {
+				System.out.println("File created: " + myObj.getName());
+			} else {
+				System.out.println("File already exists.");
+			}
+		} catch (IOException e) {
+			System.out.println("An error occurred.");
+			e.printStackTrace();
+		}
+		try {
+			FileWriter myWriter = new FileWriter("files\\dailyreport_" + date + ".txt");
+			myWriter.write("The company's total value in assets for "  + date + " is " + formatter.format(product_database.countAssets()) + "\n");
+			myWriter.write("The total number of customer orders for "  + date + " is " + OrderDatabase.countDailyOrders(order_database.findDailyOrders(date)) + "\n");
+			myWriter.write("The total dollar amount of all orders for "  + date + " is " + formatter.format(OrderDatabase.countSales(date)) + "\n");
+			myWriter.close();
+			System.out.println("Successfully wrote to the file.");
+		} catch (IOException e) {
+			System.out.println("An error occurred.");
+			e.printStackTrace();
+		}
 	}
 	
 	//	***************************************************************************	

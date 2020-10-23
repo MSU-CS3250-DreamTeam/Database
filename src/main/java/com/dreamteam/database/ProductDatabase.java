@@ -115,7 +115,6 @@ public class ProductDatabase implements Database<Product> {
 			price = current.getWholesaleCost();
 			quantity = current.getQuantity();
 			totalAssets += price * quantity;
-			it.remove();
 		}
 
 		NumberFormat formatter = NumberFormat.getCurrencyInstance();

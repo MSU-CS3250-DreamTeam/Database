@@ -4,7 +4,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.NumberFormat;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.Scanner;
 
 public class OrderDatabase implements Database<Order> {
@@ -81,7 +84,35 @@ public class OrderDatabase implements Database<Order> {
 		
 		writer.flush();
 		writer.close();
+	}
 
+	public static int countDailyOrders(HashMap<String,Order> database) { //
+		return database.size();
+	}
+
+	public static double countSales(String date) {
+		ProductDatabase product_database = ProductDatabase.getProducts();
+		NumberFormat formatter = NumberFormat.getCurrencyInstance();
+
+		Iterator<HashMap.Entry<String,Order>> it = OrderDatabase.findDailyOrders(date).entrySet().iterator();
+
+		double totalSales = 0.00;
+		Order current;
+		double price;
+		int quantity;
+		String productID;
+
+		while (it.hasNext()) {
+			HashMap.Entry<String,Order> pair = (HashMap.Entry<String,Order>) it.next();
+			current = (Order) pair.getValue();
+			productID = current.getProductID();
+			price = product_database.read(productID).getSalePrice();
+			quantity = current.getQuantity();
+			totalSales += price * quantity;
+		}
+
+		System.out.println("The company's total assets are: " + formatter.format(totalSales));
+		return totalSales;
 	}
 
 	@Override
@@ -116,7 +147,7 @@ public class OrderDatabase implements Database<Order> {
 	 * @param date
 	 * @return
 	 */
-	private HashMap<String,Order> findDailyOrders(String date) {
+	public static HashMap<String,Order> findDailyOrders(String date) {
 		HashMap<String,Order> orders = new HashMap<>(); // orders<order_id, order>
 
 		return orders;
