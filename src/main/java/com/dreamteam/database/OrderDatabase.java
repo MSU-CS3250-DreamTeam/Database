@@ -195,13 +195,13 @@ public class OrderDatabase implements Database<Order> {
 		String dbRow;
 		String[] rowArray;
 		Product existing_product;
+		String date = "2020-01-01";
 		ProductDatabase products = ProductDatabase.getProducts();
-
 
 		try {
 
-			File inventory = new File(source_file_path);
-			Scanner dbScanner = new Scanner(inventory);
+			File order_log = new File(source_file_path);
+			Scanner dbScanner = new Scanner(order_log);
 			dbScanner.nextLine();
 
 			while (dbScanner.hasNextLine()) {
@@ -211,23 +211,26 @@ public class OrderDatabase implements Database<Order> {
 				unique_key = rowArray[2] + "-" + rowArray[3] + "-" + rowArray[0];
 				processed_order = read(unique_key);
 
+				if (!date.equals(processed_order.getDate())){
+					main.dailyAssetsReport(date);
+					date = processed_order.getDate();
+				}
+
 				existing_product = products.read(processed_order.getProductID());
 
 				if (existing_product.buyQuantity(processed_order.getQuantity())) {
-					if (products.update(existing_product)) {
-						
-						try {
+					try {
 							appendCustomerHistory(processed_order);
 						} catch (IOException e) {
 							e.printStackTrace();
 							System.out.println(processed_order.getOrderID() + " could not be written to file.");
 						}
 
-					} else {
-						System.out.println(processed_order.getOrderID() + " could not be processed.");
-					}
+				} else {
+					System.out.println(processed_order.getOrderID() + " could not be processed.");
 				}
 			}
+			main.dailyAssetsReport(date);
 
 			dbScanner.close();
 

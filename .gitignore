@@ -4,6 +4,9 @@ target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
+customer_orders_A_team1.csv
+customer_history.csv
+files/reports/
 
 ### STS ###
 .apt_generated
@@ -32,6 +35,4 @@ build/
 
 ### VS Code ###
 .vscode/
-
-/*.csv
 
