@@ -4,8 +4,6 @@ target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
-/files/customer_orders_A_team1.csv
-/files/customer_history.csv
 *.txt
 
 ### STS ###
