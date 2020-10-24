@@ -1,0 +1,33 @@
+<head>
+    <link rel="stylesheet" href="../CSS/form.css">
+    <script type="text/javascript"src="https://cdn.jsdelivr.net/npm/emailjs-com@2/dist/email.min.js"></script>
+    <script type="text/javascript">
+        (function() {
+            emailjs.init("user_8zG5eWrVI8ucUmta2TQaA");
+        })();
+    </script>
+    <script type="text/javascript" src="email.js"></script>
+</head>
+<body>
+<form >
+    <div class="survey-form" id="form">
+        <h1>Order Submission Form</h1>
+        <label id="name-label" for="name">Name</label>
+        <input id="name" type="text" name="name" value="" placeholder="Jane Doe" alt="Your name." required/>
+        <br><br>
+        <label id="email-label" for="email">Email</label>
+        <input id="email" type="email" name="email" value="" placeholder="example@gmail.com" alt="Your Email." required/>
+        <br><br>
+        <label id="location-label" for="address">Zip Code</label>
+        <input id="location" type="number" name="address" value="" min=10000 max=99999 placeholder="80202" alt="Your Zip Code." required/>
+        <br><br>
+        <label id="product-label" for="product">Product Id</label>
+        <input id="product" type="text" name="product" value="" placeholder="4ITKRXAT1ELB" alt="The product id you want to order." required/>
+        <a id="product-example"></a><br><br>
+        <label id="quantity-label" for="quantity">Quantity</label>
+        <input id="quantity" type="number" name="quantity" value="" min=1 max=99999 placeholder="1" alt="The qunatity you want to order." required/>
+        <br><br>
+        <a href = "confirm.html"><button type="button" id="submit" class="btn btn-outline-light btn-lg download-button"><i class="fas fa-shopping-cart"></i></i> SUBMIT ORDER</button></a>
+    </div>
+</form>
+</body>
