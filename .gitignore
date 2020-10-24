@@ -6,7 +6,7 @@ target/
 !**/src/test/**/target/
 /files/customer_orders_A_team1.csv
 /files/customer_history.csv
-/files/reports/*.txt
+*.txt
 
 ### STS ###
 .apt_generated
@@ -22,7 +22,7 @@ target/
 *.iws
 *.iml
 *.ipr
-*.DS_Store
+.DS_Store
 
 ### NetBeans ###
 /nbproject/private/
