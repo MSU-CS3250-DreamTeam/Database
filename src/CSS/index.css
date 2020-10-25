@@ -29,7 +29,9 @@ footer {
     background-color: #515585
 }
 
-
+.feature-box {
+    text-align: center;
+}
 
 .navbar-brand {
     font-family: 'Montserrat', sans-serif;
