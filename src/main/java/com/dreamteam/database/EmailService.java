@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Properties;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 public class EmailService {
@@ -65,6 +66,7 @@ public class EmailService {
 	public String[] checkEmail()
 	{
 		String[] emailContents;
+		String[] bodyText;
 		try
 		{
 			Properties props2 = new Properties();
@@ -82,104 +84,122 @@ public class EmailService {
 			Message[] messages = emailFolder.getMessages();
 			System.out.println("Total number of messages: " + messages.length);
 			emailContents = new String[messages.length];
+			bodyText = new String[messages.length];
 			
 			for(int i = 0; i < messages.length; i++)
 			{
 				Message message2 = messages[i];
-				emailContents[i] = getTextFromMessage(message2);
-				//if(message2.getSubject().contains("order"))
-				//{
-				//emailContents[i] = message2.getContent().toString();
-				//System.out.println(emailContents[i]);
-				//}
-				//System.out.println("-----------------------------------------------");
-				//System.out.println("Email Number " + (i + 1));
-				//System.out.println("Email Subject: " + message2.getSubject());
-				//System.out.println("From: " + message2.getFrom()[0]);
-				//System.out.println("Text: " + message2.getContent().toString());
+				bodyText[i] = getTextFromMessage(message2);
+				String[] toSet = bodyText[i].split(" ");
+				System.out.println(Arrays.toString(toSet));
+				for (int k = 0; k < toSet.length; k++) {
+					if (toSet[k].contains("email:")) {
+						emailContents[k] = bodyText[k++];
+					}
+					if (toSet[k].contains("address:")) {
+						emailContents[k] += bodyText[k++];
+					}
+					if (toSet[k].contains("product:")) {
+						emailContents[k] += bodyText[k++];
+					}
+					if (toSet[k].contains("quantity:")) {
+						emailContents[k] += bodyText[k++];
+					}
+				}
+				
+					//if(message2.getSubject().contains("order"))
+					//{
+					//emailContents[i] = message2.getContent().toString();
+					//System.out.println(emailContents[i]);
+					//}
+					//System.out.println("-----------------------------------------------");
+					//System.out.println("Email Number " + (i + 1));
+					//System.out.println("Email Subject: " + message2.getSubject());
+					//System.out.println("From: " + message2.getFrom()[0]);
+					//System.out.println("Text: " + message2.getContent().toString());
+				}
+				
+				emailFolder.close(false); //TODO Should this be hardcoded?
+				store.close();
 			}
-			
-			emailFolder.close(false); //TODO Should this be hardcoded?
-			store.close();
-		}
 		catch(NoSuchProviderException e)
-		{
-			e.printStackTrace();
-			emailContents = new String[] {""};
-		}
+			{
+				e.printStackTrace();
+				emailContents = new String[] {""};
+			}
 		catch(MessagingException e)
-		{
-			e.printStackTrace();
-			emailContents = new String[] {""};
-		}
+			{
+				e.printStackTrace();
+				emailContents = new String[] {""};
+			}
 		catch(Exception e)
-		{
-			e.printStackTrace();
-			emailContents = new String[] {""};
+			{
+				e.printStackTrace();
+				emailContents = new String[] {""};
+			}
+			return emailContents;
 		}
-		return emailContents;
-	}
-	
-	private String getTextFromMessage(Message message) throws IOException, MessagingException
-	{
-		String result = "";
-		if(message.isMimeType("text/plain"))
+		
+		private String getTextFromMessage (Message message) throws IOException, MessagingException
 		{
-			result = message.getContent().toString();
+			String result = "";
+			if(message.isMimeType("text/plain"))
+			{
+				result = message.getContent().toString();
+			}
+			else if(message.isMimeType("multipart/*"))
+			{
+				MimeMultipart mimeMultipart = (MimeMultipart)message.getContent();
+				result = getTextFromMimeMultipart(mimeMultipart);
+			}
+			return result;
 		}
-		else if(message.isMimeType("multipart/*"))
-		{
-			MimeMultipart mimeMultipart = (MimeMultipart)message.getContent();
-			result = getTextFromMimeMultipart(mimeMultipart);
-		}
-		return result;
-	}
-	
-	private String getTextFromMimeMultipart(
+		
+		private String getTextFromMimeMultipart (
 	 MimeMultipart mimeMultipart) throws IOException, MessagingException
-	{
+		{
+			
+			int count = mimeMultipart.getCount();
+			if(count == 0)
+			{
+				throw new MessagingException("Multipart with no body parts not supported.");
+			}
+			boolean multipartAlt =
+			 new ContentType(mimeMultipart.getContentType()).match("multipart/alternative");
+			if(multipartAlt)
+			// alternatives appear in an order of increasing 
+			// faithfulness to the original content. Customize as req'd.
+			{
+				return getTextFromBodyPart(mimeMultipart.getBodyPart(count - 1));
+			}
+			String result = "";
+			for(int i = 0; i < count; i++)
+			{
+				BodyPart bodyPart = mimeMultipart.getBodyPart(i);
+				result += getTextFromBodyPart(bodyPart);
+			}
+			return result;
+		}
 		
-		int count = mimeMultipart.getCount();
-		if(count == 0)
-		{
-			throw new MessagingException("Multipart with no body parts not supported.");
-		}
-		boolean multipartAlt =
-		 new ContentType(mimeMultipart.getContentType()).match("multipart/alternative");
-		if(multipartAlt)
-		// alternatives appear in an order of increasing 
-		// faithfulness to the original content. Customize as req'd.
-		{
-			return getTextFromBodyPart(mimeMultipart.getBodyPart(count - 1));
-		}
-		String result = "";
-		for(int i = 0; i < count; i++)
-		{
-			BodyPart bodyPart = mimeMultipart.getBodyPart(i);
-			result += getTextFromBodyPart(bodyPart);
-		}
-		return result;
-	}
-	
-	private String getTextFromBodyPart(
+		private String getTextFromBodyPart (
 	 BodyPart bodyPart) throws IOException, MessagingException
-	{
-		
-		String result = "";
-		if(bodyPart.isMimeType("text/plain"))
 		{
-			result = (String)bodyPart.getContent();
+			
+			String result = "";
+			if(bodyPart.isMimeType("text/plain"))
+			{
+				result = (String)bodyPart.getContent();
+			}
+			else if(bodyPart.isMimeType("text/html"))
+			{
+				String html = (String)bodyPart.getContent();
+				result = org.jsoup.Jsoup.parse(html).text();
+			}
+			else if(bodyPart.getContent() instanceof MimeMultipart)
+			{
+				result = getTextFromMimeMultipart((MimeMultipart)bodyPart.getContent());
+			}
+			return result;
 		}
-		else if(bodyPart.isMimeType("text/html"))
-		{
-			String html = (String)bodyPart.getContent();
-			result = org.jsoup.Jsoup.parse(html).text();
-		}
-		else if(bodyPart.getContent() instanceof MimeMultipart)
-		{
-			result = getTextFromMimeMultipart((MimeMultipart)bodyPart.getContent());
-		}
-		return result;
 	}
-}
 
