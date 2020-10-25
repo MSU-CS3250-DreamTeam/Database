@@ -8,10 +8,12 @@ import java.nio.*;
 import java.nio.file.Paths;
 import java.text.NumberFormat;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
+import java.util.TreeMap;
 
 public class OrderDatabase implements Database<Order> {
-	
+
 	/** Member Variables */
 
 	private static String[] data_head; // The column labels of the data structure.
@@ -33,7 +35,7 @@ public class OrderDatabase implements Database<Order> {
 
 			if (dbScanner.hasNextLine())
 				OrderDatabase.data_head = dbScanner.nextLine().split(",");
-			
+
 			String dbRow;
 
 			while (dbScanner.hasNextLine()) {
@@ -60,12 +62,16 @@ public class OrderDatabase implements Database<Order> {
 	}
 
 	@Override
-	public String[] get_data_head() { return OrderDatabase.data_head; }
+	public String[] get_data_head() {
+		return OrderDatabase.data_head;
+	}
 
 	/** Setters */
 
 	@Override
-	public void set_data_head(String[] labels) { OrderDatabase.data_head = labels; }
+	public void set_data_head(String[] labels) {
+		OrderDatabase.data_head = labels;
+	}
 
 	/** Class Methods (Alphabetical Order) */
 	// TODO javadoc for class methods without @override.
@@ -75,27 +81,25 @@ public class OrderDatabase implements Database<Order> {
 	 * @param order
 	 * @throws IOException
 	 */
-	private static void appendCustomerHistory(Order order)
-	throws IOException {
+	private static void appendCustomerHistory(Order order) throws IOException {
 		String location = "files/customer_history.csv";
 
 		FileWriter writer = new FileWriter(location, true);
 		writer.append(order.toString() + "\n");
-		
+
 		writer.flush();
 		writer.close();
 
 	}
 
 	public static double countSales(String date) {
-		 //INCOMPLETE - unsure of how to implement
+		// INCOMPLETE - unsure of how to implement
 		double totalSales = 0.00;
 		NumberFormat formatter = NumberFormat.getCurrencyInstance();
-		System.out.println("The company's total assets are: " +  formatter.format(totalSales));
+		System.out.println("The company's total assets are: " + formatter.format(totalSales));
 		return totalSales;
 	}
-	
-	
+
 	@Override
 	public void create(Order new_order) {
 		String unique_key = new_order.getOrderID();
@@ -113,9 +117,9 @@ public class OrderDatabase implements Database<Order> {
 		boolean isRemoved = false;
 		if (OrderDatabase.data_table.containsKey(id))
 			isRemoved = (OrderDatabase.data_table.remove(id) != null);
-		
+
 		return isRemoved;
-    }
+	}
 
 	@Override
 	public void display() {
@@ -128,16 +132,16 @@ public class OrderDatabase implements Database<Order> {
 	 * @param date
 	 * @return
 	 */
-	public HashMap<String,Order> findDailyOrders(String date) {
-		HashMap<String,Order> orders = new HashMap<>(); // orders<order_id, order>
-		for (Order order:data_table.values()) {
+	public HashMap<String, Order> findDailyOrders(String date) {
+		HashMap<String, Order> orders = new HashMap<>(); // orders<order_id, order>
+		for (Order order : data_table.values()) {
 			if (order.getDate().equals(date))
 				orders.put(order.getOrderID(), order);
-		} 
+		}
 		return orders;
-	} 
+	}
 
-	//TODO Find the top ten products and customers (by spending) and return
+	// TODO Find the top ten products (by spending) and return
 	/**
 	 * 
 	 * @param date
@@ -145,20 +149,39 @@ public class OrderDatabase implements Database<Order> {
 	 */
 	public Order[] findTopProducts(String date) {
 		Order[] products = new Order[10];
-		HashMap<String,Order> date_orders = findDailyOrders(date);
+		HashMap<String, Order> date_orders = findDailyOrders(date);
 		
+		TreeMap<String, Order> mapper = new TreeMap<>();
+		mapper.putAll(date_orders);
+
+		int size = mapper.size()-10;
+		int count = 0; 
+		int k = 0; 
+
+		for (Map.Entry<String, Order> entry : mapper.entrySet()) { 
+			if (count >= size)
+				products[k] = entry.getValue();
+			count++;
+		}
+
 		return products;
 	}
 
-	//TODO Find the top ten customers (by spending) and return
+	// TODO Find the top ten customers (by spending) and return
 	/**
 	 * 
 	 * @param date
-	 * @return @return a string array of top customer's ids to use in reports/etc.
+	 * @return  a string array of top customer's ids to use in reports/etc.
 	 */
 	public Order[] findTopCustomers(String date) {
 		Order[] customers = new Order[10];
-		HashMap<String,Order> date_orders = findDailyOrders(date);
+		HashMap<String, Order> date_orders = findDailyOrders(date);
+
+		TreeMap<String, Order> mapper = new TreeMap<>();
+		mapper.putAll(date_orders);
+
+		
+		
 
 		return customers;
 	}
@@ -175,7 +198,6 @@ public class OrderDatabase implements Database<Order> {
 		String[] rowArray;
 		Product existing_product;
 		ProductDatabase products = ProductDatabase.getProducts();
-
 
 		try {
 
@@ -194,7 +216,7 @@ public class OrderDatabase implements Database<Order> {
 
 				if (existing_product.buyQuantity(processed_order.getQuantity())) {
 					if (products.update(existing_product)) {
-						
+
 						try {
 							appendCustomerHistory(processed_order);
 						} catch (IOException e) {
@@ -212,10 +234,10 @@ public class OrderDatabase implements Database<Order> {
 
 			try {
 				FileWriter fWriter = new FileWriter(source_file_path, false);
-				
+
 				String string_head = "";
 
-				for (String value : OrderDatabase.data_head){
+				for (String value : OrderDatabase.data_head) {
 					if (!value.equals("time"))
 						string_head += value + ",";
 				}
@@ -243,11 +265,11 @@ public class OrderDatabase implements Database<Order> {
 			System.out.println("The order was not found.");
 			return new Order("000,000,000,000,000".split(","));
 		}
-		
+
 	}
 
 	@Override
-    public boolean update(Order existing_order) {
+	public boolean update(Order existing_order) {
 		return (OrderDatabase.data_table.put(existing_order.getProductID(), existing_order) != null);
 	}
 
