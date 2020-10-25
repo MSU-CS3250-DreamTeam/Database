@@ -4,11 +4,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.*;
-import java.nio.file.Paths;
 import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Iterator;
 import java.util.Scanner;
 import java.util.TreeMap;
 
@@ -89,14 +88,34 @@ public class OrderDatabase implements Database<Order> {
 
 		writer.flush();
 		writer.close();
+	}
 
+	public static int countDailyOrders(String date) {
+		return findDailyOrders(date).size();
 	}
 
 	public static double countSales(String date) {
-		// INCOMPLETE - unsure of how to implement
-		double totalSales = 0.00;
+		ProductDatabase product_database = ProductDatabase.getProducts();
 		NumberFormat formatter = NumberFormat.getCurrencyInstance();
-		System.out.println("The company's total assets are: " + formatter.format(totalSales));
+
+		Iterator<HashMap.Entry<String,Order>> it = findDailyOrders(date).entrySet().iterator();
+
+		double totalSales = 0.00;
+		Order current;
+		double price;
+		int quantity;
+		String productID;
+
+		while (it.hasNext()) {
+			HashMap.Entry<String,Order> pair = (HashMap.Entry<String,Order>) it.next();
+			current = (Order) pair.getValue();
+			productID = current.getProductID();
+			price = product_database.read(productID).getSalePrice();
+			quantity = current.getQuantity();
+			totalSales += price * quantity;
+		}
+
+		System.out.println("The company's total sale for " + date + " are: " + formatter.format(totalSales));
 		return totalSales;
 	}
 
@@ -132,9 +151,11 @@ public class OrderDatabase implements Database<Order> {
 	 * @param date
 	 * @return
 	 */
-	public HashMap<String, Order> findDailyOrders(String date) {
-		HashMap<String, Order> orders = new HashMap<>(); // orders<order_id, order>
-		for (Order order : data_table.values()) {
+
+	public static HashMap<String,Order> findDailyOrders(String date) {
+
+		HashMap<String,Order> orders = new HashMap<>(); // orders<order_id, order>
+		for (Order order:data_table.values()) {
 			if (order.getDate().equals(date))
 				orders.put(order.getOrderID(), order);
 		}
@@ -197,12 +218,13 @@ public class OrderDatabase implements Database<Order> {
 		String dbRow;
 		String[] rowArray;
 		Product existing_product;
+		String date = "2020-01-01";
 		ProductDatabase products = ProductDatabase.getProducts();
 
 		try {
 
-			File inventory = new File(source_file_path);
-			Scanner dbScanner = new Scanner(inventory);
+			File order_log = new File(source_file_path);
+			Scanner dbScanner = new Scanner(order_log);
 			dbScanner.nextLine();
 
 			while (dbScanner.hasNextLine()) {
@@ -212,23 +234,26 @@ public class OrderDatabase implements Database<Order> {
 				unique_key = rowArray[2] + "-" + rowArray[3] + "-" + rowArray[0];
 				processed_order = read(unique_key);
 
+				if (!date.equals(processed_order.getDate())){
+					main.dailyAssetsReport(date);
+					date = processed_order.getDate();
+				}
+
 				existing_product = products.read(processed_order.getProductID());
 
 				if (existing_product.buyQuantity(processed_order.getQuantity())) {
-					if (products.update(existing_product)) {
-
-						try {
+					try {
 							appendCustomerHistory(processed_order);
 						} catch (IOException e) {
 							e.printStackTrace();
 							System.out.println(processed_order.getOrderID() + " could not be written to file.");
 						}
 
-					} else {
-						System.out.println(processed_order.getOrderID() + " could not be processed.");
-					}
+				} else {
+					System.out.println(processed_order.getOrderID() + " could not be processed.");
 				}
 			}
+			main.dailyAssetsReport(date);
 
 			dbScanner.close();
 

@@ -50,7 +50,7 @@ public class Product extends DatabaseEntry {
 
 		if(quantity >= 0) {
 			this.quantity = quantity;
-			System.out.println("Product quantity after transaction: " + quantity + ".");
+			System.out.println("Product " + getProductID() + " quantity after transaction: " + quantity + ".");
 		
 		} else {
 			int attempted_quantity = getQuantity() - quantity;
@@ -85,7 +85,7 @@ public class Product extends DatabaseEntry {
 	 * @return
 	 */
 	public boolean buyQuantity(int increment) {
-		System.out.print("Buy Transaction: ");
+		System.out.print("Buy Transaction of " + increment + " " + getProductID() + ". ");
 		return setQuantity(getQuantity() - increment);
 	}
 
@@ -121,7 +121,7 @@ public class Product extends DatabaseEntry {
 	 * @return
 	 */
 	public boolean supplyQuantity(int increment) {
-		System.out.print("Supply Transaction: ");
+		System.out.print("Supply Transaction of " + increment + ". ");
 		ProductDatabase.getProducts().appendSupplierHistory(this, increment);
 		return setQuantity(getQuantity() + increment);
 	}

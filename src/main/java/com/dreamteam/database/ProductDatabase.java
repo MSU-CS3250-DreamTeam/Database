@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Scanner;
 import java.text.NumberFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Iterator;
 
 public class ProductDatabase implements Database<Product> {
@@ -16,6 +17,33 @@ public class ProductDatabase implements Database<Product> {
 
 	private static String[] data_head; // The column labels of the data structure.
 	private static HashMap<String, Product> data_table;
+	
+	enum Options {
+
+		QUANTITY(0),
+		CAPACITY(1),
+		WHOLESALE_COST(2),
+		SALE_PRICE(3),
+		SUPPLIER(4),
+		DONE(5);
+
+		private int value;
+		private String option;
+		private String[] options = new String[] { 
+			"QUANTITY", "CAPACITY", "WHOLESALE_COST", "SALE_PRICE", "SUPPLIER","DONE"
+		};
+
+		private Options(int v) {
+			this.value = v;
+			this.option = options[v];
+		}
+
+		public String getOption() { return option; }
+
+		public int getValue() { return value; }
+
+		public String[] getOptions() { return options; }
+	}
 
 	/** Construction */
 
@@ -110,12 +138,11 @@ public class ProductDatabase implements Database<Product> {
 		int quantity;
 
 		while (it.hasNext()) {
-			HashMap.Entry<String, Product> pair = (HashMap.Entry<String, Product>)it.next();
-			current = (Product) pair.getValue();
+			HashMap.Entry<String, Product> pair = it.next();
+			current = pair.getValue();
 			price = current.getWholesaleCost();
 			quantity = current.getQuantity();
 			totalAssets += price * quantity;
-			it.remove();
 		}
 
 		NumberFormat formatter = NumberFormat.getCurrencyInstance();
@@ -123,8 +150,7 @@ public class ProductDatabase implements Database<Product> {
 		System.out.println("The company's total assets are: " + formatter.format(totalAssets));
 		return totalAssets;
 	}
-	
-	
+
 	@Override
 	public void create(Product new_product) {
 		if (!contains(new_product.getProductID())) {
@@ -167,10 +193,83 @@ public class ProductDatabase implements Database<Product> {
 
 	@Override
 	public boolean update(Product existing_product) {
-		boolean isUpdated = false;
-		if (contains(existing_product.getProductID()))
-			isUpdated = (data_table.put(existing_product.getProductID(), existing_product) != null);
+		boolean isUpdated = true;
+		Scanner local_sc = main.main_scanner;
+		Options user_choice = Options.CAPACITY;
+		Menu menu = new Menu(user_choice.getOptions());
+		
 
+		if (contains(existing_product.getProductID())){
+			do {
+				existing_product.prettyPrint();
+				System.out.print(existing_product.getProductID() + "'s Update ");
+				user_choice = Options.values()[menu.getOption()];
+				switch(user_choice) {
+					case QUANTITY:
+						System.out.println("Are you buying? y/n");
+						Boolean isBuyer = (("y".equals(local_sc.nextLine())) ? true : false);
+						
+						System.out.print("Enter the desired quantity: ");
+						int requestQuantity = Integer.parseInt(local_sc.nextLine());
+						
+						if(isBuyer) {
+							existing_product.buyQuantity(requestQuantity);
+						} else {
+							existing_product.supplyQuantity(requestQuantity);
+						}
+						
+						System.out.print("Enter customer Id: ");
+						String customer = local_sc.nextLine();
+						String date = LocalDate.now().toString();
+						String time = LocalDateTime.now().toString();
+						
+						try {
+							main.updateCustomerHistory(customer, date, time);
+						}
+						catch(IOException e) {
+							System.err.println(e);
+						}
+						break;
+
+					case CAPACITY:
+						System.out.print("Enter the new stock limit: ");
+						int limit = Integer.parseInt(local_sc.nextLine());
+						
+						existing_product.setCapacity(limit);
+						break;
+
+					case WHOLESALE_COST:
+						System.out.print("Enter the new wholesale cost: ");
+						Double cost = Double.parseDouble(local_sc.nextLine());
+						
+						existing_product.setWholesaleCost(cost);
+						break;
+
+					case SALE_PRICE:
+						System.out.print("Enter the new sale price: ");
+						Double price = Double.parseDouble(local_sc.nextLine());
+						
+						existing_product.setSalePrice(price);
+						break;
+
+					case SUPPLIER:
+						System.out.print("Enter the new supplier's id: ");
+						String id = local_sc.nextLine();
+						
+						existing_product.setSupplierID(id);
+						break;
+
+					case DONE:
+						break;
+					default:
+						System.out.println("The " + user_choice + " option is not yet implemented.");
+				}
+			} while(user_choice != Options.DONE);
+			isUpdated = true;
+		} else {
+			System.out.print("The product database does not contain an entry for: " 
+													+ existing_product.getProductID());
+		}
 		return isUpdated;
 	}
 
@@ -201,7 +300,7 @@ public class ProductDatabase implements Database<Product> {
 		} catch (IOException e) {
 	
 			e.printStackTrace();
-			System.out.println("Failed document the supply order.");
+			System.out.println("Failed to document the supply order.");
 
 		}
 
