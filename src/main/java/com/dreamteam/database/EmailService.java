@@ -1,27 +1,33 @@
 package com.dreamteam.database;
 
 import javax.mail.*; // This should cover all mail classes.
+import javax.mail.internet.ContentType;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-
+import javax.mail.internet.MimeMultipart;
+import java.io.IOException;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 public class EmailService {
 	private final String HOST2;
-	private final String USER; 
+	private final String USER;
 	private final String PASSWORD;
 	
-	public EmailService() {
+	public EmailService()
+	{
 		this.HOST2 = "pop.gmail.com";
 		this.USER = "thedreamteamsoftware+orders@gmail.com";
 		this.PASSWORD = "Sch00l2020!";
 	}
+	
 	public static void main(String[] args) throws MessagingException
 	{
 		EmailService test = new EmailService();
-		System.out.println(test.checkEmail());
+		String[] emailContents = test.checkEmail();
+		System.out.println(Arrays.toString(emailContents));
 		//checkEmail(host2, mailStoreType, toEmail, password);
 	}
 	
@@ -32,16 +38,19 @@ public class EmailService {
 		props1.put("mail.smtp.host", host1);
 		props1.put("mail.smtp.port", 587);
 		props1.put("mail.smtp.auth", "true");
-		props1.put("mail.smtp.starttls.enable","true");
+		props1.put("mail.smtp.starttls.enable", "true");
 		Session session1 = Session.getInstance(props1, null);
 		MimeMessage msg1 = new MimeMessage(session1);
 		String fromEmail = "buyingallofyourthings@gmail.com";
 		String password = "#DreamTeam1!";
 		String toEmail = "cs3250team1dreamteam@gmail.com";
 		System.out.println("Checking email, please hold...");
-		try {
+		try
+		{
 			TimeUnit.SECONDS.sleep(5);
-		} catch (InterruptedException ex) {
+		}
+		catch(InterruptedException ex)
+		{
 			Thread.currentThread().interrupt();
 		}
 		msg1.setFrom(new InternetAddress(fromEmail));
@@ -52,50 +61,125 @@ public class EmailService {
 		Transport.send(msg1, fromEmail, password);
 		System.out.println("Message sent successfully!");
 	}
-
-	public String[] checkEmail() {
+	
+	public String[] checkEmail()
+	{
 		String[] emailContents;
-		try {
+		try
+		{
 			Properties props2 = new Properties();
 			props2.put("mail.pop3.host", HOST2);
 			props2.put("mail.pop3.port", "995");
 			props2.put("mail.pop3.starttls.enable", "true");
 			Session emailSession = Session.getInstance(props2, null);
-
+			
 			Store store = emailSession.getStore("pop3s");
 			store.connect(HOST2, USER, PASSWORD);
-
+			
 			Folder emailFolder = store.getFolder("INBOX");
 			emailFolder.open(Folder.READ_ONLY);
-
+			
 			Message[] messages = emailFolder.getMessages();
 			System.out.println("Total number of messages: " + messages.length);
 			emailContents = new String[messages.length];
-
-			for (int i = 0; i < messages.length; i++) {
+			
+			for(int i = 0; i < messages.length; i++)
+			{
 				Message message2 = messages[i];
-				System.out.println("-----------------------------------------------");
-				System.out.println("Email Number " + (i + 1));
-				System.out.println("Email Subject: " + message2.getSubject());
-				System.out.println("From: " + message2.getFrom()[0]);
-				System.out.println("Text: " + message2.getContent().toString());
-				emailContents[i] = message2.getContent().toString();
+				emailContents[i] = getTextFromMessage(message2);
+				//if(message2.getSubject().contains("order"))
+				//{
+				//emailContents[i] = message2.getContent().toString();
+				//System.out.println(emailContents[i]);
+				//}
+				//System.out.println("-----------------------------------------------");
+				//System.out.println("Email Number " + (i + 1));
+				//System.out.println("Email Subject: " + message2.getSubject());
+				//System.out.println("From: " + message2.getFrom()[0]);
+				//System.out.println("Text: " + message2.getContent().toString());
 			}
-
+			
 			emailFolder.close(false); //TODO Should this be hardcoded?
 			store.close();
-
-		} catch (NoSuchProviderException e) { 
+		}
+		catch(NoSuchProviderException e)
+		{
 			e.printStackTrace();
-			emailContents = new String[]{""};
-		} catch (MessagingException e) {
+			emailContents = new String[] {""};
+		}
+		catch(MessagingException e)
+		{
 			e.printStackTrace();
-			emailContents = new String[]{""};
-		} catch (Exception e) {
+			emailContents = new String[] {""};
+		}
+		catch(Exception e)
+		{
 			e.printStackTrace();
-			emailContents = new String[]{""};
+			emailContents = new String[] {""};
 		}
 		return emailContents;
+	}
+	
+	private String getTextFromMessage(Message message) throws IOException, MessagingException
+	{
+		String result = "";
+		if(message.isMimeType("text/plain"))
+		{
+			result = message.getContent().toString();
+		}
+		else if(message.isMimeType("multipart/*"))
+		{
+			MimeMultipart mimeMultipart = (MimeMultipart)message.getContent();
+			result = getTextFromMimeMultipart(mimeMultipart);
+		}
+		return result;
+	}
+	
+	private String getTextFromMimeMultipart(
+	 MimeMultipart mimeMultipart) throws IOException, MessagingException
+	{
+		
+		int count = mimeMultipart.getCount();
+		if(count == 0)
+		{
+			throw new MessagingException("Multipart with no body parts not supported.");
+		}
+		boolean multipartAlt =
+		 new ContentType(mimeMultipart.getContentType()).match("multipart/alternative");
+		if(multipartAlt)
+		// alternatives appear in an order of increasing 
+		// faithfulness to the original content. Customize as req'd.
+		{
+			return getTextFromBodyPart(mimeMultipart.getBodyPart(count - 1));
+		}
+		String result = "";
+		for(int i = 0; i < count; i++)
+		{
+			BodyPart bodyPart = mimeMultipart.getBodyPart(i);
+			result += getTextFromBodyPart(bodyPart);
+		}
+		return result;
+	}
+	
+	private String getTextFromBodyPart(
+	 BodyPart bodyPart) throws IOException, MessagingException
+	{
+		
+		String result = "";
+		if(bodyPart.isMimeType("text/plain"))
+		{
+			result = (String)bodyPart.getContent();
+		}
+		else if(bodyPart.isMimeType("text/html"))
+		{
+			String html = (String)bodyPart.getContent();
+			result = org.jsoup.Jsoup.parse(html).text();
+		}
+		else if(bodyPart.getContent() instanceof MimeMultipart)
+		{
+			result = getTextFromMimeMultipart((MimeMultipart)bodyPart.getContent());
+		}
+		return result;
 	}
 }
 
