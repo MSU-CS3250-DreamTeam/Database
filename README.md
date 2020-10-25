@@ -1,3 +1,5 @@
+![Build Status](https://travis-ci.org/MSU-CS3250-DreamTeam/Database.svg?branch=springboot-integration)
+
 # Database
 
 A database to manage cvs stored data.
