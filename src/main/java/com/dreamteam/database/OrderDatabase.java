@@ -10,9 +10,12 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Scanner;
 import java.util.Set;
+import java.util.Map;
+import java.util.TreeMap;
+
 
 public class OrderDatabase implements Database<Order> {
-	
+
 	/** Member Variables */
 
 	private static String[] data_head; // The column labels of the data structure.
@@ -34,7 +37,7 @@ public class OrderDatabase implements Database<Order> {
 
 			if (dbScanner.hasNextLine())
 				OrderDatabase.data_head = dbScanner.nextLine().split(",");
-			
+
 			String dbRow;
 
 			while (dbScanner.hasNextLine()) {
@@ -61,12 +64,16 @@ public class OrderDatabase implements Database<Order> {
 	}
 
 	@Override
-	public String[] get_data_head() { return OrderDatabase.data_head; }
+	public String[] get_data_head() {
+		return OrderDatabase.data_head;
+	}
 
 	/** Setters */
 
 	@Override
-	public void set_data_head(String[] labels) { OrderDatabase.data_head = labels; }
+	public void set_data_head(String[] labels) {
+		OrderDatabase.data_head = labels;
+	}
 
 	/** Class Methods (Alphabetical Order) */
 	// TODO javadoc for class methods without @override.
@@ -76,13 +83,12 @@ public class OrderDatabase implements Database<Order> {
 	 * @param order
 	 * @throws IOException
 	 */
-	private static void appendCustomerHistory(Order order)
-	throws IOException {
+	private static void appendCustomerHistory(Order order) throws IOException {
 		String location = "files/customer_history.csv";
 
 		FileWriter writer = new FileWriter(location, true);
 		writer.append(order.toString() + "\n");
-		
+
 		writer.flush();
 		writer.close();
 	}
@@ -149,9 +155,9 @@ public class OrderDatabase implements Database<Order> {
 		boolean isRemoved = false;
 		if (OrderDatabase.data_table.containsKey(id))
 			isRemoved = (OrderDatabase.data_table.remove(id) != null);
-		
+
 		return isRemoved;
-    }
+	}
 
 	@Override
 	public void display() {
@@ -169,11 +175,24 @@ public class OrderDatabase implements Database<Order> {
 	 * @param date
 	 * @return
 	 */
+
 	// public static HashSet<Order> findDailyOrders(String date) {
 	// 	return data_table.get(date);
 	// } 
 
-	//TODO Find the top ten products and customers (by spending) and return
+
+// 	public static HashMap<String,Order> findDailyOrders(String date) {
+
+// 		HashMap<String,Order> orders = new HashMap<>(); // orders<order_id, order>
+// 		for (Order order:data_table.values()) {
+// 			if (order.getDate().equals(date))
+// 				orders.put(order.getOrderID(), order);
+// 		}
+// 		return orders;
+// 	}
+
+
+	// TODO Find the top ten products (by spending) and return
 	/**
 	 * 
 	 * @param date
@@ -182,20 +201,34 @@ public class OrderDatabase implements Database<Order> {
 	public Order[] findTopProducts(String date) {
 		Order[] products = new Order[10];
 		HashSet<Order> date_orders = data_table.get(date);
-		
+		TreeMap<String, Order> mapper = new TreeMap<>();
+		mapper.putAll(date_orders);
+
+		int size = mapper.size()-10;
+		int count = 0; 
+		int k = 0; 
+
+		for (Map.Entry<String, Order> entry : mapper.entrySet()) { 
+			if (count >= size)
+				products[k] = entry.getValue();
+			count++;
+		}
+
 		return products;
 	}
 
-	//TODO Find the top ten customers (by spending) and return
+	// TODO Find the top ten customers (by spending) and return
 	/**
 	 * 
 	 * @param date
-	 * @return @return a string array of top customer's ids to use in reports/etc.
+	 * @return  a string array of top customer's ids to use in reports/etc.
 	 */
 	public Order[] findTopCustomers(String date) {
 		Order[] customers = new Order[10];
 		HashSet<Order> date_orders = data_table.get(date);
-
+		TreeMap<String, Order> mapper = new TreeMap<>();
+		mapper.putAll(date_orders);
+    
 		return customers;
 	}
 
@@ -247,11 +280,12 @@ public class OrderDatabase implements Database<Order> {
 			order_scanner.close();
 
 			try {
+
 				FileWriter fWriter = new FileWriter(order_log_path, false);
 				
 				String string_head = "";
 
-				for (String value : OrderDatabase.data_head){
+				for (String value : OrderDatabase.data_head) {
 					if (!value.equals("time"))
 						string_head += value + ",";
 				}
