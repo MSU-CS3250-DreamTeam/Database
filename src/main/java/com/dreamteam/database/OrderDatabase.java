@@ -202,8 +202,10 @@ public class OrderDatabase implements Database<Order> {
 		Order[] products = new Order[10];
 		HashSet<Order> date_orders = data_table.get(date);
 		TreeMap<String, Order> mapper = new TreeMap<>();
-		mapper.putAll(date_orders);
-
+		for (Order next_order : date_orders) {
+			mapper.put(next_order.getProductID(), next_order);
+		}
+		
 		int size = mapper.size()-10;
 		int count = 0; 
 		int k = 0; 
@@ -227,7 +229,9 @@ public class OrderDatabase implements Database<Order> {
 		Order[] customers = new Order[10];
 		HashSet<Order> date_orders = data_table.get(date);
 		TreeMap<String, Order> mapper = new TreeMap<>();
-		mapper.putAll(date_orders);
+		for (Order next_order : date_orders) {
+			mapper.put(next_order.getEmail(), next_order);
+		}
     
 		return customers;
 	}
