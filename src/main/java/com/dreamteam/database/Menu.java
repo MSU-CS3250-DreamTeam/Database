@@ -1,15 +1,14 @@
 package com.dreamteam.database;
 
+import java.util.List;
 import java.util.Scanner;
 
 public class Menu {
 
-    int length;
-    String[] options;
+    private final List<Options> OPTIONS;
 
-    public Menu(String[] options) {
-        this.options = options;
-        this.length = options.length;
+    public Menu(List<Options> options) {
+		this.OPTIONS = options;
     }
 
     //	***************************************************************************
@@ -19,27 +18,29 @@ public class Menu {
 	 *
 	 * @return the selected option to menu.
 	 */
-	public int getOption() {
+	public Options getOption() {
         
         // Local Variable Declarations
-        Scanner option_sc = main.main_scanner;
-		int user_input;
+        Scanner option_scanner = main.main_scanner;
+		int user_input = 1;
 		
 		while(true) {
 			
 			// Prompt user for a choice from Options.
 			System.out.println("Options:");
-			for(int i = 0; i < options.length; i++) {
-				System.out.println("  " + (i + 1) + ": " + options[i]);
+
+			for (Options option: OPTIONS) {
+				System.out.println(" " + option.getValue() + ": " + option);
 			}
 			System.out.print("? ");
 			
 			try {
 
-				user_input = Integer.parseInt(option_sc.nextLine()) - 1;
-				for(String choice: options) {
-					if(options[user_input].equals(choice)) {
-						return user_input;
+				user_input = Integer.parseInt(option_scanner.nextLine());
+				
+				for (Options user_choice : Options.values()) {
+					if (user_input == user_choice.getValue()) {
+						return user_choice;
 					}
 				}
 				

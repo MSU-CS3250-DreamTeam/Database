@@ -11,10 +11,9 @@ public class Order extends DatabaseEntry {
     private String customer_email;
     private String customer_location;
     private String product_id;
-    private String order_id;
     private int quantity;
     
-    private DateTimeFormatter time_formatter = DateTimeFormatter.ofPattern("kk:mm:ss");
+    private static final DateTimeFormatter TIME_FORMAT = DateTimeFormatter.ofPattern("kk:mm:ss");
 
     /** Construction */
 
@@ -24,7 +23,7 @@ public class Order extends DatabaseEntry {
         this.date = order[index++];
 
         if (order.length == 5) {
-            this.process_time = LocalDateTime.now().format(time_formatter);
+            this.process_time = LocalDateTime.now().format(TIME_FORMAT);
         } else {
             this.process_time = order[index++];
         }
@@ -33,8 +32,6 @@ public class Order extends DatabaseEntry {
         this.customer_location = order[index++];;
 		this.product_id = order[index++];;
         this.quantity = Integer.parseInt(order[index++]);
-        
-        this.order_id = this.getCustomerLocation() + "-" + this.getProductID() + "-" + this.getDate();
         
     }
 
@@ -51,8 +48,6 @@ public class Order extends DatabaseEntry {
 	public int getQuantity() { return this.quantity; }
 	
     public String getCustomerLocation() { return this.customer_location; }
-    
-    public String getOrderID() { return this.order_id; }
 
     /** Class Methods (Alphabetical Order) */
 
@@ -72,7 +67,6 @@ public class Order extends DatabaseEntry {
 	@Override public String toString() {
         return 
             this.date + "," +
-            this.process_time + "," +
             this.customer_email + "," +
             this.customer_location + "," +
             this.product_id + "," +

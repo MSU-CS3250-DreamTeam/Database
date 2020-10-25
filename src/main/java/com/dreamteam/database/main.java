@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.NumberFormat;
+import java.util.List;
 import java.util.Scanner;
 
 /**
@@ -15,34 +16,6 @@ public class main {
 	static private final ProductDatabase product_database = ProductDatabase.getProducts();
 	static private final OrderDatabase order_database = OrderDatabase.getOrders();
 	public static Scanner main_scanner = new Scanner(System.in);
-
-	// Menu Option Structure: order of options is the order displayed in the menu.
-	private enum Options {
-		CREATE(0), READ(1), UPDATE(2), DELETE(3), PROCESS_ORDERS(4), REPORTS(5), QUIT(6);
-
-		private int value;
-		private String option;
-		private String[] options = new String[] { "CREATE", "READ", "UPDATE", "DELETE", "PROCESS_ORDERS", "REPORTS",
-				"QUIT" };
-
-		private Options(int v) {
-			this.value = v;
-			this.option = options[v];
-		}
-
-		public String getOption() {
-			return option;
-		}
-
-		public int getValue() {
-			return value;
-		}
-
-		public String[] getOptions() {
-			return options;
-		}
-
-	}
 
 	// ***************************************************************************
 
@@ -130,8 +103,10 @@ public class main {
 	public static void runMenu() {
 
 		// Local Variable Declarations
-		Options user_choice = Options.READ;
-		Menu menu = new Menu(user_choice.getOptions());
+		Options user_choice = null;
+		final List<Options> MAIN_MENU = List.of(Options.CREATE, Options.READ, Options.UPDATE,
+								Options.DELETE, Options.PROCESS_ORDERS, Options.REPORTS, Options.QUIT);
+		Menu menu = new Menu(MAIN_MENU);
 		String[] database_header = product_database.get_data_head();
 		String[] new_entry = new String[product_database.get_column_size()];
 		Product existing_entry = null;
@@ -145,7 +120,7 @@ public class main {
 			product_database.display();
 			order_database.display();
 			System.out.println();
-			user_choice = Options.values()[menu.getOption()];
+			user_choice = menu.getOption();
 
 			switch (user_choice) {
 
@@ -203,38 +178,12 @@ public class main {
 
 					System.out.println("For which date would you like reports?");
 					String date = main_scanner.nextLine();
+					if (order_database.contains(date)) {
+						System.out.println("Reports generating...");
 
-					System.out.println("Reports generating...");
-
-					dailyAssetsReport(date);
-					dailyTopTenReport(date);
-
-					// String day = "dd";
-					// String month = "mm";
-					// final int MO = 6;
-					// final int DA = 28;
-					// String year = "2020-";
-					// String date_regex = year;
-					// int[] MONTH_DAYS = new int[]{31,29,31,30,31,28};
-					// MONTH_DAYS[MO-1] = DA;
-
-					// for (int m = 1; m <= 6; m++) {
-					// 	month = "";
-					// 		if (m < 10)
-					// 			month = "0";
-					// 	month += Integer.toString(m);
-					// 	date_regex += month + "-";
-					// 	for (int d = 1; d <= MONTH_DAYS[m - 1]; d++) {
-					// 		day = "";
-					// 		if (d < 10)
-					// 			day = "0";
-					// 		day += Integer.toString(d);
-					// 		date_regex += day;
-					// 		System.out.println(date_regex);
-					// 		date_regex = date_regex.substring(0, 8);
-					// 	}
-					// 	date_regex = date_regex.substring(0, 5);
-					// }
+						dailyAssetsReport(date);
+						dailyTopTenReport(date);
+					}
 
 					break;
 				
@@ -246,8 +195,7 @@ public class main {
 					break;
 				
 				default:
-					
-					System.out.println("The selected option exists, but is not implemented yet.");
+					System.out.println("The " + user_choice + " option is not in this menu.");
 			}
 		} while(user_choice != Options.QUIT);
 	}
@@ -309,7 +257,7 @@ public class main {
 	 */
 	protected static void updateCustomerHistory(String customer, String date, String time)
 	throws IOException {
-		String location = "files/supplier_history.csv";
+		String location = "files/buyer_order_history.csv";
 		
 		try {
 			FileWriter writer = new FileWriter(location, true);

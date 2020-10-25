@@ -10,6 +10,7 @@ import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Iterator;
+import java.util.List;
 
 public class ProductDatabase implements Database<Product> {
 
@@ -17,33 +18,6 @@ public class ProductDatabase implements Database<Product> {
 
 	private static String[] data_head; // The column labels of the data structure.
 	private static HashMap<String, Product> data_table;
-	
-	enum Options {
-
-		QUANTITY(0),
-		CAPACITY(1),
-		WHOLESALE_COST(2),
-		SALE_PRICE(3),
-		SUPPLIER(4),
-		DONE(5);
-
-		private int value;
-		private String option;
-		private String[] options = new String[] { 
-			"QUANTITY", "CAPACITY", "WHOLESALE_COST", "SALE_PRICE", "SUPPLIER","DONE"
-		};
-
-		private Options(int v) {
-			this.value = v;
-			this.option = options[v];
-		}
-
-		public String getOption() { return option; }
-
-		public int getValue() { return value; }
-
-		public String[] getOptions() { return options; }
-	}
 
 	/** Construction */
 
@@ -57,19 +31,19 @@ public class ProductDatabase implements Database<Product> {
 
 			File inventory = new File(file_path);
 			ProductDatabase.data_table = new HashMap<>();
-			Scanner dbScanner = new Scanner(inventory);
+			Scanner product_scanner = new Scanner(inventory);
 
-			if (dbScanner.hasNextLine())
-				ProductDatabase.data_head = dbScanner.nextLine().split(",");
+			if (product_scanner.hasNextLine())
+				ProductDatabase.data_head = product_scanner.nextLine().split(",");
 
 			String dbRow;
 
-			while (dbScanner.hasNextLine()) {
-				dbRow = dbScanner.nextLine();
+			while (product_scanner.hasNextLine()) {
+				dbRow = product_scanner.nextLine();
 				create(dbRow);
 			}
 
-			dbScanner.close();
+			product_scanner.close();
 
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -122,7 +96,8 @@ public class ProductDatabase implements Database<Product> {
 	 * @return
 	 */
 	private boolean contains(String product_id) {
-		return ProductDatabase.data_table.containsKey(product_id);
+		boolean hasProduct = data_table.containsKey(product_id);
+		return hasProduct;
 	}
 
 	/**
@@ -177,7 +152,7 @@ public class ProductDatabase implements Database<Product> {
 
 	@Override
 	public void display() {
-		System.out.println("The products database has " + ProductDatabase.data_table.size() + " products.");
+		System.out.println("The products database has " + data_table.size() + " products.");
 	}
 
 	@Override
@@ -195,15 +170,17 @@ public class ProductDatabase implements Database<Product> {
 	public boolean update(Product existing_product) {
 		boolean isUpdated = true;
 		Scanner local_sc = main.main_scanner;
-		Options user_choice = Options.CAPACITY;
-		Menu menu = new Menu(user_choice.getOptions());
+		Options user_choice = null;
+		final List<Options> UPDATE_MENU = List.of(Options.QUANTITY,Options.CAPACITY,Options.WHOLESALE_COST,
+										Options.SALE_PRICE,Options.SUPPLIER,Options.DONE);
+		Menu menu = new Menu(UPDATE_MENU);
 		
 
 		if (contains(existing_product.getProductID())){
 			do {
 				existing_product.prettyPrint();
 				System.out.print(existing_product.getProductID() + "'s Update ");
-				user_choice = Options.values()[menu.getOption()];
+				user_choice = menu.getOption();
 				switch(user_choice) {
 					case QUANTITY:
 						System.out.println("Are you buying? y/n");
@@ -262,7 +239,7 @@ public class ProductDatabase implements Database<Product> {
 					case DONE:
 						break;
 					default:
-						System.out.println("The " + user_choice + " option is not yet implemented.");
+						System.out.println("The " + user_choice + " option is not in this menu.");
 				}
 			} while(user_choice != Options.DONE);
 			isUpdated = true;

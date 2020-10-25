@@ -6,17 +6,20 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.text.NumberFormat;
 import java.util.HashMap;
-import java.util.Map;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Scanner;
+import java.util.Set;
+import java.util.Map;
 import java.util.TreeMap;
+
 
 public class OrderDatabase implements Database<Order> {
 
 	/** Member Variables */
 
 	private static String[] data_head; // The column labels of the data structure.
-	private static HashMap<String, Order> data_table;
+	private static HashMap<String, HashSet<Order>> data_table;
 
 	/** Construction */
 
@@ -90,15 +93,27 @@ public class OrderDatabase implements Database<Order> {
 		writer.close();
 	}
 
+	/**
+	 * 
+	 * @param date
+	 * @return
+	 */
+	public boolean contains(String date) {
+		boolean hasDate = data_table.containsKey(date);
+		if (!hasDate)
+			System.out.println("The order database has no orders for the date: " + date);
+		return hasDate;
+	}
+
 	public static int countDailyOrders(String date) {
-		return findDailyOrders(date).size();
+		return data_table.get(date).size();
 	}
 
 	public static double countSales(String date) {
 		ProductDatabase product_database = ProductDatabase.getProducts();
 		NumberFormat formatter = NumberFormat.getCurrencyInstance();
 
-		Iterator<HashMap.Entry<String,Order>> it = findDailyOrders(date).entrySet().iterator();
+		Iterator<Order> it = data_table.get(date).iterator();
 
 		double totalSales = 0.00;
 		Order current;
@@ -107,8 +122,7 @@ public class OrderDatabase implements Database<Order> {
 		String productID;
 
 		while (it.hasNext()) {
-			HashMap.Entry<String,Order> pair = (HashMap.Entry<String,Order>) it.next();
-			current = (Order) pair.getValue();
+			current = it.next();
 			productID = current.getProductID();
 			price = product_database.read(productID).getSalePrice();
 			quantity = current.getQuantity();
@@ -121,8 +135,13 @@ public class OrderDatabase implements Database<Order> {
 
 	@Override
 	public void create(Order new_order) {
-		String unique_key = new_order.getOrderID();
-		OrderDatabase.data_table.put(unique_key, new_order);
+		String order_date = new_order.getDate();
+		HashSet<Order> orders = data_table.get(order_date);
+		if (orders == null) {
+			orders = new HashSet<Order>();
+			data_table.put(new_order.getDate(), orders);
+		} 
+		orders.add(new_order);
 	}
 
 	@Override
@@ -142,7 +161,12 @@ public class OrderDatabase implements Database<Order> {
 
 	@Override
 	public void display() {
-		System.out.println("The orders database has " + OrderDatabase.data_table.size() + " orders.");
+		int number_of_orders = 0;
+		Set<String> dates = data_table.keySet();
+		for (String date: dates) {
+			number_of_orders += data_table.get(date).size();
+		}
+		System.out.println("The orders database has " + number_of_orders + " orders.");
 	}
 
 	// TODO Find matching orders by date and put in the returning hashmap.
@@ -152,15 +176,21 @@ public class OrderDatabase implements Database<Order> {
 	 * @return
 	 */
 
-	public static HashMap<String,Order> findDailyOrders(String date) {
+	// public static HashSet<Order> findDailyOrders(String date) {
+	// 	return data_table.get(date);
+	// } 
 
-		HashMap<String,Order> orders = new HashMap<>(); // orders<order_id, order>
-		for (Order order:data_table.values()) {
-			if (order.getDate().equals(date))
-				orders.put(order.getOrderID(), order);
-		}
-		return orders;
-	}
+
+// 	public static HashMap<String,Order> findDailyOrders(String date) {
+
+// 		HashMap<String,Order> orders = new HashMap<>(); // orders<order_id, order>
+// 		for (Order order:data_table.values()) {
+// 			if (order.getDate().equals(date))
+// 				orders.put(order.getOrderID(), order);
+// 		}
+// 		return orders;
+// 	}
+
 
 	// TODO Find the top ten products (by spending) and return
 	/**
@@ -170,11 +200,12 @@ public class OrderDatabase implements Database<Order> {
 	 */
 	public Order[] findTopProducts(String date) {
 		Order[] products = new Order[10];
-		HashMap<String, Order> date_orders = findDailyOrders(date);
-		
+		HashSet<Order> date_orders = data_table.get(date);
 		TreeMap<String, Order> mapper = new TreeMap<>();
-		mapper.putAll(date_orders);
-
+		for (Order next_order : date_orders) {
+			mapper.put(next_order.getProductID(), next_order);
+		}
+		
 		int size = mapper.size()-10;
 		int count = 0; 
 		int k = 0; 
@@ -196,14 +227,12 @@ public class OrderDatabase implements Database<Order> {
 	 */
 	public Order[] findTopCustomers(String date) {
 		Order[] customers = new Order[10];
-		HashMap<String, Order> date_orders = findDailyOrders(date);
-
+		HashSet<Order> date_orders = data_table.get(date);
 		TreeMap<String, Order> mapper = new TreeMap<>();
-		mapper.putAll(date_orders);
-
-		
-		
-
+		for (Order next_order : date_orders) {
+			mapper.put(next_order.getEmail(), next_order);
+		}
+    
 		return customers;
 	}
 
@@ -212,33 +241,30 @@ public class OrderDatabase implements Database<Order> {
 	 */
 	public void processOrders() {
 
-		String source_file_path = "files/customer_orders_A_team1.csv";
+		String order_log_path = "files/customer_orders_A_team1.csv";
 		Order processed_order = null;
-		String unique_key;
-		String dbRow;
-		String[] rowArray;
+		String next_order;
 		Product existing_product;
 		String date = "2020-01-01";
 		ProductDatabase products = ProductDatabase.getProducts();
 
 		try {
 
-			File order_log = new File(source_file_path);
-			Scanner dbScanner = new Scanner(order_log);
-			dbScanner.nextLine();
+			File order_log = new File(order_log_path);
+			Scanner order_scanner = new Scanner(order_log);
+			order_scanner.nextLine();
 
-			while (dbScanner.hasNextLine()) {
-				dbRow = dbScanner.nextLine();
-				create(dbRow);
-				rowArray = dbRow.split(",");
-				unique_key = rowArray[2] + "-" + rowArray[3] + "-" + rowArray[0];
-				processed_order = read(unique_key);
-
-				if (!date.equals(processed_order.getDate())){
+			while (order_scanner.hasNextLine()) {
+				next_order = order_scanner.nextLine();
+				create(next_order);
+				
+				if (!next_order.contains(date)){
 					main.dailyAssetsReport(date);
-					date = processed_order.getDate();
+					date = next_order.substring(0, date.length());
+					System.out.println(date);
 				}
 
+				processed_order = read(date, next_order);
 				existing_product = products.read(processed_order.getProductID());
 
 				if (existing_product.buyQuantity(processed_order.getQuantity())) {
@@ -246,20 +272,21 @@ public class OrderDatabase implements Database<Order> {
 							appendCustomerHistory(processed_order);
 						} catch (IOException e) {
 							e.printStackTrace();
-							System.out.println(processed_order.getOrderID() + " could not be written to file.");
+							System.out.println(processed_order.getEmail() + " could not be written to file.");
 						}
 
 				} else {
-					System.out.println(processed_order.getOrderID() + " could not be processed.");
+					System.out.println(processed_order.getEmail() + " could not be processed.");
 				}
 			}
 			main.dailyAssetsReport(date);
 
-			dbScanner.close();
+			order_scanner.close();
 
 			try {
-				FileWriter fWriter = new FileWriter(source_file_path, false);
 
+				FileWriter fWriter = new FileWriter(order_log_path, false);
+				
 				String string_head = "";
 
 				for (String value : OrderDatabase.data_head) {
@@ -278,24 +305,47 @@ public class OrderDatabase implements Database<Order> {
 
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
-			System.out.println("Is the data file " + source_file_path + " in the wrong directory?");
+			System.out.println("Is the data file " + order_log_path + " in the wrong directory?");
 		}
 	}
 
 	@Override
-	public Order read(String id) {
-		if (OrderDatabase.data_table.containsKey(id)) {
-			return OrderDatabase.data_table.get(id);
+	public Order read(String date) {
+		if (OrderDatabase.data_table.containsKey(date)) {
+			HashSet<Order> orders = data_table.get(date);
+			Scanner retrieve_scanner = main.main_scanner;
+			int user_input = 1;
+
+			System.out.println("Select the order you wish to retrieve: ");
+
+			for (Order order: orders) {
+				System.out.println(user_input++ + ": " + order.toString());
+			}
+			
+			user_input = Integer.parseInt(retrieve_scanner.nextLine());
+
+			return (Order) orders.toArray()[0];
 		} else {
 			System.out.println("The order was not found.");
 			return new Order("000,000,000,000,000".split(","));
+		}		
+	}
+
+	private Order read(String date, String order) {
+		HashSet<Order> orders = data_table.get(date);
+		for (Order o: orders) {
+			if (o.toString().equals(order))
+				return o;
 		}
 
+		System.out.println("The order was not found.");
+		return new Order("000,000,000,000,000".split(","));
 	}
 
 	@Override
-	public boolean update(Order existing_order) {
-		return (OrderDatabase.data_table.put(existing_order.getProductID(), existing_order) != null);
+    public boolean update(Order existing_order) {
+		HashSet<Order> matching_orders = data_table.get(existing_order.getDate());
+		return matching_orders.contains(existing_order);
 	}
 
 }
