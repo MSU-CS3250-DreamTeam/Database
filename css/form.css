@@ -1,0 +1,66 @@
+body {
+    font-family: 'Montserrat', sans-serif;
+}
+
+h1 {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 3rem;
+    line-height: 1.5;
+    margin-bottom: 10%;
+}
+
+form {
+    background-color: #f8f8f8;
+    margin: 0 auto;
+    width: 50%
+}
+
+footer {
+    background-color: #515585
+}
+
+.navbar-brand {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 2em;
+}
+
+.navbar {
+    padding: 0 0 3rem;
+}
+
+.nav-item {
+    padding: 0 18px;
+}
+
+h3 {
+    text-align: center;
+    margin: 5% auto;
+    font-family: 'Montserrat';
+}
+
+p {
+    text-align: center;
+    color: black;
+    margin-bottom: 5%;
+}
+
+h2 {
+    font-size: 2rem;
+    line-height: 1.5;
+    padding-bottom: 3%;
+}
+
+@media (max-width 991px) and (min-width 881px) {
+    h1 {
+        font-size: 80px;
+    }
+}
+
+.foot {
+    background-color: #f8f8f8;
+}
+
+#top {
+    background-color: #515585;
+}
+
