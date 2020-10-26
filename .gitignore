@@ -4,6 +4,7 @@ target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
+*.txt
 
 ### STS ###
 .apt_generated
@@ -19,6 +20,7 @@ target/
 *.iws
 *.iml
 *.ipr
+.DS_Store
 
 ### NetBeans ###
 /nbproject/private/
@@ -32,6 +34,4 @@ build/
 
 ### VS Code ###
 .vscode/
-
-/*.csv
 
