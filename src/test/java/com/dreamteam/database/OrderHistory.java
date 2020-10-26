@@ -2,95 +2,55 @@ package com.dreamteam.database;
 
 import java.io.FileWriter;
 import java.io.IOException;
-// Alejandro and John
+// Alejandro and John and Kevin
 // Still writing code and this will be used as our foundation for the finance customer order history
 
 
 public class OrderHistory {
+    private static final String FILE = "orderHistory.csv";
+    private static FileWriter writer;
 
-    private static void generateCsvFile(String fileName) {
 
+    protected static void generateCsvFile() throws IOException {
 
-        FileWriter writer = null;
+        writer = new FileWriter(FILE, true);
 
-        try {
+        writer.append("Date");
+        writer.append(',');
+        writer.append("Time");
+        writer.append(',');
+        writer.append("Email");
+        writer.append(',');
+        writer.append("Address");
+        writer.append(',');
+        writer.append("Product");
+        writer.append(',');
+        writer.append("Quantity");
+        writer.append('\n');
 
-            writer = new FileWriter(fileName);
-            writer.append("Customer order"); // we would append the order from the events into here
-            writer.append(',');
-            writer.append("Date");
-            writer.append(',');
-            writer.append("Time");
-            writer.append('\n');
+        writer.flush();
+        writer.close();
 
-            writer.append("00Smith");
-            writer.append(',');
-            writer.append("9-12-2020");
-            writer.append(',');
-            writer.append("1:00pm");
-            writer.append('\n');
-
-            writer.append("00Jones");
-            writer.append(',');
-            writer.append("9-13-2020");
-            writer.append(',');
-            writer.append("1:00pm");
-            writer.append('\n');
-
-            writer.append("00Alex");
-            writer.append(',');
-            writer.append("9-14-2020");
-            writer.append(',');
-            writer.append("1:00pm");
-            writer.append('\n');
-
-            writer.append("00Brian");
-            writer.append(',');
-            writer.append("9-15-2020");
-            writer.append(',');
-            writer.append("11:00am");
-            writer.append('\n');
-
-            writer.append("00Jacob");
-            writer.append(',');
-            writer.append("9-16-2020");
-            writer.append(',');
-            writer.append("5:00pm");
-            writer.append('\n');
-
-            writer.append("00John");
-            writer.append(',');
-            writer.append("9-17-2020");
-            writer.append(',');
-            writer.append("3:00pm");
-            writer.append('\n');
-
-            System.out.println("CSV file is created...");
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                writer.flush();
-                writer.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+        System.out.println("CSV file generated.");
     }
 
-    public static void main(String[] args) {
-        // writes into a file
-        // this is for testing will fi
-        String location = "customerHistory.csv";
-        generateCsvFile(location);
+    protected static void generateOrderHistory(BuyerEvent event) throws IOException {
 
+        writer = new FileWriter(FILE, true);
+        writer.append(event.getDate());
+        writer.append(',');
+        writer.append(event.getTime());
+        writer.append(',');
+        writer.append(event.getEmail());
+        writer.append(',');
+        writer.append(event.getShipping_address());
+        writer.append(',');
+        writer.append(event.getProduct_id());
+        writer.append(',');
+        writer.append(String.valueOf(event.getQuantity()));
+        writer.append('\n');
+
+        writer.flush();
+        writer.close();
     }
-
 }
-
-
-
-
-
-

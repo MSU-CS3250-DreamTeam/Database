@@ -1,24 +1,33 @@
 package com.dreamteam.database;
 
-import javax.mail.*;
+import javax.mail.*; // This should cover all mail classes.
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-import javax.mail.Folder;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.NoSuchProviderException;
-import javax.mail.Session;
-import javax.mail.Store;
+
 import java.util.Date;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
-public class OrderSubmission {
+public class EmailService {
+	private final String HOST2;
+	private final String USER; 
+	private final String PASSWORD;
+	
+	public EmailService() {
+		this.HOST2 = "pop.gmail.com";
+		this.USER = "thedreamteamsoftware+orders@gmail.com";
+		this.PASSWORD = "Sch00l2020!";
+	}
 	public static void main(String[] args) throws MessagingException
 	{
+		EmailService test = new EmailService();
+		System.out.println(test.checkEmail());
+		//checkEmail(host2, mailStoreType, toEmail, password);
+	}
+	
+	public static void SendMessage() throws MessagingException
+	{
 		String host1 = "smtp.gmail.com";
-		String host2 = "pop.gmail.com";
-		String mailStoreType = "pop3";
 		Properties props1 = new Properties();
 		props1.put("mail.smtp.host", host1);
 		props1.put("mail.smtp.port", 587);
@@ -29,44 +38,39 @@ public class OrderSubmission {
 		String fromEmail = "buyingallofyourthings@gmail.com";
 		String password = "#DreamTeam1!";
 		String toEmail = "cs3250team1dreamteam@gmail.com";
-		SendMessage(msg1, fromEmail, toEmail, "Can I please have your stuff?", password, "SUBJECT: I'm seriously going to need your stuff.");
 		System.out.println("Checking email, please hold...");
 		try {
 			TimeUnit.SECONDS.sleep(5);
 		} catch (InterruptedException ex) {
 			Thread.currentThread().interrupt();
 		}
-		checkEmail(host2, mailStoreType, toEmail, password);
-	}
-
-	public static void SendMessage(MimeMessage msg, String from, String to, String text,
-	 String password, String subject) throws MessagingException
-	{
-		msg.setFrom(new InternetAddress(from));
-		msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to));
-		msg.setSubject(subject);
-		msg.setSentDate(new Date());
-		msg.setText(text);
-		Transport.send(msg, from, password);
+		msg1.setFrom(new InternetAddress(fromEmail));
+		msg1.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmail));
+		msg1.setSubject("Blah");
+		msg1.setSentDate(new Date());
+		msg1.setText("blah");
+		Transport.send(msg1, fromEmail, password);
 		System.out.println("Message sent successfully!");
 	}
 
-	public static void checkEmail(String host2, String storeType, String user, String password) {
+	public String[] checkEmail() {
+		String[] emailContents;
 		try {
 			Properties props2 = new Properties();
-			props2.put("mail.pop3.host", host2);
+			props2.put("mail.pop3.host", HOST2);
 			props2.put("mail.pop3.port", "995");
 			props2.put("mail.pop3.starttls.enable", "true");
 			Session emailSession = Session.getInstance(props2, null);
 
 			Store store = emailSession.getStore("pop3s");
-			store.connect(host2, user, password);
+			store.connect(HOST2, USER, PASSWORD);
 
 			Folder emailFolder = store.getFolder("INBOX");
 			emailFolder.open(Folder.READ_ONLY);
 
 			Message[] messages = emailFolder.getMessages();
 			System.out.println("Total number of messages: " + messages.length);
+			emailContents = new String[messages.length];
 
 			for (int i = 0; i < messages.length; i++) {
 				Message message2 = messages[i];
@@ -75,19 +79,23 @@ public class OrderSubmission {
 				System.out.println("Email Subject: " + message2.getSubject());
 				System.out.println("From: " + message2.getFrom()[0]);
 				System.out.println("Text: " + message2.getContent().toString());
+				emailContents[i] = message2.getContent().toString();
 			}
 
-			emailFolder.close(false);
+			emailFolder.close(false); //TODO Should this be hardcoded?
 			store.close();
 
 		} catch (NoSuchProviderException e) { 
-			e.printStackTrace(); 
+			e.printStackTrace();
+			emailContents = new String[]{""};
 		} catch (MessagingException e) {
 			e.printStackTrace();
+			emailContents = new String[]{""};
 		} catch (Exception e) {
 			e.printStackTrace();
-		}	
-	}		
-
+			emailContents = new String[]{""};
 		}
+		return emailContents;
+	}
+}
 
