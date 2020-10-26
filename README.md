@@ -1,5 +1,10 @@
 ![Build Status](https://travis-ci.org/MSU-CS3250-DreamTeam/Database.svg?branch=springboot-integration)
 
+<a href="https://scan.coverity.com/projects/msu-cs3250-dreamteam-database">
+  <img alt="Coverity Scan Build Status"
+       src="https://scan.coverity.com/projects/21975/badge.svg"/>
+</a>
+
 # Database
 
 A database to manage cvs stored data.
