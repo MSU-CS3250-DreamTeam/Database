@@ -1,5 +1,24 @@
 language: java
-jdk: openjdk14
+jdk: openjdk11
 install:
 - mvn -N io.takari:maven:wrapper
 - ./mvnw install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
+
+env:
+  global:
+   # The next declaration is the encrypted COVERITY_SCAN_TOKEN, created
+   #   via the "travis encrypt" command using the project repo's public key
+   - secure: "MLWvZ9mucqBzHIadT236dM0CfskX5MEvvFWfFYU32yRIagXFPM5aJf6b+UJo9jPv0Ve/00R9KkrvfyX2gJI4ukwZ/hXvNfcyxXFfyHxJB9aByM4EVAMU3S8LfvecoX1o1ptSqWXK6hYciWMFtFe9RYRVAEZGyQQG84o+ASZ/f2XbNOaLGgawsNuklaI1db+4btxcH4sMyqizuCRja931/32lzTRZD+60wKZ6x89UkTFIIXfZPnUi30blG0ys1CPIDYEZpAvV7/5r1o45TQVLOv0lxwq0R2T/CyR+lQ38cO1EIvqPbxQHy+rZvnxKyEpWMyYg413JpG6zk5tL9GUG25iLKTMwKNxDOeZdHSwViirIavNojRulVcYU1PvIoP7sDPHnh4P5VwJLavPGxtq93uDxSLzAy7yYYtDJWG1/M/LHpbfq/X/yPfR1XYio6HihUoO69wMtjt90si2sfyKks7cfaIjWG9jCvN72+2bhxSUkp5Csbz+qwRhleV/rCLQ3AL3Q5rai/K53T0TNkbsd2Z5eF05a693Bw5n+ZPz8DPRlUGsSiVdi9NPYXeLJk1NsEt/8p1xpZXAdIzuVE8jSyCZdxCYZw3gKyp/O0r32YaU3I5WG/Lj7VLFdbBU8lk56emmyf+J2X4qT4iEbk5Ghkl1Y9y6SRI1y0pOXrd0USC8="
+
+before_install:
+  - echo -n | openssl s_client -connect https://scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-
+
+addons:
+  coverity_scan:
+    project:
+      name: "MSU-CS3250-DreamTeam/Database"
+      description: "A product and orders database program."
+    notification_email: thedreamteamsoftware@gmail.com
+    build_command_prepend: "./configure"
+    build_command: "mvn -DskipTests=true compile"
+    branch_pattern: coverity_scan
