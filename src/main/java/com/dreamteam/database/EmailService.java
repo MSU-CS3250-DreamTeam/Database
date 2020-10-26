@@ -27,8 +27,8 @@ public class EmailService {
 	public static void main(String[] args) throws MessagingException
 	{
 		EmailService test = new EmailService();
-		String[] emailContents = test.checkEmail();
-		System.out.println(Arrays.toString(emailContents));
+		String[] orderContents = test.checkEmail();
+		System.out.println(Arrays.toString(orderContents));
 		//checkEmail(host2, mailStoreType, toEmail, password);
 	}
 	
@@ -65,7 +65,7 @@ public class EmailService {
 	
 	public String[] checkEmail()
 	{
-		String[] emailContents;
+		String[] orderContents;
 		String[] bodyText;
 		try
 		{
@@ -83,34 +83,44 @@ public class EmailService {
 			
 			Message[] messages = emailFolder.getMessages();
 			System.out.println("Total number of messages: " + messages.length);
-			emailContents = new String[messages.length];
+			orderContents = new String[5];
 			bodyText = new String[messages.length];
 			
 			for(int i = 0; i < messages.length; i++)
 			{
 				Message message2 = messages[i];
 				bodyText[i] = getTextFromMessage(message2);
-				String[] toSet = bodyText[i].split(" ");
-				System.out.println(Arrays.toString(toSet));
-				for (int k = 0; k < toSet.length; k++) {
-					if (toSet[k].contains("email:")) {
-						emailContents[k] = bodyText[k++];
+				String[] toArray = bodyText[i].split(" ");
+				System.out.println(Arrays.toString(toArray));
+				for (int k = 0; k < toArray.length; k++) {
+					if(toArray[k].contains("Submitted"))
+					{
+						orderContents[0] = toArray[k+1] 
+						 + toArray[k+2] 
+						 + toArray[k+3] 
+						 + toArray[k+4] 
+						 + toArray[k+5] 
+						 + toArray[k+6];
 					}
-					if (toSet[k].contains("address:")) {
-						emailContents[k] += bodyText[k++];
+					if (toArray[k].contains("email:")) {
+						orderContents[1] = toArray[k+1];
 					}
-					if (toSet[k].contains("product:")) {
-						emailContents[k] += bodyText[k++];
+					if (toArray[k].contains("address:")) {
+						orderContents[2] = toArray[k+1];
 					}
-					if (toSet[k].contains("quantity:")) {
-						emailContents[k] += bodyText[k++];
+					if (toArray[k].contains("product:")) {
+						orderContents[3] = toArray[k+1];
+					}
+					if (toArray[k].contains("quantity:")) {
+						orderContents[4] = toArray[k+1];
 					}
 				}
+			
 				
 					//if(message2.getSubject().contains("order"))
 					//{
-					//emailContents[i] = message2.getContent().toString();
-					//System.out.println(emailContents[i]);
+					//orderContents[i] = message2.getContent().toString();
+					//System.out.println(orderContents[i]);
 					//}
 					//System.out.println("-----------------------------------------------");
 					//System.out.println("Email Number " + (i + 1));
@@ -125,19 +135,19 @@ public class EmailService {
 		catch(NoSuchProviderException e)
 			{
 				e.printStackTrace();
-				emailContents = new String[] {""};
+				orderContents = new String[] {""};
 			}
 		catch(MessagingException e)
 			{
 				e.printStackTrace();
-				emailContents = new String[] {""};
+				orderContents = new String[] {""};
 			}
 		catch(Exception e)
 			{
 				e.printStackTrace();
-				emailContents = new String[] {""};
+				orderContents = new String[] {""};
 			}
-			return emailContents;
+			return orderContents;
 		}
 		
 		private String getTextFromMessage (Message message) throws IOException, MessagingException
