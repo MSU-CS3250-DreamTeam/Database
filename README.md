@@ -1,4 +1,4 @@
-![Build Status](https://travis-ci.org/MSU-CS3250-DreamTeam/Database.svg?branch=springboot-integration)
+![Build Status](https://travis-ci.org/MSU-CS3250-DreamTeam/Database.svg?branch=master)
 
 <a href="https://scan.coverity.com/projects/msu-cs3250-dreamteam-database">
   <img alt="Coverity Scan Build Status"
