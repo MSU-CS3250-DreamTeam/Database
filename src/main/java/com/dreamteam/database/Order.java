@@ -52,13 +52,13 @@ public class Order extends DatabaseEntry {
     /** Class Methods (Alphabetical Order) */
 
     public String prettyPrint() {
-        String regex = ", \n\t";
+        String regex = ", \n\t\t";
 		String s =  "Order:\t" +
-			   "{ date:\t\t" + this.date +
+			   "{ date:\t\t\t" + this.date +
 			   regex + "  customer email:\t\t" + this.customer_email +
                regex + "  customer location:\t\"" + this.customer_location + '\"' +
                regex + "  product id:\t\t\"" + this.product_id + '\"' +
-               regex + "  quantity:\t\t" + this.quantity + "\t}\n";
+               regex + "  quantity:\t\t\t" + this.quantity + "\t}\n";
                
 		System.out.println(s);
 		return s;
@@ -67,6 +67,7 @@ public class Order extends DatabaseEntry {
 	@Override public String toString() {
         return 
             this.date + "," +
+            this.process_time + "," +
             this.customer_email + "," +
             this.customer_location + "," +
             this.product_id + "," +

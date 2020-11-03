@@ -1,11 +1,10 @@
 package com.dreamteam.database;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.NumberFormat;
-import java.util.List;
+import java.util.EnumSet;
 import java.util.Scanner;
 
 /**
@@ -15,14 +14,12 @@ public class main {
 	// Variable Declarations
 	static private final ProductDatabase product_database = ProductDatabase.getProducts();
 	static private final OrderDatabase order_database = OrderDatabase.getOrders();
-	public static Scanner main_scanner = new Scanner(System.in);
+	static private Scanner main_scanner = new Scanner(System.in);
 
 	// ***************************************************************************
 
 	/**
 	 * @param args
-	 *
-	 * @throws FileNotFoundException
 	 */
 	static public void main(String[] args) {
 
@@ -45,7 +42,7 @@ public class main {
 	 * A demonstration of how to use the CRUD methods on an active, visible database
 	 * object.
 	 */
-	private static final void demo_database() {
+	private static void demo_database() {
 
 		System.out.println("\nTesting the product database.");
 		System.out.println("-----------------------------");
@@ -104,7 +101,7 @@ public class main {
 
 		// Local Variable Declarations
 		Options user_choice = null;
-		final List<Options> MAIN_MENU = List.of(Options.CREATE, Options.READ, Options.UPDATE,
+		final EnumSet<Options> MAIN_MENU = EnumSet.of(Options.CREATE, Options.READ, Options.UPDATE,
 								Options.DELETE, Options.PROCESS_ORDERS, Options.REPORTS, Options.QUIT);
 		Menu menu = new Menu(MAIN_MENU);
 		String[] database_header = product_database.get_data_head();
@@ -120,7 +117,7 @@ public class main {
 			product_database.display();
 			order_database.display();
 			System.out.println();
-			user_choice = menu.getOption();
+			user_choice = menu.getOption(main_scanner);
 
 			switch (user_choice) {
 
@@ -154,7 +151,7 @@ public class main {
 					existing_entry = product_database.read(main_scanner.nextLine());
 					
 					if ((existing_entry != null) && (existing_entry.getProductID() != "000")) {
-						product_database.update(existing_entry);
+						product_database.update(existing_entry, main_scanner);
 						existing_entry.prettyPrint();
 					}
 
@@ -201,15 +198,14 @@ public class main {
 	}
 
 	//	***************************************************************************
-	// TODO create a file with a date stamp like daily-report-10-18.txt under 'files/reports'
 
-	/** TODO Write the networth of all assets to a daily report file.
-	 * 
+	/**
+	 *
+	 * @param date
 	 */
-
 	public static void dailyAssetsReport(String date) {  //prints out report to console and txt file with assets in product_database and customer orders and sales in order_database
 		NumberFormat formatter = NumberFormat.getCurrencyInstance(); //to format the print statements in dollar form
-		String report_path = "files/reports/dailyreport_" + date + ".txt";
+		String report_path = "files/reports/daily-report_" + date + ".txt";
 		
 		try {
 			File myObj = new File(report_path);
@@ -238,8 +234,11 @@ public class main {
 	
 	//	***************************************************************************	
 
-	/**	TODO Write the top ten products and customers (by spending) to a daily report file
-	 * 
+	//	TODO Write the top products and customers (by spending) to a daily report file
+
+	/**
+	 *
+	 * @param date
 	 */
 	private static void dailyTopTenReport(String date) {
 		order_database.findTopCustomers(date);
@@ -258,19 +257,13 @@ public class main {
 	protected static void updateCustomerHistory(String customer, String date, String time)
 	throws IOException {
 		String location = "files/buyer_order_history.csv";
+		String new_order = customer + ", " + date + ", " + time + '\n';
 		
-		try {
-			FileWriter writer = new FileWriter(location, true);
-			writer.append(customer); // we would append the order from the events into here
-			writer.append(", ");
-			writer.append(date);
-			writer.append(", ");
-			writer.append(time);
-			writer.append('\n');
+		try (FileWriter writer = new FileWriter(location, true)) {
+			writer.append(new_order);
 			
 			System.out.println("Realtime order appended to file in relative path: " + location);
 			writer.flush();
-			writer.close();
 		}
 		catch(IOException e) {
 			e.printStackTrace();

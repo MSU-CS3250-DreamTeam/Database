@@ -1,5 +1,7 @@
 package com.dreamteam.database;
 
+import java.util.Scanner;
+
 public interface Database<E> {
 
 	// TODO javadoc; methods in the interface do not require a javadoc where @override is used.
@@ -52,15 +54,16 @@ public interface Database<E> {
 	public E read(String id);
 	
 	public void set_data_head(String[] labels);
-	
+
 	/**
 	 * Find existing entry in database and update with new entry.
 	 *
 	 * @param existing_entry the new entry to overwrite the old one
+	 * @param program_scanner the tool used to scan user update choices
 	 *
 	 * @return the old entry, in case we want to do something with it
 	 */
-	public boolean update(E existing_entry);
+	public boolean update(E existing_entry, Scanner program_scanner);
 	
 	/**
 	 *  Prints the number of current entries in the database.

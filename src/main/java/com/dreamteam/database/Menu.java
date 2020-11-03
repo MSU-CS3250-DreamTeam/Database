@@ -1,13 +1,13 @@
 package com.dreamteam.database;
 
-import java.util.List;
+import java.util.EnumSet;
 import java.util.Scanner;
 
 public class Menu {
 
-    private final List<Options> OPTIONS;
+    private final EnumSet<Options> OPTIONS;
 
-    public Menu(List<Options> options) {
+    public Menu(EnumSet<Options> options) {
 		this.OPTIONS = options;
     }
 
@@ -18,11 +18,7 @@ public class Menu {
 	 *
 	 * @return the selected option to menu.
 	 */
-	public Options getOption() {
-        
-        // Local Variable Declarations
-        Scanner option_scanner = main.main_scanner;
-		int user_input = 1;
+	public Options getOption(Scanner option_scanner) {
 		
 		while(true) {
 			
@@ -33,20 +29,18 @@ public class Menu {
 				System.out.println(" " + option.getValue() + ": " + option);
 			}
 			System.out.print("? ");
-			
+
 			try {
 
-				user_input = Integer.parseInt(option_scanner.nextLine());
+				int user_choice = Integer.parseInt(option_scanner.nextLine());
 				
-				for (Options user_choice : Options.values()) {
-					if (user_input == user_choice.getValue()) {
-						return user_choice;
+				for (Options choice : Options.values()) {
+					if (user_choice == choice.getValue()) {
+						return choice;
 					}
 				}
 				
-			}
-			catch(NumberFormatException ex) {
-				
+			} catch(NumberFormatException ex) {
 				System.err.println(ex.getMessage());
 				System.out.println("Error! Incorrect format.");
 			}
