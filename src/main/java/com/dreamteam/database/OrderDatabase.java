@@ -214,8 +214,9 @@ public class OrderDatabase implements Database<Order> {
 		Product existing_product;
 		String date = "2020-01-01";
 		ProductDatabase products = ProductDatabase.getProducts();
+		File order_log = new File(order_log_path);
 
-		try (Scanner order_scanner = new Scanner(new File(order_log_path))) {
+		try (Scanner order_scanner = new Scanner(order_log)) {
 
 			order_scanner.nextLine();
 
