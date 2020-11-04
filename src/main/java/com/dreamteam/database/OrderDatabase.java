@@ -1,9 +1,6 @@
 package com.dreamteam.database;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -28,12 +25,11 @@ public class OrderDatabase implements Database<Order> {
 	private OrderDatabase() {
 
 		final String file_path = "files/customer_history.csv";
+		File order_history = new File(file_path);
 
-		try {
+		try (Scanner dbScanner = new Scanner(order_history)) {
 
-			File inventory = new File(file_path);
 			data_table = new HashMap<>();
-			Scanner dbScanner = new Scanner(inventory);
 
 			if (dbScanner.hasNextLine())
 				OrderDatabase.data_head = dbScanner.nextLine().split(",");
@@ -45,8 +41,6 @@ public class OrderDatabase implements Database<Order> {
 				create(dbRow);
 			}
 
-			dbScanner.close();
-
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 			System.out.println("Is the data file " + file_path + " in the wrong directory?");
@@ -55,10 +49,6 @@ public class OrderDatabase implements Database<Order> {
 
 	/** Getters */
 
-	/**
-	 * 
-	 * @return a reference to the OrderDatabase instance.
-	 */
 	public static OrderDatabase getOrders() {
 		return ORDERS;
 	}
@@ -75,7 +65,7 @@ public class OrderDatabase implements Database<Order> {
 		OrderDatabase.data_head = labels;
 	}
 
-	/** Class Methods (Alphabetical Order) */
+	/* Class Methods (Alphabetical Order) */
 	// TODO javadoc for class methods without @override.
 
 	/**
@@ -87,7 +77,7 @@ public class OrderDatabase implements Database<Order> {
 		String location = "files/customer_history.csv";
 
 		FileWriter writer = new FileWriter(location, true);
-		writer.append(order.toString() + "\n");
+		writer.append(order.toString()).append("\n");
 
 		writer.flush();
 		writer.close();
@@ -135,12 +125,23 @@ public class OrderDatabase implements Database<Order> {
 
 	@Override
 	public void create(Order new_order) {
+		final boolean COMPARE_TIMES = false;
 		String order_date = new_order.getDate();
+		String order_details = new_order.toString(COMPARE_TIMES);
 		HashSet<Order> orders = data_table.get(order_date);
+
 		if (orders == null) {
 			orders = new HashSet<Order>();
 			data_table.put(new_order.getDate(), orders);
-		} 
+		} else {
+			for (Order o: orders) {
+				if (o.toString(COMPARE_TIMES).equals(order_details)) {
+					System.out.println("An identical order already exists: " + o.toString());
+					return;
+				}
+			}
+		}
+		
 		orders.add(new_order);
 	}
 
@@ -169,30 +170,7 @@ public class OrderDatabase implements Database<Order> {
 		System.out.println("The orders database has " + number_of_orders + " orders.");
 	}
 
-	// TODO Find matching orders by date and put in the returning hashmap.
-	/**
-	 * 
-	 * @param date
-	 * @return
-	 */
-
-	// public static HashSet<Order> findDailyOrders(String date) {
-	// 	return data_table.get(date);
-	// } 
-
-
-// 	public static HashMap<String,Order> findDailyOrders(String date) {
-
-// 		HashMap<String,Order> orders = new HashMap<>(); // orders<order_id, order>
-// 		for (Order order:data_table.values()) {
-// 			if (order.getDate().equals(date))
-// 				orders.put(order.getOrderID(), order);
-// 		}
-// 		return orders;
-// 	}
-
-
-	// TODO Find the top ten products (by spending) and return
+	// TODO Find the top products (by spending) and return
 	/**
 	 * 
 	 * @param date
@@ -219,7 +197,7 @@ public class OrderDatabase implements Database<Order> {
 		return products;
 	}
 
-	// TODO Find the top ten customers (by spending) and return
+	// TODO Find the top customers (by spending) and return
 	/**
 	 * 
 	 * @param date
@@ -242,23 +220,22 @@ public class OrderDatabase implements Database<Order> {
 	public void processOrders() {
 
 		String order_log_path = "files/customer_orders_A_team1.csv";
-		Order processed_order = null;
+		Order processed_order;
 		String next_order;
 		Product existing_product;
 		String date = "2020-01-01";
 		ProductDatabase products = ProductDatabase.getProducts();
+		File order_log = new File(order_log_path);
 
-		try {
+		try (Scanner order_scanner = new Scanner(order_log)) {
 
-			File order_log = new File(order_log_path);
-			Scanner order_scanner = new Scanner(order_log);
 			order_scanner.nextLine();
 
 			while (order_scanner.hasNextLine()) {
 				next_order = order_scanner.nextLine();
 				create(next_order);
-				
-				if (!next_order.contains(date)){
+
+				if (!next_order.contains(date)) {
 					main.dailyAssetsReport(date);
 					date = next_order.substring(0, date.length());
 					System.out.println(date);
@@ -269,37 +246,34 @@ public class OrderDatabase implements Database<Order> {
 
 				if (existing_product.buyQuantity(processed_order.getQuantity())) {
 					try {
-							appendCustomerHistory(processed_order);
-						} catch (IOException e) {
-							e.printStackTrace();
-							System.out.println(processed_order.getEmail() + " could not be written to file.");
-						}
+						appendCustomerHistory(processed_order);
+					} catch (IOException e) {
+						e.printStackTrace();
+						System.out.println(processed_order.getEmail() + " could not be written to file.");
+					}
 
 				} else {
 					System.out.println(processed_order.getEmail() + " could not be processed.");
 				}
 			}
+
 			main.dailyAssetsReport(date);
 
-			order_scanner.close();
-
-			try {
-
-				FileWriter fWriter = new FileWriter(order_log_path, false);
-				
-				String string_head = "";
-
-				for (String value : OrderDatabase.data_head) {
-					if (!value.equals("time"))
-						string_head += value + ",";
-				}
-
-				fWriter.write(string_head + '\n');
-				fWriter.close();
-
-			} catch (IOException e1) {
-				e1.printStackTrace();
-			}
+			// Wipes the file of customer orders, so disabled for convenience.
+//			try (FileWriter fWriter = new FileWriter(order_log_path, false)) {
+//
+//				StringBuilder string_head = new StringBuilder();
+//
+//				for (String value : OrderDatabase.data_head) {
+//					if (!value.equals("time"))
+//						string_head.append(value).append(",");
+//				}
+//
+//				fWriter.write(string_head.toString() + '\n');
+//
+//			} catch (IOException e1) {
+//				e1.printStackTrace();
+//			}
 
 			System.out.println("The orders are processed and appended to history.");
 
@@ -309,32 +283,31 @@ public class OrderDatabase implements Database<Order> {
 		}
 	}
 
-	@Override
+		@Override
 	public Order read(String date) {
 		if (OrderDatabase.data_table.containsKey(date)) {
 			HashSet<Order> orders = data_table.get(date);
-			Scanner retrieve_scanner = main.main_scanner;
-			int user_input = 1;
+			Scanner retrieve_scanner = new Scanner(System.in);
 
 			System.out.println("Select the order you wish to retrieve: ");
 
 			for (Order order: orders) {
-				System.out.println(user_input++ + ": " + order.toString());
+				System.out.println("Is this your order y/n? \n" + order.toString());
+				if ("y".equals(retrieve_scanner.nextLine().toLowerCase())) {
+					return order;
+				}
 			}
-			
-			user_input = Integer.parseInt(retrieve_scanner.nextLine());
 
-			return (Order) orders.toArray()[0];
-		} else {
-			System.out.println("The order was not found.");
-			return new Order("000,000,000,000,000".split(","));
-		}		
+		}
+
+		System.out.println("The order was not found.");
+		return new Order("000,000,000,000,000".split(","));
 	}
 
 	private Order read(String date, String order) {
 		HashSet<Order> orders = data_table.get(date);
 		for (Order o: orders) {
-			if (o.toString().equals(order))
+			if (o.toString(false).equals(order))
 				return o;
 		}
 
@@ -342,8 +315,9 @@ public class OrderDatabase implements Database<Order> {
 		return new Order("000,000,000,000,000".split(","));
 	}
 
+	// TODO control flow like ProductDatabase.update() method for field setters. Try c&v, then adapt for orders.
 	@Override
-    public boolean update(Order existing_order) {
+    public boolean update(Order existing_order, Scanner order_scanner) {
 		HashSet<Order> matching_orders = data_table.get(existing_order.getDate());
 		return matching_orders.contains(existing_order);
 	}

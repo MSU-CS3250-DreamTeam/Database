@@ -1,6 +1,6 @@
 package com.dreamteam.database;
 
-import javax.mail.*; // This should cover all mail classes.
+import javax.mail.*;
 import javax.mail.internet.ContentType;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Properties;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 public class EmailService {
@@ -132,7 +131,7 @@ public class EmailService {
 				emailFolder.close(false); //TODO Should this be hardcoded?
 				store.close();
 			}
-		catch(NoSuchProviderException e)
+		catch (NoSuchProviderException e)
 			{
 				e.printStackTrace();
 				orderContents = new String[] {""};
