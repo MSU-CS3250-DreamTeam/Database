@@ -95,11 +95,11 @@ public class OrderDatabase implements Database<Order> {
 		return hasDate;
 	}
 
-	public static int countDailyOrders(String date) {
+	public int countDailyOrders(String date) {
 		return data_table.get(date).size();
 	}
 
-	public static double countSales(String date) {
+	public double countSales(String date) {
 		ProductDatabase product_database = ProductDatabase.getProducts();
 		NumberFormat formatter = NumberFormat.getCurrencyInstance();
 
@@ -218,6 +218,13 @@ public class OrderDatabase implements Database<Order> {
 	 * 
 	 */
 	public void processOrders() {
+
+		// Cleans out annual-plot-data csv for a fresh simulation.
+		try (FileWriter eraser = new FileWriter(new File("files/annual-plot-data.csv"), false)) {
+			eraser.write("");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 
 		String order_log_path = "files/customer_orders_A_team1.csv";
 		Order processed_order;
