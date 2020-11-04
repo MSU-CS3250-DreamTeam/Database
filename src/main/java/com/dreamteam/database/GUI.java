@@ -23,6 +23,7 @@ public class GUI implements ActionListener {
     JLabel wholesaleLabel = new JLabel("Wholesale Cost:");
     JLabel salesLabel = new JLabel("Sales Price:");
     JLabel supplierLabel = new JLabel("Supplier ID:");
+    JLabel label = new JLabel("");
 
     //Globalized text area + button components to process user input
     JTextArea product;
@@ -159,8 +160,11 @@ public class GUI implements ActionListener {
             case "REPORTS":
                 JLabel reportsLabel = new JLabel("For which date would you like reports for?");
                 date = new JTextArea();
+                submit = new JButton("GENERATE REPORT");
+                submit.addActionListener(this::reportSubmit);
                 panel2.add(reportsLabel);
                 panel2.add(date);
+                panel2.add(submit);
                 newGUI("REPORTS");
 
                 break;
@@ -187,7 +191,14 @@ public class GUI implements ActionListener {
 
         Product newProduct = new Product(product_id, product_quantity, wholesale_cost,sales_price,supplier_id);
         productDatabase.create(newProduct);
-        System.out.println("Product created!");
+        if (productDatabase.contains(newProduct.getProductID())){
+            label.setText("New product created successfully!");
+        } else {
+            label.setText("Product not created. Unexpected issue... :(");
+        }
+        panel2.removeAll();
+        panel2.add(label);
+        newGUI("CREATE");
     }
 
     /**
@@ -198,8 +209,16 @@ public class GUI implements ActionListener {
      */
     public void readSubmit(ActionEvent e) {
         String product_id = product.getText();
-        System.out.println(productDatabase.read(product_id));
-        frame2.dispose();
+        if (productDatabase.contains(product_id)) {
+            Product productData = productDatabase.read(product_id);
+            label.setText(productData.prettyPrint());
+        } else {
+            label.setText("No products in database match with ID of [ " + product_id + " ]");
+        }
+
+        panel2.removeAll();
+        panel2.add(label);
+        newGUI("READ");
     }
 
     /**
@@ -210,8 +229,15 @@ public class GUI implements ActionListener {
      */
     public void deleteSubmit(ActionEvent e) {
         String product_id = product.getText();
-        productDatabase.delete(product_id);
-        System.out.println("Product deleted successfully!");
+        if (productDatabase.contains(product_id)) {
+            productDatabase.delete(product_id);
+            label.setText("Product deleted successfully!");
+        } else {
+            label.setText("Product doesn't exist / already deleted.");
+        }
+        panel2.removeAll();
+        panel2.add(label);
+        newGUI("DELETE");
     }
 
     /**
@@ -222,8 +248,29 @@ public class GUI implements ActionListener {
      */
     public void processSubmit(ActionEvent e) {
         orderDatabase.processOrders();
-        panel2.remove(submit);
-        panel2.add(new JLabel("Orders Processed Successfully!"));
+        label = new JLabel("Orders Processed Successfully!");
+        panel2.removeAll();
+        panel2.add(label);
+        newGUI("PROCESS ORDERS");
+    }
+
+    /**
+     * This method calls on the OrderDatabase.processOrders()
+     * method to process any available orders
+     *
+     * @param e Submit button clicked in PROCESS_ORDERS mode
+     */
+    public void reportSubmit(ActionEvent e) {
+        String reportDate = date.getText();
+        label = new JLabel("");
+        if (orderDatabase.contains(reportDate)){
+            label.setText("Generating reports...");
+        } else {
+            label.setText("No reports available for that date.");
+        }
+        panel2.removeAll();
+        panel2.add(label);
+        newGUI("DAILY REPORTS");
     }
 
     /**
