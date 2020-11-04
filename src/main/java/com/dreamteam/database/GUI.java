@@ -4,8 +4,11 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.EnumSet;
+import java.util.Scanner;
 
 public class GUI implements ActionListener {
 
@@ -260,17 +263,36 @@ public class GUI implements ActionListener {
      *
      * @param e Submit button clicked in PROCESS_ORDERS mode
      */
-    public void reportSubmit(ActionEvent e) {
+    public void reportSubmit(ActionEvent e)  {
+
         String reportDate = date.getText();
-        label = new JLabel("");
+
         if (orderDatabase.contains(reportDate)){
-            label.setText("Generating reports...");
-        } else {
+
+            File reportFile = new File("files/reports/dailyreport_" + reportDate + ".txt");
+
+            try {
+                main.main_scanner = new Scanner(reportFile);
+                String assets = main.main_scanner.nextLine();
+                String orderCount = main.main_scanner.nextLine();
+                String totalPrice = main.main_scanner.nextLine();
+                label.setText(assets);
+                salesLabel.setText(orderCount);
+                wholesaleLabel.setText(totalPrice);
+            } catch (FileNotFoundException fileNotFoundException) {
+                fileNotFoundException.printStackTrace();
+            }
+
+        }
+        else {
             label.setText("No reports available for that date.");
         }
         panel2.removeAll();
         panel2.add(label);
+        panel2.add(salesLabel);
+        panel2.add(wholesaleLabel);
         newGUI("DAILY REPORTS");
+
     }
 
     /**
