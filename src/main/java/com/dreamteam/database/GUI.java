@@ -23,7 +23,7 @@ public class GUI implements ActionListener {
     JLabel salesLabel = new JLabel("Sales Price:");
     JLabel supplierLabel = new JLabel("Supplier ID:");
 
-    //Globalized text area components to store user input
+    //Globalized text area + button components to process user input
     JTextArea product;
     JTextArea quantity;
     JTextArea wholesale;
@@ -33,6 +33,7 @@ public class GUI implements ActionListener {
     JButton submit;
 
 
+    //Constructor
     public GUI() {
 
         //Create window frame
@@ -68,7 +69,12 @@ public class GUI implements ActionListener {
 
     }
 
-
+    /**
+     * This method creates operation buttons and also
+     * allows for new windows to be created for each option
+     *
+     * @param e Operation button clicked on main menu
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
 
@@ -79,6 +85,7 @@ public class GUI implements ActionListener {
         panel2.setLayout(new GridLayout(0,1));
 
         switch(e.getActionCommand()){
+
             case "CREATE":
                 product = new JTextArea();
                 quantity = new JTextArea();
@@ -161,9 +168,14 @@ public class GUI implements ActionListener {
 
                 break;
         }
-
     }
 
+    /**
+     * This method creates a Product object with user input and
+     * calls on the ProductDatabase.create() method to add Product
+     *
+     * @param e Submit button clicked in CREATE mode
+     */
     public void createSubmit(ActionEvent e) {
         String product_id = product.getText();
         int product_quantity = Integer.parseInt(quantity.getText());
@@ -176,18 +188,36 @@ public class GUI implements ActionListener {
         System.out.println("Product created!");
     }
 
+    /**
+     * This method calls on the ProductDatabase.read()
+     * method to read Product given a valid product ID
+     *
+     * @param e Submit button clicked in READ mode
+     */
     public void readSubmit(ActionEvent e) {
         String product_id = product.getText();
         System.out.println(database.read(product_id));
         frame2.dispose();
     }
 
+    /**
+     * This method calls on the ProductDatabase.delete()
+     * method to delete Product given a valid product ID
+     *
+     * @param e Submit button clicked in DELETE mode
+     */
     public void deleteSubmit(ActionEvent e) {
         String product_id = product.getText();
         database.delete(product_id);
         System.out.println("Product deleted successfully!");
     }
 
+    /**
+     * This method reduces code to create new GUI windows
+     * for all operations being done
+     *
+     * @param title Title to know what operation user is on
+     */
     public void newGUI(String title) {
         frame2.setTitle("DATABASE OPERATION: " + title);
         frame2.add(panel2, BorderLayout.CENTER);
