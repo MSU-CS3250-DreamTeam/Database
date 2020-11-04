@@ -130,7 +130,7 @@ public class GUI implements ActionListener {
 
             case "UPDATE":
                 EnumSet<Options> OPTIONS = EnumSet.of(Options.QUANTITY, Options.CAPACITY, Options.WHOLESALE_COST, Options.SALE_PRICE, Options.SUPPLIER, Options.DONE);
-                ArrayList<JButton> buttonList = new ArrayList<JButton>();
+                ArrayList<JButton> buttonList = new ArrayList<>();
                 for(Options option : OPTIONS){
                     buttonList.add(new JButton(String.valueOf(option)));
                 }
@@ -153,8 +153,10 @@ public class GUI implements ActionListener {
                 break;
 
             case "PROCESS_ORDERS":
+                label.setText("Press button to process orders.");
                 submit = new JButton("PROCESS");
                 submit.addActionListener(this::processSubmit);
+                panel2.add(label);
                 panel2.add(submit);
                 newGUI("PROCESS ORDERS");
 
@@ -258,10 +260,10 @@ public class GUI implements ActionListener {
     }
 
     /**
-     * This method calls on the OrderDatabase.processOrders()
-     * method to process any available orders
+     * This method uses the main scanner to find reports
+     * on a valid date, and shows user in GUI
      *
-     * @param e Submit button clicked in PROCESS_ORDERS mode
+     * @param e Submit button clicked in REPORT mode
      */
     public void reportSubmit(ActionEvent e)  {
 
