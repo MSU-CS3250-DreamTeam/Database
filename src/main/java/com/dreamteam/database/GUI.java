@@ -14,7 +14,8 @@ public class GUI implements ActionListener {
     private JFrame frame2;
     private JPanel panel;
     private JPanel panel2;
-    private ProductDatabase database = ProductDatabase.getProducts();
+    private ProductDatabase productDatabase = ProductDatabase.getProducts();
+    private OrderDatabase orderDatabase = OrderDatabase.getOrders();
 
     //Necessary labels for most/all methods
     JLabel productLabel = new JLabel("Product ID:");
@@ -148,8 +149,9 @@ public class GUI implements ActionListener {
                 break;
 
             case "PROCESS_ORDERS":
-                JLabel processLabel = new JLabel("Order Processing NOT Complete!");
-                panel2.add(processLabel);
+                submit = new JButton("PROCESS");
+                submit.addActionListener(this::processSubmit);
+                panel2.add(submit);
                 newGUI("PROCESS ORDERS");
 
                 break;
@@ -184,7 +186,7 @@ public class GUI implements ActionListener {
         String supplier_id = supplier.getText();
 
         Product newProduct = new Product(product_id, product_quantity, wholesale_cost,sales_price,supplier_id);
-        database.create(newProduct);
+        productDatabase.create(newProduct);
         System.out.println("Product created!");
     }
 
@@ -196,7 +198,7 @@ public class GUI implements ActionListener {
      */
     public void readSubmit(ActionEvent e) {
         String product_id = product.getText();
-        System.out.println(database.read(product_id));
+        System.out.println(productDatabase.read(product_id));
         frame2.dispose();
     }
 
@@ -208,8 +210,20 @@ public class GUI implements ActionListener {
      */
     public void deleteSubmit(ActionEvent e) {
         String product_id = product.getText();
-        database.delete(product_id);
+        productDatabase.delete(product_id);
         System.out.println("Product deleted successfully!");
+    }
+
+    /**
+     * This method calls on the OrderDatabase.processOrders()
+     * method to process any available orders
+     *
+     * @param e Submit button clicked in PROCESS_ORDERS mode
+     */
+    public void processSubmit(ActionEvent e) {
+        orderDatabase.processOrders();
+        panel2.remove(submit);
+        panel2.add(new JLabel("Orders Processed Successfully!"));
     }
 
     /**
