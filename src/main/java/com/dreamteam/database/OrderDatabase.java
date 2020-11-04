@@ -125,12 +125,23 @@ public class OrderDatabase implements Database<Order> {
 
 	@Override
 	public void create(Order new_order) {
+		final boolean COMPARE_TIMES = false;
 		String order_date = new_order.getDate();
+		String order_details = new_order.toString(COMPARE_TIMES);
 		HashSet<Order> orders = data_table.get(order_date);
+
 		if (orders == null) {
 			orders = new HashSet<Order>();
 			data_table.put(new_order.getDate(), orders);
-		} 
+		} else {
+			for (Order o: orders) {
+				if (o.toString(COMPARE_TIMES).equals(order_details)) {
+					System.out.println("An identical order already exists: " + o.toString());
+					return;
+				}
+			}
+		}
+		
 		orders.add(new_order);
 	}
 
@@ -209,7 +220,7 @@ public class OrderDatabase implements Database<Order> {
 	public void processOrders() {
 
 		String order_log_path = "files/customer_orders_A_team1.csv";
-		Order processed_order = null;
+		Order processed_order;
 		String next_order;
 		Product existing_product;
 		String date = "2020-01-01";
@@ -296,7 +307,7 @@ public class OrderDatabase implements Database<Order> {
 	private Order read(String date, String order) {
 		HashSet<Order> orders = data_table.get(date);
 		for (Order o: orders) {
-			if (o.toString().equals(order))
+			if (o.toString(false).equals(order))
 				return o;
 		}
 

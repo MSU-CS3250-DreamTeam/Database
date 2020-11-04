@@ -28,10 +28,10 @@ public class Order extends DatabaseEntry {
             this.process_time = order[index++];
         }
         
-        this.customer_email = order[index++];;
-        this.customer_location = order[index++];;
-		this.product_id = order[index++];;
-        this.quantity = Integer.parseInt(order[index++]);
+        this.customer_email = order[index++];
+        this.customer_location = order[index++];
+		this.product_id = order[index++];
+        this.quantity = Integer.parseInt(order[index]);
         
     }
 
@@ -63,11 +63,22 @@ public class Order extends DatabaseEntry {
 		System.out.println(s);
 		return s;
 	}
-	
+
 	@Override public String toString() {
+        return toString(true);
+    }
+
+    /**
+     * Allows read method to compare string without time for processing order validation.
+     *
+     * @param has_time whether the toString method should return fields of object including process_time.
+     * @return the csv of the Order's fields.
+     */
+	public String toString(boolean has_time) {
+        String time = has_time ? this.process_time + "," : "";
         return 
             this.date + "," +
-            this.process_time + "," +
+            time +
             this.customer_email + "," +
             this.customer_location + "," +
             this.product_id + "," +

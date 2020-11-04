@@ -44,8 +44,6 @@ public class ProductDatabase implements Database<Product> {
 				create(dbRow);
 			}
 
-			product_scanner.close();
-
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 			System.out.println("Is the data file " + file_path + " in the wrong directory?");
@@ -73,19 +71,6 @@ public class ProductDatabase implements Database<Product> {
 
 	/* Class Methods (Alphabetical Order) */
 	// TODO javadoc for class methods without @override.
-
-	/**
-	 * Check to see if we can make a sale
-	 *
-	 * @param attemptedQuantity which we need to have enough of
-	 */
-	public boolean canProcessOrder(String id, int attemptedQuantity) {
-		Product product = data_table.get(id);
-		if (product != null) {
-			return (attemptedQuantity <= product.getQuantity());
-		}
-		return false;
-	}
 
 	/**
 	 * 
@@ -127,7 +112,7 @@ public class ProductDatabase implements Database<Product> {
 		if (!contains(new_product.getProductID())) {
 			data_table.put(new_product.getProductID(), new_product);
 		} else {
-			System.out.println("Product already exists");
+			System.out.println("Product already exists.");
 		}
 	}
 
@@ -165,7 +150,7 @@ public class ProductDatabase implements Database<Product> {
 	@Override
 	public boolean update(Product existing_product, Scanner product_scanner) {
 		boolean isUpdated = true;
-		Options user_choice = null;
+		Options user_choice;
 		final EnumSet<Options> UPDATE_MENU = EnumSet.of(Options.QUANTITY,Options.CAPACITY,Options.WHOLESALE_COST,
 										Options.SALE_PRICE,Options.SUPPLIER,Options.DONE);
 		Menu menu = new Menu(UPDATE_MENU);
@@ -193,13 +178,8 @@ public class ProductDatabase implements Database<Product> {
 						String customer = product_scanner.nextLine();
 						String date = LocalDate.now().toString();
 						String time = LocalDateTime.now().toString();
-						
-						try {
-							main.updateCustomerHistory(customer, date, time);
-						}
-						catch(IOException e) {
-							System.err.println(e);
-						}
+
+						main.updateCustomerHistory(customer, date, time);
 						break;
 
 					case CAPACITY:

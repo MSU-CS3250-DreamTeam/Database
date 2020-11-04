@@ -1,6 +1,5 @@
 package com.dreamteam.database;
 
-import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.NumberFormat;
@@ -12,9 +11,9 @@ import java.util.Scanner;
  */
 public class main {
 	// Variable Declarations
-	static private final ProductDatabase product_database = ProductDatabase.getProducts();
-	static private final OrderDatabase order_database = OrderDatabase.getOrders();
-	static private Scanner main_scanner = new Scanner(System.in);
+	static private final ProductDatabase PRODUCT_DATABASE = ProductDatabase.getProducts();
+	static private final OrderDatabase ORDER_DATABASE = OrderDatabase.getOrders();
+	static private final Scanner MAIN_SCANNER = new Scanner(System.in);
 
 	// ***************************************************************************
 
@@ -33,7 +32,7 @@ public class main {
 
 		// Call the menu for user to access and modify the database.
 		runMenu();
-		main_scanner.close();
+		MAIN_SCANNER.close();
 	} // End main method.
 
 	// ***************************************************************************
@@ -53,37 +52,37 @@ public class main {
 		Product created_product;
 
 		System.out.print("\nRetrieving a product: ");
-		existing_product = product_database.read(existing_product_id);
+		existing_product = PRODUCT_DATABASE.read(existing_product_id);
 		existing_product.prettyPrint();
 
 		System.out.print("\nRemoving a product: ");
-		if (product_database.delete(existing_product_id))
+		if (PRODUCT_DATABASE.delete(existing_product_id))
 			System.out.println("product removed.");
-		product_database.display();
+		PRODUCT_DATABASE.display();
 
 		System.out.print("\nExisting product should not be found: ");
-		product_database.read(existing_product_id);
+		PRODUCT_DATABASE.read(existing_product_id);
 
 		System.out.print("\nNew product should be found: ");
-		product_database.create(new_product);
-		product_database.display();
-		created_product = product_database.read(new_product.split(",")[0]);
+		PRODUCT_DATABASE.create(new_product);
+		PRODUCT_DATABASE.display();
+		created_product = PRODUCT_DATABASE.read(new_product.split(",")[0]);
 
 		System.out.print("\nRetrieving a product. ");
-		product_database.read(created_product.getProductID()).prettyPrint();
+		PRODUCT_DATABASE.read(created_product.getProductID()).prettyPrint();
 
 		System.out.print("\nBuy quantity of 4000: ");
 		created_product.buyQuantity(4000);
 
 		System.out.print("\nRetrieving updated product in the product database: ");
-		product_database.read(created_product.getProductID()).prettyPrint();
+		PRODUCT_DATABASE.read(created_product.getProductID()).prettyPrint();
 
 		System.out.print("\n\nRemoving dummy product: ");
-		if (product_database.delete(created_product.getProductID()))
+		if (PRODUCT_DATABASE.delete(created_product.getProductID()))
 			System.out.println("product removed.");
-		product_database.display();
+		PRODUCT_DATABASE.display();
 
-		product_database.create(existing_product);
+		PRODUCT_DATABASE.create(existing_product);
 
 		System.out.println("\n\n-----------------------------");
 		System.out.println("      Testing complete.      ");
@@ -100,13 +99,13 @@ public class main {
 	public static void runMenu() {
 
 		// Local Variable Declarations
-		Options user_choice = null;
+		Options user_choice;
 		final EnumSet<Options> MAIN_MENU = EnumSet.of(Options.CREATE, Options.READ, Options.UPDATE,
 								Options.DELETE, Options.PROCESS_ORDERS, Options.REPORTS, Options.QUIT);
 		Menu menu = new Menu(MAIN_MENU);
-		String[] database_header = product_database.get_data_head();
-		String[] new_entry = new String[product_database.get_column_size()];
-		Product existing_entry = null;
+		String[] database_header = PRODUCT_DATABASE.get_data_head();
+		String[] new_entry = new String[PRODUCT_DATABASE.get_column_size()];
+		Product existing_entry;
 
 		System.out.println("\n-----------------------------");
 		System.out.println("       Launching Menu        ");
@@ -114,10 +113,10 @@ public class main {
 
 		do {
 
-			product_database.display();
-			order_database.display();
+			PRODUCT_DATABASE.display();
+			ORDER_DATABASE.display();
 			System.out.println();
-			user_choice = menu.getOption(main_scanner);
+			user_choice = menu.getOption(MAIN_SCANNER);
 
 			switch (user_choice) {
 
@@ -125,11 +124,11 @@ public class main {
 
 					for (int i = 0; i < database_header.length; i++) {
 						System.out.print("Enter " + database_header[i] + ": ");
-						new_entry[i] = main_scanner.nextLine();
+						new_entry[i] = MAIN_SCANNER.nextLine();
 					}
-					product_database.create(new_entry);
+					PRODUCT_DATABASE.create(new_entry);
 					
-					Product new_product = product_database.read(new_entry[0]); // Prints the object address in memory.
+					Product new_product = PRODUCT_DATABASE.read(new_entry[0]); // Prints the object address in memory.
 					new_product.prettyPrint();
 
 					break;
@@ -137,7 +136,7 @@ public class main {
 				case READ:
 					
 					System.out.print("Enter " + database_header[0] + ": ");
-					existing_entry = product_database.read(main_scanner.nextLine());
+					existing_entry = PRODUCT_DATABASE.read(MAIN_SCANNER.nextLine());
 					
 					if(existing_entry != null) {
 						existing_entry.prettyPrint();
@@ -148,10 +147,10 @@ public class main {
 				case UPDATE:
 					
 					System.out.print("Enter existing entry's " + database_header[0] + ": ");
-					existing_entry = product_database.read(main_scanner.nextLine());
+					existing_entry = PRODUCT_DATABASE.read(MAIN_SCANNER.nextLine());
 					
-					if ((existing_entry != null) && (existing_entry.getProductID() != "000")) {
-						product_database.update(existing_entry, main_scanner);
+					if ((existing_entry != null) && !(existing_entry.getProductID().equals("000"))) {
+						PRODUCT_DATABASE.update(existing_entry, MAIN_SCANNER);
 						existing_entry.prettyPrint();
 					}
 
@@ -160,12 +159,12 @@ public class main {
 				case DELETE:
 					
 					System.out.print("Enter " + database_header[0] + ": ");
-					product_database.delete(main_scanner.nextLine());
+					PRODUCT_DATABASE.delete(MAIN_SCANNER.nextLine());
 
 					break;
 				
 				case PROCESS_ORDERS:
-					order_database.processOrders();
+					ORDER_DATABASE.processOrders();
 
 					System.out.println("Simulation processed.");
 					
@@ -174,8 +173,8 @@ public class main {
 				case REPORTS:
 
 					System.out.println("For which date would you like reports?");
-					String date = main_scanner.nextLine();
-					if (order_database.contains(date)) {
+					String date = MAIN_SCANNER.nextLine();
+					if (ORDER_DATABASE.contains(date)) {
 						System.out.println("Reports generating...");
 
 						dailyAssetsReport(date);
@@ -206,27 +205,15 @@ public class main {
 	public static void dailyAssetsReport(String date) {  //prints out report to console and txt file with assets in product_database and customer orders and sales in order_database
 		NumberFormat formatter = NumberFormat.getCurrencyInstance(); //to format the print statements in dollar form
 		String report_path = "files/reports/daily-report_" + date + ".txt";
-		
-		try {
-			File myObj = new File(report_path);
-			if (myObj.createNewFile()) {
-				System.out.println("File created: " + myObj.getName());
-			} else {
-				System.out.println("File already exists.");
-			}
-		} catch (IOException e) {
-			System.out.println("An error occurred.");
-			e.printStackTrace();
-		}
-		try {
-			FileWriter myWriter = new FileWriter(report_path);
-			myWriter.write("The company's total value in assets for "  + date + " is " + formatter.format(product_database.countAssets()) + "\n");
-			myWriter.write("The total number of customer orders for "  + date + " is " + OrderDatabase.countDailyOrders(date) + "\n");
-			myWriter.write("The total dollar amount of all orders for "  + date + " is " + formatter.format(OrderDatabase.countSales(date)) + "\n");
-			myWriter.close();
+
+		try (FileWriter report_writer = new FileWriter(report_path, false)) {
+			report_writer.write("The company's total value in assets for "  + date + " is " + formatter.format(PRODUCT_DATABASE.countAssets()) + "\n");
+			report_writer.write("The total number of customer orders for "  + date + " is " + OrderDatabase.countDailyOrders(date) + "\n");
+			report_writer.write("The total dollar amount of all orders for "  + date + " is " + formatter.format(OrderDatabase.countSales(date)) + "\n");
+
 			System.out.println("Successfully wrote to the file.");
 		} catch (IOException e) {
-			System.out.println("An error occurred.");
+			System.out.println("Failed to create or write to file.");
 			e.printStackTrace();
 		}
 	}
@@ -241,8 +228,8 @@ public class main {
 	 * @param date
 	 */
 	private static void dailyTopTenReport(String date) {
-		order_database.findTopCustomers(date);
-		order_database.findTopProducts(date);
+		ORDER_DATABASE.findTopCustomers(date);
+		ORDER_DATABASE.findTopProducts(date);
 	}
 
 	//	***************************************************************************
@@ -252,10 +239,8 @@ public class main {
 	 * @param customer
 	 * @param date
 	 * @param time
-	 * @throws IOException
 	 */
-	protected static void updateCustomerHistory(String customer, String date, String time)
-	throws IOException {
+	protected static void updateCustomerHistory(String customer, String date, String time) {
 		String location = "files/buyer_order_history.csv";
 		String new_order = customer + ", " + date + ", " + time + '\n';
 		
