@@ -17,8 +17,8 @@ public class GUI implements ActionListener {
     private JFrame frame2;
     private JPanel panel;
     private JPanel panel2;
-    private ProductDatabase productDatabase = ProductDatabase.getProducts();
-    private OrderDatabase orderDatabase = OrderDatabase.getOrders();
+    private static ProductDatabase productDatabase = ProductDatabase.getProducts();
+    private static OrderDatabase orderDatabase = OrderDatabase.getOrders();
 
     //Necessary labels for most/all methods
     JLabel productLabel = new JLabel("Product ID:");
@@ -165,11 +165,16 @@ public class GUI implements ActionListener {
             case "REPORTS":
                 JLabel reportsLabel = new JLabel("For which date would you like reports for?");
                 date = new JTextArea();
-                submit = new JButton("GENERATE REPORT");
+                label.setText("You can also view a graph report of company assets.");
+                JButton view = new JButton("VIEW GRAPH REPORT");
+                submit = new JButton("GENERATE ORDER REPORT");
                 submit.addActionListener(this::reportSubmit);
+                view.addActionListener(this::viewSubmit);
                 panel2.add(reportsLabel);
                 panel2.add(date);
                 panel2.add(submit);
+                panel2.add(label);
+                panel2.add(view);
                 newGUI("REPORTS");
 
                 break;
@@ -278,23 +283,55 @@ public class GUI implements ActionListener {
                 String assets = main.main_scanner.nextLine();
                 String orderCount = main.main_scanner.nextLine();
                 String totalPrice = main.main_scanner.nextLine();
+                panel2.removeAll();
+                panel2.add(label);
+                panel2.add(salesLabel);
+                panel2.add(wholesaleLabel);
                 label.setText(assets);
                 salesLabel.setText(orderCount);
                 wholesaleLabel.setText(totalPrice);
             } catch (FileNotFoundException fileNotFoundException) {
                 fileNotFoundException.printStackTrace();
+                System.out.println("Error scanning file.");
             }
 
         }
         else {
             label.setText("No reports available for that date.");
+            panel2.removeAll();
+            panel2.add(label);
         }
-        panel2.removeAll();
-        panel2.add(label);
-        panel2.add(salesLabel);
-        panel2.add(wholesaleLabel);
+
         newGUI("DAILY REPORTS");
 
+    }
+    /**
+     * This method currently finds a PDF in
+     * program and displays it to the user
+     *
+     * @param e View button clicked in REPORTS mode
+     */
+    public void viewSubmit(ActionEvent e) {
+        try {
+
+            File pdfFile = new File("files/graph_report.pdf");
+            if (pdfFile.exists()) {
+
+                if (Desktop.isDesktopSupported()) {
+                    Desktop.getDesktop().open(pdfFile);
+                } else {
+                    System.out.println("Awt Desktop is not supported!");
+                }
+
+            } else {
+                System.out.println("File is not exists!");
+            }
+
+            System.out.println("Done");
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
     /**
