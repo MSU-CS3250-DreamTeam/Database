@@ -94,6 +94,31 @@ public class OrderDatabase implements Database<Order> {
 			System.out.println("The order database has no orders for the date: " + date);
 		return hasDate;
 	}
+	
+	/**
+	 * 
+	 * @param new_order
+	 * @return
+	 */
+	public boolean contains(Order new_order) {
+		final boolean COMPARE_TIMES = false;
+		String order_date = new_order.getDate();
+		String order_details = new_order.toString(COMPARE_TIMES);
+		HashSet<Order> orders = data_table.get(order_date);
+		
+		if (orders == null) {
+			orders = new HashSet<Order>();
+			data_table.put(new_order.getDate(), orders);
+		} else {
+			for (Order o: orders) {
+				if (o.toString(COMPARE_TIMES).equals(order_details)) {
+					System.out.println("An identical order already exists: " + o.toString());
+					return false;
+				}
+			}
+		}
+		return true;
+	}
 
 	public int countDailyOrders(String date) {
 		return data_table.get(date).size();
@@ -125,24 +150,12 @@ public class OrderDatabase implements Database<Order> {
 
 	@Override
 	public void create(Order new_order) {
-		final boolean COMPARE_TIMES = false;
 		String order_date = new_order.getDate();
-		String order_details = new_order.toString(COMPARE_TIMES);
 		HashSet<Order> orders = data_table.get(order_date);
-
-		if (orders == null) {
-			orders = new HashSet<Order>();
-			data_table.put(new_order.getDate(), orders);
-		} else {
-			for (Order o: orders) {
-				if (o.toString(COMPARE_TIMES).equals(order_details)) {
-					System.out.println("An identical order already exists: " + o.toString());
-					return;
-				}
-			}
+		if (!contains(new_order)) {
+			orders.add(new_order);
 		}
 		
-		orders.add(new_order);
 	}
 
 	@Override
@@ -311,7 +324,7 @@ public class OrderDatabase implements Database<Order> {
 		return new Order("000,000,000,000,000".split(","));
 	}
 
-	private Order read(String date, String order) {
+	public Order read(String date, String order) {
 		HashSet<Order> orders = data_table.get(date);
 		for (Order o: orders) {
 			if (o.toString(false).equals(order))
