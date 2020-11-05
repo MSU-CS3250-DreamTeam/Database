@@ -36,6 +36,7 @@ public class GUI implements ActionListener {
     JTextArea supplier;
     JTextArea date;
     JButton submit;
+    JButton view;
 
 
     //Constructor
@@ -166,7 +167,7 @@ public class GUI implements ActionListener {
                 JLabel reportsLabel = new JLabel("For which date would you like reports for?");
                 date = new JTextArea();
                 label.setText("You can also view a graph report of company assets.");
-                JButton view = new JButton("VIEW GRAPH REPORT");
+                view = new JButton("VIEW GRAPH REPORT");
                 submit = new JButton("GENERATE ORDER REPORT");
                 submit.addActionListener(this::reportSubmit);
                 view.addActionListener(this::viewSubmit);
@@ -320,11 +321,18 @@ public class GUI implements ActionListener {
                 if (Desktop.isDesktopSupported()) {
                     Desktop.getDesktop().open(pdfFile);
                 } else {
-                    System.out.println("Awt Desktop is not supported!");
+                    label.setText("Awt Desktop is Not Supported.");
+                    panel2.add(label);
+                    panel2.remove(view);
+                    newGUI("REPORTS");
                 }
 
             } else {
-                System.out.println("File is not exists!");
+                label.setText("Graph Report File Does Not Exist.");
+                panel2.add(label);
+                panel2.remove(view);
+                newGUI("REPORTS");
+                System.out.println("File does not exist!");
             }
 
             System.out.println("Done");
