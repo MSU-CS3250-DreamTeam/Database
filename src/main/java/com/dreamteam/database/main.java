@@ -117,7 +117,8 @@ public class main {
 		// Local Variable Declarations
 		Options user_choice;
 		final EnumSet<Options> MAIN_MENU = EnumSet.of(Options.CREATE, Options.READ, Options.UPDATE,
-								Options.DELETE, Options.PROCESS_ORDERS, Options.REPORTS, Options.TOP_CUSTOMERS, Options.TOP_PRODUCTS,  Options.QUIT);
+								Options.DELETE, Options.PROCESS_ORDERS, Options.REPORTS, Options.TOP_CUSTOMERS, Options.TOP_PRODUCTS, Options.CHECK_EMAIL, Options.QUIT);
+
 		Menu menu = new Menu(MAIN_MENU);
 		String[] database_header = PRODUCT_DATABASE.get_data_head();
 		String[] new_entry = new String[PRODUCT_DATABASE.get_column_size()];
@@ -199,8 +200,16 @@ public class main {
 					}
 
 					break;
-
+					
+				case CHECK_EMAIL:
+					
+					System.out.println("Checking inbox...");
+					EmailService email = new EmailService();
+					email.checkEmail();
+					break;
+					
 				case TOP_PRODUCTS:
+          
 					System.out.println("For which date would you like reports?");
 					date = MAIN_SCANNER.nextLine();
 					ORDER_DATABASE.findTopProducts(date);
@@ -208,6 +217,7 @@ public class main {
 					break;
 
 				case TOP_CUSTOMERS:
+          
 					System.out.println("For which date would you like reports?");
 					date = MAIN_SCANNER.nextLine();
 					ORDER_DATABASE.findTopCustomers(date);

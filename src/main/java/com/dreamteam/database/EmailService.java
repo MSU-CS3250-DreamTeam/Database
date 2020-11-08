@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
+import java.util.Calendar.*;
 
 public class EmailService {
 	private final String HOST2;
@@ -23,15 +24,7 @@ public class EmailService {
 		this.PASSWORD = "Sch00l2020!";
 	}
 	
-	public static void main(String[] args) throws MessagingException
-	{
-		EmailService test = new EmailService();
-		String[] orderContents = test.checkEmail();
-		System.out.println(Arrays.toString(orderContents));
-		//checkEmail(host2, mailStoreType, toEmail, password);
-	}
-	
-	public static void SendMessage() throws MessagingException
+	public static void sendMessage(Order new_order) throws MessagingException
 	{
 		String host1 = "smtp.gmail.com";
 		Properties props1 = new Properties();
@@ -41,10 +34,12 @@ public class EmailService {
 		props1.put("mail.smtp.starttls.enable", "true");
 		Session session1 = Session.getInstance(props1, null);
 		MimeMessage msg1 = new MimeMessage(session1);
-		String fromEmail = "buyingallofyourthings@gmail.com";
-		String password = "#DreamTeam1!";
-		String toEmail = "cs3250team1dreamteam@gmail.com";
+		String fromEmail = "thedreamteamsoftware@gmail.com";
+		String password = "Sch00l2020!";
+		String toEmail = "thedreamteamsoftware+orders@gmail.com";
 		System.out.println("Checking email, please hold...");
+		String confirmationMessage = new_order.prettyPrint() +
+		 "Your order has been successfully submitted. Thank you for choosing the Dream Team!";
 		try
 		{
 			TimeUnit.SECONDS.sleep(5);
@@ -55,15 +50,16 @@ public class EmailService {
 		}
 		msg1.setFrom(new InternetAddress(fromEmail));
 		msg1.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmail));
-		msg1.setSubject("Blah");
+		msg1.setSubject("Order Confirmation");
 		msg1.setSentDate(new Date());
-		msg1.setText("blah");
+		msg1.setText(confirmationMessage);
 		Transport.send(msg1, fromEmail, password);
 		System.out.println("Message sent successfully!");
 	}
 	
 	public String[] checkEmail()
 	{
+		final OrderDatabase od = OrderDatabase.getOrders();
 		String[] orderContents;
 		String[] bodyText;
 		try
@@ -76,7 +72,6 @@ public class EmailService {
 			
 			Store store = emailSession.getStore("pop3s");
 			store.connect(HOST2, USER, PASSWORD);
-			
 			Folder emailFolder = store.getFolder("INBOX");
 			emailFolder.open(Folder.READ_ONLY);
 			
@@ -90,125 +85,162 @@ public class EmailService {
 				Message message2 = messages[i];
 				bodyText[i] = getTextFromMessage(message2);
 				String[] toArray = bodyText[i].split(" ");
-				System.out.println(Arrays.toString(toArray));
-				for (int k = 0; k < toArray.length; k++) {
+				for(int k = 0; k < toArray.length; k++)
+				{
 					if(toArray[k].contains("Submitted"))
 					{
-						orderContents[0] = toArray[k+1] 
-						 + toArray[k+2] 
-						 + toArray[k+3] 
-						 + toArray[k+4] 
-						 + toArray[k+5] 
-						 + toArray[k+6];
+						orderContents[0] = toArray[k + 1]
+						 + toArray[k + 2]
+						 + toArray[k + 3]
+						 + toArray[k + 4]
+						 + toArray[k + 5]
+						 + toArray[k + 6];
+						orderContents[0] = reformatDate(orderContents[0]);
 					}
-					if (toArray[k].contains("email:")) {
-						orderContents[1] = toArray[k+1];
+					if(toArray[k].contains("email:"))
+					{
+						orderContents[1] = toArray[k + 1];
 					}
-					if (toArray[k].contains("address:")) {
-						orderContents[2] = toArray[k+1];
+					if(toArray[k].contains("address:"))
+					{
+						orderContents[2] = toArray[k + 1];
 					}
-					if (toArray[k].contains("product:")) {
-						orderContents[3] = toArray[k+1];
+					if(toArray[k].contains("product:"))
+					{
+						orderContents[3] = toArray[k + 1];
 					}
-					if (toArray[k].contains("quantity:")) {
-						orderContents[4] = toArray[k+1];
+					if(toArray[k].contains("quantity:"))
+					{
+						orderContents[4] = toArray[k + 1];
+					}
+					if(!(orderContents[0] == null))
+					{
+						if(!(orderContents[0].equals("New")))
+						{
+							od.create(orderContents);
+							String regex = ",";
+							String order_string = orderContents[0] + regex +
+							 orderContents[1] + regex +
+							 orderContents[2] + regex +
+							 orderContents[3] + regex +
+							 orderContents[4];
+							
+							Order emailOrder = od.read(orderContents[0], order_string);
+							if(od.contains(emailOrder))
+							{
+								System.out.println("Order successful! Sending confirmation email" +
+								 ".");
+								sendMessage(emailOrder);
+							}
+							break;
+						}
 					}
 				}
+			}
 			
-				
-					//if(message2.getSubject().contains("order"))
-					//{
-					//orderContents[i] = message2.getContent().toString();
-					//System.out.println(orderContents[i]);
-					//}
-					//System.out.println("-----------------------------------------------");
-					//System.out.println("Email Number " + (i + 1));
-					//System.out.println("Email Subject: " + message2.getSubject());
-					//System.out.println("From: " + message2.getFrom()[0]);
-					//System.out.println("Text: " + message2.getContent().toString());
-				}
-				
-				emailFolder.close(false); //TODO Should this be hardcoded?
-				store.close();
-			}
-		catch (NoSuchProviderException e)
-			{
-				e.printStackTrace();
-				orderContents = new String[] {""};
-			}
+			emailFolder.close(false); //TODO Should this be hardcoded?
+			store.close();
+		}
+		catch(NoSuchProviderException e)
+		{
+			e.printStackTrace();
+			orderContents = new String[] {""};
+		}
 		catch(MessagingException e)
-			{
-				e.printStackTrace();
-				orderContents = new String[] {""};
-			}
+		{
+			e.printStackTrace();
+			orderContents = new String[] {""};
+		}
 		catch(Exception e)
-			{
-				e.printStackTrace();
-				orderContents = new String[] {""};
-			}
-			return orderContents;
-		}
-		
-		private String getTextFromMessage (Message message) throws IOException, MessagingException
 		{
-			String result = "";
-			if(message.isMimeType("text/plain"))
-			{
-				result = message.getContent().toString();
-			}
-			else if(message.isMimeType("multipart/*"))
-			{
-				MimeMultipart mimeMultipart = (MimeMultipart)message.getContent();
-				result = getTextFromMimeMultipart(mimeMultipart);
-			}
-			return result;
+			e.printStackTrace();
+			orderContents = new String[] {""};
 		}
-		
-		private String getTextFromMimeMultipart (
-	 MimeMultipart mimeMultipart) throws IOException, MessagingException
-		{
-			
-			int count = mimeMultipart.getCount();
-			if(count == 0)
-			{
-				throw new MessagingException("Multipart with no body parts not supported.");
-			}
-			boolean multipartAlt =
-			 new ContentType(mimeMultipart.getContentType()).match("multipart/alternative");
-			if(multipartAlt)
-			// alternatives appear in an order of increasing 
-			// faithfulness to the original content. Customize as req'd.
-			{
-				return getTextFromBodyPart(mimeMultipart.getBodyPart(count - 1));
-			}
-			String result = "";
-			for(int i = 0; i < count; i++)
-			{
-				BodyPart bodyPart = mimeMultipart.getBodyPart(i);
-				result += getTextFromBodyPart(bodyPart);
-			}
-			return result;
-		}
-		
-		private String getTextFromBodyPart (
-	 BodyPart bodyPart) throws IOException, MessagingException
-		{
-			
-			String result = "";
-			if(bodyPart.isMimeType("text/plain"))
-			{
-				result = (String)bodyPart.getContent();
-			}
-			else if(bodyPart.isMimeType("text/html"))
-			{
-				String html = (String)bodyPart.getContent();
-				result = org.jsoup.Jsoup.parse(html).text();
-			}
-			else if(bodyPart.getContent() instanceof MimeMultipart)
-			{
-				result = getTextFromMimeMultipart((MimeMultipart)bodyPart.getContent());
-			}
-			return result;
-		}
+		return orderContents;
 	}
-
+	
+	private String getTextFromMessage(Message message) throws IOException, MessagingException
+	{
+		String result = "";
+		if(message.isMimeType("text/plain"))
+		{
+			result = message.getContent().toString();
+		}
+		else if(message.isMimeType("multipart/*"))
+		{
+			MimeMultipart mimeMultipart = (MimeMultipart)message.getContent();
+			result = getTextFromMimeMultipart(mimeMultipart);
+		}
+		return result;
+	}
+	
+	private String getTextFromMimeMultipart(
+	 MimeMultipart mimeMultipart) throws IOException, MessagingException
+	{
+		
+		int count = mimeMultipart.getCount();
+		if(count == 0)
+		{
+			throw new MessagingException("Multipart with no body parts not supported.");
+		}
+		boolean multipartAlt =
+		 new ContentType(mimeMultipart.getContentType()).match("multipart/alternative");
+		if(multipartAlt)
+		// alternatives appear in an order of increasing 
+		// faithfulness to the original content. Customize as req'd.
+		{
+			return getTextFromBodyPart(mimeMultipart.getBodyPart(count - 1));
+		}
+		String result = "";
+		for(int i = 0; i < count; i++)
+		{
+			BodyPart bodyPart = mimeMultipart.getBodyPart(i);
+			result += getTextFromBodyPart(bodyPart);
+		}
+		return result;
+	}
+	
+	private String getTextFromBodyPart(
+	 BodyPart bodyPart) throws IOException, MessagingException
+	{
+		
+		String result = "";
+		if(bodyPart.isMimeType("text/plain"))
+		{
+			result = (String)bodyPart.getContent();
+		}
+		else if(bodyPart.isMimeType("text/html"))
+		{
+			String html = (String)bodyPart.getContent();
+			result = org.jsoup.Jsoup.parse(html).text();
+		}
+		else if(bodyPart.getContent() instanceof MimeMultipart)
+		{
+			result = getTextFromMimeMultipart((MimeMultipart)bodyPart.getContent());
+		}
+		return result;
+	}
+	
+	private String reformatDate(String date)
+	{
+		int startIndex = date.indexOf("-");
+		int endIndex = date.indexOf(".");
+		String orderDay = date.substring(startIndex + 1, startIndex + 3);
+		String orderMonth = date.substring(startIndex + 3, endIndex - 4);
+		String orderYear = date.substring(endIndex - 4, endIndex);
+		if(orderMonth.contains("October"))
+		{
+			orderMonth = orderMonth.replace("October", "10");
+		}
+		if(orderMonth.contains("November"))
+		{
+			orderMonth = orderMonth.replace("November", "11");
+		}
+		if(orderMonth.contains("December"))
+		{
+			orderMonth = orderMonth.replace("December", "12");
+		}
+		date = orderYear + "-" + orderMonth + "-" + orderDay;
+		return date;
+	}
+}
