@@ -85,7 +85,6 @@ public class EmailService {
 				Message message2 = messages[i];
 				bodyText[i] = getTextFromMessage(message2);
 				String[] toArray = bodyText[i].split(" ");
-				//System.out.println(Arrays.toString(toArray));
 				for(int k = 0; k < toArray.length; k++)
 				{
 					if(toArray[k].contains("Submitted"))
@@ -137,17 +136,6 @@ public class EmailService {
 						}
 					}
 				}
-				
-				//if(message2.getSubject().contains("order"))
-				//{
-				//orderContents[i] = message2.getContent().toString();
-				//System.out.println(orderContents[i]);
-				//}
-				//System.out.println("-----------------------------------------------");
-				//System.out.println("Email Number " + (i + 1));
-				//System.out.println("Email Subject: " + message2.getSubject());
-				//System.out.println("From: " + message2.getFrom()[0]);
-				//System.out.println("Text: " + message2.getContent().toString());
 			}
 			
 			emailFolder.close(false); //TODO Should this be hardcoded?
