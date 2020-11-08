@@ -118,10 +118,18 @@ public class EmailService {
 					{
 						if(!(orderContents[0].equals("New")))
 						{
-							System.out.println(Arrays.toString(orderContents));
 							od.create(orderContents);
-							Order emailOrder = od.read(orderContents[0], Arrays.toString(orderContents));
-							if (od.contains(emailOrder)) {
+							String regex = ",";
+							String order_string = orderContents[0] + regex +
+							 orderContents[1] + regex +
+							 orderContents[2] + regex +
+							 orderContents[3] + regex +
+							 orderContents[4];
+							
+							Order emailOrder = od.read(orderContents[0], order_string);
+							if(od.contains(emailOrder))
+							{
+								System.out.println("Order successful! Sending confirmation email.");
 								sendMessage(emailOrder);
 							}
 							break;
@@ -223,5 +231,14 @@ public class EmailService {
 		}
 		return result;
 	}
+	
+	private String reformatDate(String date) {
+	if (date.contains("October")) {
+		date = date.replace("October", "10");
+		}
+	if (date.contains("November")) {
+		date = date.replace("November", "11");
+	}
+	return date;
+	}
 }
-
