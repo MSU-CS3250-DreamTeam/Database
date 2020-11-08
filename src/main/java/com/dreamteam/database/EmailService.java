@@ -96,7 +96,7 @@ public class EmailService {
 						 + toArray[k + 4]
 						 + toArray[k + 5]
 						 + toArray[k + 6];
-						//System.out.println(orderContents[0]);
+						orderContents[0] = reformatDate(orderContents[0]);
 					}
 					if(toArray[k].contains("email:"))
 					{
@@ -129,7 +129,8 @@ public class EmailService {
 							Order emailOrder = od.read(orderContents[0], order_string);
 							if(od.contains(emailOrder))
 							{
-								System.out.println("Order successful! Sending confirmation email.");
+								System.out.println("Order successful! Sending confirmation email" +
+								 ".");
 								sendMessage(emailOrder);
 							}
 							break;
@@ -232,13 +233,26 @@ public class EmailService {
 		return result;
 	}
 	
-	private String reformatDate(String date) {
-	if (date.contains("October")) {
-		date = date.replace("October", "10");
+	private String reformatDate(String date)
+	{
+		int startIndex = date.indexOf("-");
+		int endIndex = date.indexOf(".");
+		String orderDay = date.substring(startIndex + 1, startIndex + 3);
+		String orderMonth = date.substring(startIndex + 3, endIndex - 4);
+		String orderYear = date.substring(endIndex - 4, endIndex);
+		if(orderMonth.contains("October"))
+		{
+			orderMonth = orderMonth.replace("October", "10");
 		}
-	if (date.contains("November")) {
-		date = date.replace("November", "11");
-	}
-	return date;
+		if(orderMonth.contains("November"))
+		{
+			orderMonth = orderMonth.replace("November", "11");
+		}
+		if(orderMonth.contains("December"))
+		{
+			orderMonth = orderMonth.replace("December", "12");
+		}
+		date = orderYear + "-" + orderMonth + "-" + orderDay;
+		return date;
 	}
 }
