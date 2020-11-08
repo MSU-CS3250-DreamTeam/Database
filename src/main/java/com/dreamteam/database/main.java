@@ -5,6 +5,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.text.NumberFormat;
 import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Scanner;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -115,11 +117,13 @@ public class main {
 		// Local Variable Declarations
 		Options user_choice;
 		final EnumSet<Options> MAIN_MENU = EnumSet.of(Options.CREATE, Options.READ, Options.UPDATE,
-								Options.DELETE, Options.PROCESS_ORDERS, Options.REPORTS, Options.CHECK_EMAIL, Options.QUIT);
+								Options.DELETE, Options.PROCESS_ORDERS, Options.REPORTS, Options.TOP_CUSTOMERS, Options.TOP_PRODUCTS, Options.CHECK_EMAIL, Options.QUIT);
+
 		Menu menu = new Menu(MAIN_MENU);
 		String[] database_header = PRODUCT_DATABASE.get_data_head();
 		String[] new_entry = new String[PRODUCT_DATABASE.get_column_size()];
 		Product existing_entry;
+		String date;
 
 		System.out.println("\n-----------------------------");
 		System.out.println("       Launching Menu        ");
@@ -187,7 +191,7 @@ public class main {
 				case REPORTS:
 
 					System.out.println("For which date would you like reports?");
-					String date = MAIN_SCANNER.nextLine();
+					date = MAIN_SCANNER.nextLine();
 					if (ORDER_DATABASE.contains(date)) {
 						System.out.println("Reports generating...");
 
@@ -204,6 +208,22 @@ public class main {
 					email.checkEmail();
 					break;
 					
+				case TOP_PRODUCTS:
+          
+					System.out.println("For which date would you like reports?");
+					date = MAIN_SCANNER.nextLine();
+					ORDER_DATABASE.findTopProducts(date);
+
+					break;
+
+				case TOP_CUSTOMERS:
+          
+					System.out.println("For which date would you like reports?");
+					date = MAIN_SCANNER.nextLine();
+					ORDER_DATABASE.findTopCustomers(date);
+
+					break;
+				
 				case QUIT:
 					
 					System.out.println("\nSaving Database changes...");
@@ -253,12 +273,11 @@ public class main {
 		PDDocument document = new PDDocument();
 		PDPage page = new PDPage(PDRectangle.A4);
 		document.addPage(page);
+		PDPageContentStream pdf_writer;
 
-
-		try (PDPageContentStream pdf_writer = new PDPageContentStream(document, page);
-			 FileWriter data_writer = new FileWriter(annual_data_path, true);
+		try (FileWriter data_writer = new FileWriter(annual_data_path, true);
 			 Scanner annual_data_scanner = new Scanner(annual_data_file)) {
-
+			pdf_writer = new PDPageContentStream(document, page);
 			pdf_writer.beginText();
 			pdf_writer.moveTextPositionByAmount(100, 800);
 			PDFont font = PDType1Font.HELVETICA;
@@ -310,7 +329,32 @@ public class main {
 
 			pdf_writer.drawImage(asset_img, 20, 400);
 			pdf_writer.drawImage(sales_img, 20, 40);
-
+			pdf_writer.close();
+			PDPage stats_page = new PDPage(PDRectangle.A4);
+			document.addPage(stats_page);
+			pdf_writer = new PDPageContentStream(document, stats_page);
+			pdf_writer.beginText();
+			pdf_writer.moveTextPositionByAmount(100, 800);
+			pdf_writer.setFont(font, 20);
+			pdf_writer.showText("Top Products ");
+			pdf_writer.moveTextPositionByAmount(0, -23);
+			pdf_writer.setFont(font, 14);
+			LinkedHashMap<String, Double> top_products = ORDER_DATABASE.findTopProducts(date);
+			for (String id : top_products.keySet()) {
+				pdf_writer.showText(id + ", $" + top_products.get(id));
+				pdf_writer.moveTextPositionByAmount(0, -17);
+			}
+			pdf_writer.moveTextPositionByAmount(0, -69);
+			pdf_writer.setFont(font, 20);
+			pdf_writer.showText("Top Customers ");
+			pdf_writer.moveTextPositionByAmount(0, -23);
+			pdf_writer.setFont(font, 14);
+			LinkedHashMap<String, Double> top_customers = ORDER_DATABASE.findTopCustomers(date);
+			for (String id : top_customers.keySet()) {
+				pdf_writer.showText(id + ", $" + top_customers.get(id));
+				pdf_writer.moveTextPositionByAmount(0, -17);
+			}
+			pdf_writer.endText();
 			pdf_writer.close();
 			document.save(report_path + ".pdf");
 

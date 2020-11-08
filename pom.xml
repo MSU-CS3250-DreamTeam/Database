@@ -131,10 +131,10 @@
 						<target>8</target>
 					</configuration>
 				</plugin>
-				<plugin>
-					<artifactId>maven-surefire-plugin</artifactId>
-					<version>2.22.1</version>
-				</plugin>
+<!--				<plugin>-->
+<!--					<artifactId>maven-surefire-plugin</artifactId>-->
+<!--					<version>2.22.1</version>-->
+<!--				</plugin>-->
 				<plugin>
 					<artifactId>maven-jar-plugin</artifactId>
 					<version>3.0.2</version>
