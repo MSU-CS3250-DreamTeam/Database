@@ -2,13 +2,7 @@ package com.dreamteam.database;
 
 import java.io.*;
 import java.text.NumberFormat;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Scanner;
-import java.util.Set;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 
 public class OrderDatabase implements Database<Order> {
@@ -176,24 +170,26 @@ public class OrderDatabase implements Database<Order> {
 	 * @param date
 	 * @return a string array of top product's ids to use in reports/etc.
 	 */
-	public Order[] findTopProducts(String date) {
-		Order[] products = new Order[10];
+	public LinkedHashMap<String, Double> findTopProducts(String date) {
+		LinkedHashMap<String, Double> products = new LinkedHashMap<>();
 		HashSet<Order> date_orders = data_table.get(date);
-		TreeMap<String, Order> mapper = new TreeMap<>();
+		TreeMap<Double, Order> mapper = new TreeMap<>();
+		ProductDatabase z = ProductDatabase.getProducts();
+		double price = 0;
+
 		for (Order next_order : date_orders) {
-			mapper.put(next_order.getProductID(), next_order);
-		}
-		
-		int size = mapper.size()-10;
-		int count = 0; 
-		int k = 0; 
-
-		for (Map.Entry<String, Order> entry : mapper.entrySet()) { 
-			if (count >= size)
-				products[k] = entry.getValue();
-			count++;
+			price = z.read(next_order.getProductID()).getSalePrice() * next_order.getQuantity();
+			mapper.put(price, next_order);
 		}
 
+		ArrayList<Double> order_keys = new ArrayList<>(mapper.keySet());
+		Collections.sort(order_keys);
+		Collections.reverse(order_keys);
+		for (double x: order_keys) {
+			System.out.println("Key = " + mapper.get(x).getProductID() +
+					", Value = " + x);
+			products.put(mapper.get(x).getProductID(), x);
+		}
 		return products;
 	}
 
@@ -203,14 +199,38 @@ public class OrderDatabase implements Database<Order> {
 	 * @param date
 	 * @return  a string array of top customer's ids to use in reports/etc.
 	 */
-	public Order[] findTopCustomers(String date) {
-		Order[] customers = new Order[10];
+	public LinkedHashMap<String, Double> findTopCustomers(String date) {
+		LinkedHashMap<String, Double> customers = new LinkedHashMap<>();
 		HashSet<Order> date_orders = data_table.get(date);
-		TreeMap<String, Order> mapper = new TreeMap<>();
+		TreeMap<String, Double> mapper = new TreeMap<>();
+		TreeMap<Double, String> inverse_mapper = new TreeMap<>();
+		HashSet<String> email_mapper = new HashSet<>();
+		ProductDatabase z = ProductDatabase.getProducts();
+		double price = 0;
+
 		for (Order next_order : date_orders) {
-			mapper.put(next_order.getEmail(), next_order);
+			price = z.read(next_order.getProductID()).getSalePrice() * next_order.getQuantity();
+			if (email_mapper.contains(next_order.getEmail())) {
+				mapper.put(next_order.getEmail(), mapper.get(next_order.getEmail()) + price);
+			}
+			else {
+				mapper.put(next_order.getEmail(), price);
+				email_mapper.add(next_order.getEmail());
+			}
+
 		}
-    
+		for (String email : mapper.keySet()) {
+			inverse_mapper.put(mapper.get(email), email);
+		}
+
+		ArrayList<Double> order_keys = new ArrayList<>(mapper.values());
+		Collections.sort(order_keys);
+		Collections.reverse(order_keys);
+		for (double x: order_keys) {
+			System.out.println("Key = " + inverse_mapper.get(x) +
+					", Value = " + x);
+			customers.put(inverse_mapper.get(x), x);
+		}
 		return customers;
 	}
 
