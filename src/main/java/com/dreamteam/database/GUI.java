@@ -245,10 +245,10 @@ public class GUI implements ActionListener {
     }
 
     /**
-     * This method calls on the OrderDatabase.processOrders()
-     * method to process any available orders
+     * This method allows for update of all Product variables
+     * except for quantity. Must use back-end for that
      *
-     * @param e Submit button clicked in PROCESS_ORDERS mode
+     * @param e Submit button clicked in UPDATE mode
      */
     public void updateSubmit(ActionEvent e) {
 
@@ -305,8 +305,8 @@ public class GUI implements ActionListener {
     }
 
     /**
-     * This method uses the main scanner to find reports
-     * on a valid date, and shows user in GUI
+     * Method pulls PDF reports of orders given
+     * a valid date, and displays on user desktop
      *
      * @param e Submit button clicked in REPORT mode
      */
