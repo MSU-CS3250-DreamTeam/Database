@@ -46,6 +46,7 @@ public class main {
 		demo_database();
 
 		// Call the menu for user to access and modify the database.
+		new GUI();
 		runMenu();
 
 		MAIN_SCANNER.close();

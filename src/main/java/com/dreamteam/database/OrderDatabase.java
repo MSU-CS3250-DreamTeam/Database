@@ -130,8 +130,8 @@ public class OrderDatabase implements Database<Order> {
 		return data_table.get(date).size();
 	}
 	
-	public double countSales(String date)
-	{
+	public double countSales(String date) {
+
 		ProductDatabase product_database = ProductDatabase.getProducts();
 		NumberFormat formatter = NumberFormat.getCurrencyInstance();
 		
@@ -227,8 +227,6 @@ public class OrderDatabase implements Database<Order> {
 		Collections.sort(order_keys);
 		Collections.reverse(order_keys);
 		for (double x: order_keys) {
-			System.out.println("Key = " + mapper.get(x).getProductID() +
-					", Value = " + x);
 			products.put(mapper.get(x).getProductID(), x);
 		}
 		return products;
@@ -269,8 +267,6 @@ public class OrderDatabase implements Database<Order> {
 		Collections.sort(order_keys);
 		Collections.reverse(order_keys);
 		for (double x: order_keys) {
-			System.out.println("Key = " + inverse_mapper.get(x) +
-					", Value = " + x);
 			customers.put(inverse_mapper.get(x), x);
 		}
 
@@ -311,7 +307,7 @@ public class OrderDatabase implements Database<Order> {
 				next_order = order_scanner.nextLine();
 				create(next_order);
 				
-				if(!next_order.contains(date))
+				if(!next_order.contains(date) && date != null)
 				{
 					main.dailyAssetsReport(date);
 					date = next_order.substring(0, date.length());
@@ -339,8 +335,9 @@ public class OrderDatabase implements Database<Order> {
 					System.out.println(processed_order.getEmail() + " could not be processed.");
 				}
 			}
-			
-			main.dailyAssetsReport(date);
+			if (date != null) {
+				main.dailyAssetsReport(date);
+			}
 			
 			// Wipes the file of customer orders, so disabled for convenience.
 //			try (FileWriter fWriter = new FileWriter(order_log_path, false)) {
