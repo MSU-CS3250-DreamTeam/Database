@@ -18,7 +18,7 @@ public class GUI implements ActionListener {
     private JPanel panel;
     private JPanel panel2;
     private static ProductDatabase productDatabase = ProductDatabase.getProducts();
-    private static OrderDatabase orderDatabase = OrderDatabase.getOrders();
+    private static final OrderDatabase orderDatabase = OrderDatabase.getOrders();
 
     //Necessary labels for most/all methods
     JLabel productLabel = new JLabel("Product ID:");
@@ -296,11 +296,13 @@ public class GUI implements ActionListener {
 
             File reportFile = new File("files/reports/dailyreport_" + reportDate + ".txt");
 
+
             try {
-                main.main_scanner = new Scanner(reportFile);
-                String assets = main.main_scanner.nextLine();
-                String orderCount = main.main_scanner.nextLine();
-                String totalPrice = main.main_scanner.nextLine();
+                //TODO: create local scanner
+                Scanner scanner = new Scanner(reportFile);
+                String assets = scanner.nextLine();
+                String orderCount = scanner.nextLine();
+                String totalPrice = scanner.nextLine();
                 panel2.removeAll();
                 panel2.add(label);
                 panel2.add(salesLabel);
@@ -332,7 +334,7 @@ public class GUI implements ActionListener {
     public void viewSubmit(ActionEvent e) {
         try {
 
-            File pdfFile = new File("files/graph_report.pdf");
+            File pdfFile = new File("files/reports/daily-report_" + date.getText() + ".pdf");
             if (pdfFile.exists()) {
 
                 if (Desktop.isDesktopSupported()) {
