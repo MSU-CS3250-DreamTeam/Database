@@ -26,31 +26,22 @@ public class DatabaseTest {
   }
 
   @Test void buyTest(TestReporter reporter) throws FileNotFoundException {
-    try {
-      executeTransactions("files/buyer_event.csv", -1, reporter);
-    } catch (FileNotFoundException e) {
-      System.err.println(e);
-    }
+    executeTransactions("files/buyer_event.csv", -1, reporter);
   }
 
   @Test void supplyTest(TestReporter reporter) {
-    try {
-      executeTransactions("files/supplier_event.csv", 1, reporter);
-    } catch (FileNotFoundException e) {
-      System.err.println(e);
-    }
+    executeTransactions("files/supplier_event.csv", 1, reporter);
   }
 
-  private void executeTransactions(String file_path, int math_sign, TestReporter reporter) throws FileNotFoundException {
+  private void executeTransactions(String file_path, int math_sign, TestReporter reporter) {
     
     File existing_file = new File(file_path);
     int quantity = 0;
     Product product;
     Product product_entry;
 
-    if (existing_file.exists()) {
+    try (Scanner data_input = new Scanner(existing_file)) {
 
-      Scanner data_input = new Scanner(existing_file);
       data_input.nextLine(); // Return and throw away column headers of file.
 
       while (data_input.hasNextLine()) {
@@ -85,10 +76,9 @@ public class DatabaseTest {
 
       }
 
-      data_input.close();
-
-    } else {
-        throw new FileNotFoundException("Is the data file in the wrong directory:" + file_path);
+    } catch (FileNotFoundException e) {
+      System.err.println(e);
+      System.err.println("Is the data file in the wrong directory:" + file_path);
     }
   }
   

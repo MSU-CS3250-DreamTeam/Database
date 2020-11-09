@@ -4,13 +4,15 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Scanner;
 import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
+import java.util.Scanner;
+
+
 
 public class ProductDatabase implements Database<Product> {
 
@@ -26,12 +28,11 @@ public class ProductDatabase implements Database<Product> {
 	private ProductDatabase() {
 
 		final String file_path = "files/inventory_team1.csv";
+		File product_inventory = new File(file_path);
 
-		try {
+		try (Scanner product_scanner = new Scanner(product_inventory)) {
 
-			File inventory = new File(file_path);
 			ProductDatabase.data_table = new HashMap<>();
-			Scanner product_scanner = new Scanner(inventory);
 
 			if (product_scanner.hasNextLine())
 				ProductDatabase.data_head = product_scanner.nextLine().split(",");
@@ -43,8 +44,6 @@ public class ProductDatabase implements Database<Product> {
 				create(dbRow);
 			}
 
-			product_scanner.close();
-
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 			System.out.println("Is the data file " + file_path + " in the wrong directory?");
@@ -54,10 +53,6 @@ public class ProductDatabase implements Database<Product> {
 
 	/** Getters */
 
-	/**
-	 * 
-	 * @return a reference to the ProductDatabase instance.
-	 */
 	public static ProductDatabase getProducts() {
 		return PRODUCTS;
 	}
@@ -74,30 +69,17 @@ public class ProductDatabase implements Database<Product> {
 		ProductDatabase.data_head = labels;
 	}
 
-	/** Class Methods (Alphabetical Order) */
+	/* Class Methods (Alphabetical Order) */
 	// TODO javadoc for class methods without @override.
-
-	/**
-	 * Check to see if we can make a sale
-	 *
-	 * @param attemptedQuantity which we need to have enough of
-	 */
-	public boolean canProcessOrder(String id, int attemptedQuantity) {
-		Product product = data_table.get(id);
-		if (product != null) {
-			return (attemptedQuantity <= product.getQuantity());
-		}
-		return false;
-	}
 
 	/**
 	 * 
 	 * @param product_id
 	 * @return
 	 */
-	protected boolean contains(String product_id) {
-		boolean hasProduct = data_table.containsKey(product_id);
-		return hasProduct;
+
+	private boolean contains(String product_id) {
+		return data_table.containsKey(product_id);
 	}
 
 	/**
@@ -131,7 +113,7 @@ public class ProductDatabase implements Database<Product> {
 		if (!contains(new_product.getProductID())) {
 			data_table.put(new_product.getProductID(), new_product);
 		} else {
-			System.out.println("Product already exists");
+			System.out.println("Product already exists.");
 		}
 	}
 
@@ -167,27 +149,25 @@ public class ProductDatabase implements Database<Product> {
 	}
 
 	@Override
-	public boolean update(Product existing_product) {
+	public boolean update(Product existing_product, Scanner product_scanner) {
 		boolean isUpdated = true;
-		Scanner local_sc = main.main_scanner;
-		Options user_choice = null;
-		final List<Options> UPDATE_MENU = List.of(Options.QUANTITY,Options.CAPACITY,Options.WHOLESALE_COST,
+		Options user_choice;
+		final EnumSet<Options> UPDATE_MENU = EnumSet.of(Options.QUANTITY,Options.CAPACITY,Options.WHOLESALE_COST,
 										Options.SALE_PRICE,Options.SUPPLIER,Options.DONE);
 		Menu menu = new Menu(UPDATE_MENU);
-		
 
 		if (contains(existing_product.getProductID())){
 			do {
 				existing_product.prettyPrint();
 				System.out.print(existing_product.getProductID() + "'s Update ");
-				user_choice = menu.getOption();
+				user_choice = menu.getOption(product_scanner);
 				switch(user_choice) {
 					case QUANTITY:
 						System.out.println("Are you buying? y/n");
-						Boolean isBuyer = (("y".equals(local_sc.nextLine())) ? true : false);
+						boolean isBuyer = (("y".equals(product_scanner.nextLine())));
 						
 						System.out.print("Enter the desired quantity: ");
-						int requestQuantity = Integer.parseInt(local_sc.nextLine());
+						int requestQuantity = Integer.parseInt(product_scanner.nextLine());
 						
 						if(isBuyer) {
 							existing_product.buyQuantity(requestQuantity);
@@ -196,42 +176,37 @@ public class ProductDatabase implements Database<Product> {
 						}
 						
 						System.out.print("Enter customer Id: ");
-						String customer = local_sc.nextLine();
+						String customer = product_scanner.nextLine();
 						String date = LocalDate.now().toString();
 						String time = LocalDateTime.now().toString();
-						
-						try {
-							main.updateCustomerHistory(customer, date, time);
-						}
-						catch(IOException e) {
-							System.err.println(e);
-						}
+
+						main.updateCustomerHistory(customer, date, time);
 						break;
 
 					case CAPACITY:
 						System.out.print("Enter the new stock limit: ");
-						int limit = Integer.parseInt(local_sc.nextLine());
+						int limit = Integer.parseInt(product_scanner.nextLine());
 						
 						existing_product.setCapacity(limit);
 						break;
 
 					case WHOLESALE_COST:
 						System.out.print("Enter the new wholesale cost: ");
-						Double cost = Double.parseDouble(local_sc.nextLine());
+						double cost = Double.parseDouble(product_scanner.nextLine());
 						
 						existing_product.setWholesaleCost(cost);
 						break;
 
 					case SALE_PRICE:
 						System.out.print("Enter the new sale price: ");
-						Double price = Double.parseDouble(local_sc.nextLine());
+						double price = Double.parseDouble(product_scanner.nextLine());
 						
 						existing_product.setSalePrice(price);
 						break;
 
 					case SUPPLIER:
 						System.out.print("Enter the new supplier's id: ");
-						String id = local_sc.nextLine();
+						String id = product_scanner.nextLine();
 						
 						existing_product.setSupplierID(id);
 						break;
@@ -242,8 +217,9 @@ public class ProductDatabase implements Database<Product> {
 						System.out.println("The " + user_choice + " option is not in this menu.");
 				}
 			} while(user_choice != Options.DONE);
-			isUpdated = true;
+
 		} else {
+			isUpdated = false;
 			System.out.print("The product database does not contain an entry for: " 
 													+ existing_product.getProductID());
 		}
@@ -258,10 +234,9 @@ public class ProductDatabase implements Database<Product> {
 	public void appendSupplierHistory(Product product, int quantity) {
 
 		String file_destination = "files/supplier_order_history.csv";
-		FileWriter writer = null;
 
-		try {
-			writer = new FileWriter(file_destination, true);
+		try (FileWriter writer = new FileWriter(file_destination, true)) {
+
 			
 			String supplier_order = "";
 			String regex = ",";
@@ -271,8 +246,6 @@ public class ProductDatabase implements Database<Product> {
 			supplier_order += quantity + "\n";
 
 			writer.append(supplier_order);
-
-			writer.close();
 
 		} catch (IOException e) {
 	

@@ -1,10 +1,14 @@
 HELP.md
 target/
-*.jar
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
+files/annual-plot-data.csv
+files/reports/
+*.jar
+*.jpg
 *.txt
+
 
 ### STS ###
 .apt_generated
@@ -33,6 +37,6 @@ build/
 !**/src/test/**/build/
 
 ### VS Code ###
-.vscode/
+.vscode
 
 *.csv
