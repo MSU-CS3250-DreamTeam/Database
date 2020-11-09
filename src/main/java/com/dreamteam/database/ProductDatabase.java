@@ -7,11 +7,7 @@ import java.io.IOException;
 import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Scanner;
-
+import java.util.*;
 
 
 public class ProductDatabase implements Database<Product> {
@@ -157,25 +153,28 @@ public class ProductDatabase implements Database<Product> {
 
 		if (contains(existing_product.getProductID())){
 			do {
-				existing_product.prettyPrint();
+				ArrayList<String> option_fields = new ArrayList<>();
+				menu.printMessage(existing_product.prettyPrint());
 				System.out.print(existing_product.getProductID() + "'s Update ");
-				user_choice = menu.getOption(product_scanner);
+				user_choice = menu.getOption();
+
 				switch(user_choice) {
 					case QUANTITY:
-						System.out.println("Are you buying? y/n");
-						boolean isBuyer = (("y".equals(product_scanner.nextLine())));
-						
-						System.out.print("Enter the desired quantity: ");
-						int requestQuantity = Integer.parseInt(product_scanner.nextLine());
+						option_fields.add("Are you buying? y/n");
+						option_fields.add("Enter the desired quantity: ");
+						option_fields.add("Enter customer Id: ");
+						option_fields = menu.runTextReader(Options.QUANTITY, option_fields);
+						boolean isBuyer = "y".equals(option_fields.get(0));
+
+						int requestQuantity = Integer.parseInt(option_fields.get(1));
 						
 						if(isBuyer) {
 							existing_product.buyQuantity(requestQuantity);
 						} else {
 							existing_product.supplyQuantity(requestQuantity);
 						}
-						
-						System.out.print("Enter customer Id: ");
-						String customer = product_scanner.nextLine();
+
+						String customer = option_fields.get(2);
 						String date = LocalDate.now().toString();
 						String time = LocalDateTime.now().toString();
 
@@ -183,44 +182,55 @@ public class ProductDatabase implements Database<Product> {
 						break;
 
 					case CAPACITY:
-						System.out.print("Enter the new stock limit: ");
-						int limit = Integer.parseInt(product_scanner.nextLine());
+						option_fields.add("Enter the new stock limit: ");
+						option_fields = menu.runTextReader(Options.CAPACITY, option_fields);
+						int limit = Integer.parseInt(option_fields.get(0));
 						
 						existing_product.setCapacity(limit);
 						break;
 
 					case WHOLESALE_COST:
-						System.out.print("Enter the new wholesale cost: ");
-						double cost = Double.parseDouble(product_scanner.nextLine());
+						option_fields.add("Enter the new wholesale cost: ");
+						option_fields = menu.runTextReader(Options.WHOLESALE_COST, option_fields);
+						double cost = Double.parseDouble(option_fields.get(0));
 						
 						existing_product.setWholesaleCost(cost);
 						break;
 
 					case SALE_PRICE:
-						System.out.print("Enter the new sale price: ");
-						double price = Double.parseDouble(product_scanner.nextLine());
+						option_fields.add("Enter the new sale price: ");
+						option_fields = menu.runTextReader(Options.SALE_PRICE, option_fields);
+						double price = Double.parseDouble(option_fields.get(0));
 						
 						existing_product.setSalePrice(price);
 						break;
 
 					case SUPPLIER:
-						System.out.print("Enter the new supplier's id: ");
-						String id = product_scanner.nextLine();
+						option_fields.add("Enter the new supplier's id: ");
+						option_fields = menu.runTextReader(Options.SUPPLIER, option_fields);
+						String id = option_fields.get(0);
 						
 						existing_product.setSupplierID(id);
 						break;
 
 					case DONE:
+						menu.closeMenu();
 						break;
 					default:
-						System.out.println("The " + user_choice + " option is not in this menu.");
+						menu.printMessage("The " + user_choice + " option is not in this menu.");
 				}
 			} while(user_choice != Options.DONE);
 
 		} else {
 			isUpdated = false;
-			System.out.print("The product database does not contain an entry for: " 
+			menu.printMessage("The product database does not contain an entry for: "
 													+ existing_product.getProductID());
+			try {
+				Thread.sleep(400);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			menu.closeMenu();
 		}
 		return isUpdated;
 	}

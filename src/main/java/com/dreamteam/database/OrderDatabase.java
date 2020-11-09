@@ -227,8 +227,6 @@ public class OrderDatabase implements Database<Order> {
 		Collections.sort(order_keys);
 		Collections.reverse(order_keys);
 		for (double x: order_keys) {
-			System.out.println("Key = " + mapper.get(x).getProductID() +
-					", Value = " + x);
 			products.put(mapper.get(x).getProductID(), x);
 		}
 		return products;

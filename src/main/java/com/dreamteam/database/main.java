@@ -3,11 +3,9 @@ package com.dreamteam.database;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.text.NumberFormat;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Scanner;
+import java.util.*;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -121,105 +119,120 @@ public class main {
 
 		Menu menu = new Menu(MAIN_MENU);
 		String[] database_header = PRODUCT_DATABASE.get_data_head();
-		String[] new_entry = new String[PRODUCT_DATABASE.get_column_size()];
 		Product existing_entry;
 		String date;
 
 		System.out.println("\n-----------------------------");
 		System.out.println("       Launching Menu        ");
 		System.out.println("-----------------------------\n");
+		menu.printMessage("Welcome to DreamTeam DataBase");
 
 		do {
-
+			ArrayList<String> option_fields = new ArrayList<>();
 			PRODUCT_DATABASE.display();
 			ORDER_DATABASE.display();
 			System.out.println();
-			user_choice = menu.getOption(MAIN_SCANNER);
+			user_choice = menu.getOption();
 
 			switch (user_choice) {
 
 				case CREATE:
 
-					for (int i = 0; i < database_header.length; i++) {
-						System.out.print("Enter " + database_header[i] + ": ");
-						new_entry[i] = MAIN_SCANNER.nextLine();
+					option_fields.addAll(Arrays.asList(database_header));
+					option_fields = menu.runTextReader(Options.CREATE, option_fields);
+					String[] new_entry = new String[database_header.length];
+
+					for (String field : option_fields) {
+						new_entry[option_fields.indexOf(field)] = field;
 					}
+					System.out.println(new_entry);
 					PRODUCT_DATABASE.create(new_entry);
 					
-					Product new_product = PRODUCT_DATABASE.read(new_entry[0]); // Prints the object address in memory.
+					Product new_product = PRODUCT_DATABASE.read(new_entry[0]);
 					new_product.prettyPrint();
 
 					break;
 				
 				case READ:
 					
-					System.out.print("Enter " + database_header[0] + ": ");
-					existing_entry = PRODUCT_DATABASE.read(MAIN_SCANNER.nextLine());
+					option_fields.add(database_header[0]);
+					option_fields = menu.runTextReader(Options.READ, option_fields);
+					existing_entry = PRODUCT_DATABASE.read(option_fields.get(0));
 					
 					if(existing_entry != null) {
-						existing_entry.prettyPrint();
+						menu.printMessage(existing_entry.prettyPrint());
 					}
 					
 					break;
 				
 				case UPDATE:
 					
-					System.out.print("Enter existing entry's " + database_header[0] + ": ");
-					existing_entry = PRODUCT_DATABASE.read(MAIN_SCANNER.nextLine());
+					option_fields.add(database_header[0]);
+					option_fields = menu.runTextReader(Options.UPDATE, option_fields);
+					existing_entry = PRODUCT_DATABASE.read(option_fields.get(0));
 					
 					if ((existing_entry != null) && !(existing_entry.getProductID().equals("000"))) {
 						PRODUCT_DATABASE.update(existing_entry, MAIN_SCANNER);
-						existing_entry.prettyPrint();
+						menu.printMessage(existing_entry.prettyPrint());
 					}
 
 					break;
 				
 				case DELETE:
-					
-					System.out.print("Enter " + database_header[0] + ": ");
-					PRODUCT_DATABASE.delete(MAIN_SCANNER.nextLine());
+
+					option_fields.add(database_header[0]);
+					option_fields = menu.runTextReader(Options.UPDATE, option_fields);
+					if (PRODUCT_DATABASE.delete(option_fields.get(0)))
+						menu.printMessage(option_fields.get(0) + " was successfully deleted.");
 
 					break;
 				
 				case PROCESS_ORDERS:
 					ORDER_DATABASE.processOrders();
 
-					System.out.println("Simulation processed.");
+					menu.printMessage("Simulation processed.");
 					
 					break;
 
 				case REPORTS:
 
-					System.out.println("For which date would you like reports?");
-					date = MAIN_SCANNER.nextLine();
-					if (ORDER_DATABASE.contains(date)) {
-						System.out.println("Reports generating...");
+					menu.printMessage("For which date would you like reports?");
+					option_fields.add("Date");
+					option_fields = menu.runTextReader(Options.REPORTS, option_fields);
 
-						dailyAssetsReport(date);
-						dailyTopTenReport(date);
+					date = option_fields.get(0);
+					if (ORDER_DATABASE.contains(date)) {
+						menu.printMessage("Reports generating...");
+
+						menu.showReport(date);
 					}
 
 					break;
 					
 				case CHECK_EMAIL:
 					
-					System.out.println("Checking inbox...");
+					menu.printMessage("Checking inbox...");
 					EmailService email = new EmailService();
 					email.checkEmail();
 					break;
 					
 				case TOP_PRODUCTS:
-          
-					System.out.println("For which date would you like reports?");
-					date = MAIN_SCANNER.nextLine();
+
+					menu.printMessage("For which date would you like the top products?");
+					option_fields.add("Date");
+					option_fields = menu.runTextReader(Options.REPORTS, option_fields);
+					date = option_fields.get(0);
 					ORDER_DATABASE.findTopProducts(date);
 
 					break;
 
 				case TOP_CUSTOMERS:
-          
-					System.out.println("For which date would you like reports?");
-					date = MAIN_SCANNER.nextLine();
+
+					menu.printMessage("For which date would you like the top products?");
+					option_fields.add("Date");
+					option_fields = menu.runTextReader(Options.REPORTS, option_fields);
+					date = option_fields.get(0);
+					ORDER_DATABASE.findTopProducts(date);
 					ORDER_DATABASE.findTopCustomers(date);
 
 					break;
@@ -229,10 +242,11 @@ public class main {
 					System.out.println("\nSaving Database changes...");
 					System.out.println("Done!");
 					System.out.println("Bye!");
+					menu.closeMenu();
 					break;
 				
 				default:
-					System.out.println("The " + user_choice + " option is not in this menu.");
+					menu.printMessage("The " + user_choice + " option is not in this menu.");
 			}
 		} while(user_choice != Options.QUIT);
 	}
