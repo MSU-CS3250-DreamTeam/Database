@@ -130,17 +130,31 @@ public class GUI implements ActionListener {
                 break;
 
             case "UPDATE":
-                EnumSet<Options> OPTIONS = EnumSet.of(Options.QUANTITY, Options.CAPACITY, Options.WHOLESALE_COST, Options.SALE_PRICE, Options.SUPPLIER, Options.DONE);
-                ArrayList<JButton> buttonList = new ArrayList<>();
-                for(Options option : OPTIONS){
-                    buttonList.add(new JButton(String.valueOf(option)));
-                }
-                for(int i = 0; i < buttonList.size(); i++){
-                    buttonList.get(i).addActionListener(this::updateSubmit);
-                    panel2.add(buttonList.get(i));
-                }
-                newGUI("UPDATE");
 
+                product = new JTextArea();
+                quantity = new JTextArea();
+                wholesale = new JTextArea();
+                sales = new JTextArea();
+                supplier = new JTextArea();
+
+                submit = new JButton("SUBMIT");
+                submit.addActionListener(this::updateSubmit);
+
+                productLabel.setText("ID of Product Update:");
+                panel2.add(productLabel);
+                panel2.add(product);
+                panel2.add(quantityLabel);
+                panel2.add(quantity);
+
+                panel2.add(wholesaleLabel);
+                panel2.add(wholesale);
+                panel2.add(salesLabel);
+                panel2.add(sales);
+                panel2.add(supplierLabel);
+                panel2.add(supplier);
+                panel2.add(submit);
+
+                newGUI("CREATE");
                 break;
 
             case "DELETE":
@@ -167,21 +181,18 @@ public class GUI implements ActionListener {
             case "REPORTS":
                 JLabel reportsLabel = new JLabel("For which date would you like reports for?");
                 date = new JTextArea();
-                label.setText("You can also view a graph report of company assets.");
-                view = new JButton("VIEW GRAPH REPORT");
                 submit = new JButton("GENERATE ORDER REPORT");
                 submit.addActionListener(this::reportSubmit);
-                view.addActionListener(this::viewSubmit);
                 panel2.add(reportsLabel);
                 panel2.add(date);
                 panel2.add(submit);
-                panel2.add(label);
-                panel2.add(view);
                 newGUI("REPORTS");
 
                 break;
 
             case "QUIT":
+                frame.dispose();
+                frame2.dispose();
                 System.exit(0);
 
                 break;
@@ -240,13 +251,26 @@ public class GUI implements ActionListener {
      * @param e Submit button clicked in PROCESS_ORDERS mode
      */
     public void updateSubmit(ActionEvent e) {
-        switch (e.getActionCommand()) {
-            case "QUANTITY":
-                quantity = new JTextArea();
-                panel2.add(quantityLabel);
-                panel2.add(quantity);
-                newGUI("UPDATE");
-        }
+
+        String product_id = product.getText();
+        int capacity = Integer.parseInt(quantity.getText());
+        double wholesale_cost = Double.parseDouble(wholesale.getText());
+        double sales_price = Double.parseDouble(sales.getText());
+        String supplier_id = supplier.getText();
+
+        ProductDatabase.getProducts().read(product_id).setCapacity(capacity);
+        ProductDatabase.getProducts().read(product_id).setWholesaleCost(wholesale_cost);
+        ProductDatabase.getProducts().read(product_id).setSalePrice(sales_price);
+        ProductDatabase.getProducts().read(product_id).setSupplierID(supplier_id);
+
+
+
+        label.setText("Product [ " + ProductDatabase.getProducts().read(product_id).getProductID() + " ] has been successfully updated!");
+
+        panel2.removeAll();
+        panel2.add(label);
+        newGUI("UPDATE");
+
     }
 
     /**
@@ -289,49 +313,6 @@ public class GUI implements ActionListener {
      * @param e Submit button clicked in REPORT mode
      */
     public void reportSubmit(ActionEvent e)  {
-
-        String reportDate = date.getText();
-
-        if (orderDatabase.contains(reportDate)){
-
-            File reportFile = new File("files/reports/dailyreport_" + reportDate + ".txt");
-
-
-            try {
-                //TODO: create local scanner
-                Scanner scanner = new Scanner(reportFile);
-                String assets = scanner.nextLine();
-                String orderCount = scanner.nextLine();
-                String totalPrice = scanner.nextLine();
-                panel2.removeAll();
-                panel2.add(label);
-                panel2.add(salesLabel);
-                panel2.add(wholesaleLabel);
-                label.setText(assets);
-                salesLabel.setText(orderCount);
-                wholesaleLabel.setText(totalPrice);
-            } catch (FileNotFoundException fileNotFoundException) {
-                fileNotFoundException.printStackTrace();
-                System.out.println("Error scanning file.");
-            }
-
-        }
-        else {
-            label.setText("No reports available for that date.");
-            panel2.removeAll();
-            panel2.add(label);
-        }
-
-        newGUI("DAILY REPORTS");
-
-    }
-    /**
-     * This method currently finds a PDF in
-     * program and displays it to the user
-     *
-     * @param e View button clicked in REPORTS mode
-     */
-    public void viewSubmit(ActionEvent e) {
         try {
 
             File pdfFile = new File("files/reports/daily-report_" + date.getText() + ".pdf");
@@ -359,6 +340,7 @@ public class GUI implements ActionListener {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+
     }
 
     /**
