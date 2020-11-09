@@ -136,6 +136,7 @@ public class GUI implements ActionListener {
                     buttonList.add(new JButton(String.valueOf(option)));
                 }
                 for(int i = 0; i < buttonList.size(); i++){
+                    buttonList.get(i).addActionListener(this::updateSubmit);
                     panel2.add(buttonList.get(i));
                 }
                 newGUI("UPDATE");
@@ -230,6 +231,22 @@ public class GUI implements ActionListener {
         panel2.removeAll();
         panel2.add(label);
         newGUI("READ");
+    }
+
+    /**
+     * This method calls on the OrderDatabase.processOrders()
+     * method to process any available orders
+     *
+     * @param e Submit button clicked in PROCESS_ORDERS mode
+     */
+    public void updateSubmit(ActionEvent e) {
+        switch (e.getActionCommand()) {
+            case "QUANTITY":
+                quantity = new JTextArea();
+                panel2.add(quantityLabel);
+                panel2.add(quantity);
+                newGUI("UPDATE");
+        }
     }
 
     /**
