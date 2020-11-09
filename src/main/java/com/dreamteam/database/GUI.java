@@ -137,7 +137,6 @@ public class GUI implements ActionListener {
                 submit = new JButton("SUBMIT");
                 submit.addActionListener(this::updateSubmit);
 
-                productLabel.setText("ID of Product Update:");
                 panel2.add(productLabel);
                 panel2.add(product);
 
