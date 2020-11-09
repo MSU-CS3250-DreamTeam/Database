@@ -129,7 +129,7 @@ public class GUI implements ActionListener {
             case "UPDATE":
 
                 product = new JTextArea();
-                quantity = new JTextArea();
+                quantity = new JTextArea(); //misnomer; will actually change capacity
                 wholesale = new JTextArea();
                 sales = new JTextArea();
                 supplier = new JTextArea();
@@ -140,6 +140,9 @@ public class GUI implements ActionListener {
                 productLabel.setText("ID of Product Update:");
                 panel2.add(productLabel);
                 panel2.add(product);
+
+                //variables named after quantity but refer to capacity
+                quantityLabel.setText("Capacity:");
                 panel2.add(quantityLabel);
                 panel2.add(quantity);
 
@@ -250,7 +253,7 @@ public class GUI implements ActionListener {
     public void updateSubmit(ActionEvent e) {
 
         String product_id = product.getText();
-        int capacity = Integer.parseInt(quantity.getText());
+        int capacity = Integer.parseInt(quantity.getText()); //see comment on line 144
         double wholesale_cost = Double.parseDouble(wholesale.getText());
         double sales_price = Double.parseDouble(sales.getText());
         String supplier_id = supplier.getText();
@@ -259,8 +262,6 @@ public class GUI implements ActionListener {
         ProductDatabase.getProducts().read(product_id).setWholesaleCost(wholesale_cost);
         ProductDatabase.getProducts().read(product_id).setSalePrice(sales_price);
         ProductDatabase.getProducts().read(product_id).setSupplierID(supplier_id);
-
-
 
         label.setText("Product [ " + ProductDatabase.getProducts().read(product_id).getProductID() + " ] has been successfully updated!");
 
@@ -327,7 +328,6 @@ public class GUI implements ActionListener {
             } else {
                 label.setText("Graph Report File Does Not Exist.");
                 panel2.add(label);
-                panel2.remove(view);
                 newGUI("REPORTS");
                 System.out.println("File does not exist!");
             }
