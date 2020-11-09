@@ -5,10 +5,8 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.EnumSet;
-import java.util.Scanner;
 
 public class GUI implements ActionListener {
 
@@ -64,7 +62,6 @@ public class GUI implements ActionListener {
             buttonList.get(i).addActionListener(this::actionPerformed);
             panel.add(buttonList.get(i));
         }
-
 
         //Attach panel to frame
         frame.add(panel, BorderLayout.CENTER);
