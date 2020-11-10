@@ -73,7 +73,8 @@ public class ProductDatabase implements Database<Product> {
 	 * @param product_id
 	 * @return
 	 */
-	private boolean contains(String product_id) {
+
+	protected boolean contains(String product_id) {
 		return data_table.containsKey(product_id);
 	}
 
