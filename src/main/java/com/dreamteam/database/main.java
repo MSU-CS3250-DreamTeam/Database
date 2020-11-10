@@ -124,13 +124,11 @@ public class main {
 		System.out.println("\n-----------------------------");
 		System.out.println("       Launching Menu        ");
 		System.out.println("-----------------------------\n");
-		menu.printMessage("Welcome to DreamTeam DataBase");
+		menu.printMessage("Welcome to DreamTeam DataBase\n" + PRODUCT_DATABASE.display() + ORDER_DATABASE.display());
 
 		do {
 			ArrayList<String> option_fields = new ArrayList<>();
-			PRODUCT_DATABASE.display();
-			ORDER_DATABASE.display();
-			System.out.println();
+			System.out.println(PRODUCT_DATABASE.display() + ORDER_DATABASE.display());
 			user_choice = menu.getOption();
 
 			switch (user_choice) {
@@ -221,8 +219,12 @@ public class main {
 					option_fields.add("Date");
 					option_fields = menu.runTextReader(Options.REPORTS, option_fields);
 					date = option_fields.get(0);
-					ORDER_DATABASE.findTopProducts(date);
-
+					LinkedHashMap<String, Double> top_products = ORDER_DATABASE.findTopProducts(date);
+					String products = "Top Products:\n";
+					for (String product : top_products.keySet()){
+						products += "\t" + product + ": " + top_products.get(product) + "\n";
+					}
+					menu.printMessage(products);
 					break;
 
 				case TOP_CUSTOMERS:
@@ -231,9 +233,12 @@ public class main {
 					option_fields.add("Date");
 					option_fields = menu.runTextReader(Options.REPORTS, option_fields);
 					date = option_fields.get(0);
-					ORDER_DATABASE.findTopProducts(date);
-					ORDER_DATABASE.findTopCustomers(date);
-
+					LinkedHashMap<String, Double> top_customers = ORDER_DATABASE.findTopCustomers(date);
+					String customers = "Top Customers:\n";
+					for (String customer : top_customers.keySet()){
+						customers += "\t" + customer + ": " + top_customers.get(customer) + "\n";
+					}
+					menu.printMessage(customers);
 					break;
 				
 				case QUIT:

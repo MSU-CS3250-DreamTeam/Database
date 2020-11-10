@@ -26,7 +26,10 @@ public class Menu implements ActionListener {
         this.lock_menu = true;
         this.lock_text_box = true;
         this.DIALOG_TEXT = new JTextArea();
-        Dimension dialog_size = new Dimension(200, 100);
+        final JScrollPane VERTICAL_SCROLL = new JScrollPane(this.DIALOG_TEXT);
+        VERTICAL_SCROLL.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        VERTICAL_SCROLL.createVerticalScrollBar();
+        Dimension dialog_size = new Dimension(200, 150);
 
         this.MENU_FRAME = new JFrame();
         this.MENU_BORDER = BorderFactory.createEmptyBorder(125, 300, 125, 300);
@@ -45,10 +48,12 @@ public class Menu implements ActionListener {
         }
 
         this.DIALOG_TEXT.setPreferredSize(dialog_size);
+        VERTICAL_SCROLL.setPreferredSize(dialog_size);
         this.DIALOG_TEXT.setText("Nothing to show.");
 
         this.MENU_FRAME.add(menu_panel, BorderLayout.CENTER);
-        this.MENU_FRAME.add(this.DIALOG_TEXT, BorderLayout.SOUTH);
+//        this.MENU_FRAME.add(this.DIALOG_TEXT, BorderLayout.SOUTH);
+        this.MENU_FRAME.add(VERTICAL_SCROLL, BorderLayout.SOUTH);
         this.MENU_FRAME.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.MENU_FRAME.setTitle("GUI Menu Program");
         this.MENU_FRAME.pack();

@@ -193,7 +193,7 @@ public class OrderDatabase implements Database<Order> {
 	}
 	
 	@Override
-	public void display()
+	public String display()
 	{
 		int number_of_orders = 0;
 		Set<String> dates = data_table.keySet();
@@ -201,7 +201,7 @@ public class OrderDatabase implements Database<Order> {
 		{
 			number_of_orders += data_table.get(date).size();
 		}
-		System.out.println("The orders database has " + number_of_orders + " orders.");
+		return "The orders database has " + number_of_orders + " orders.\n";
 	}
 	
 	// TODO Find the top products (by spending) and return

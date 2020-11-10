@@ -68,6 +68,6 @@ public interface Database<E> {
 	/**
 	 *  Prints the number of current entries in the database.
 	 */
-	public void display();
+	public String display();
 
 }

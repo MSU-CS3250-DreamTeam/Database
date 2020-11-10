@@ -129,9 +129,7 @@ public class ProductDatabase implements Database<Product> {
 	}
 
 	@Override
-	public void display() {
-		System.out.println("The products database has " + data_table.size() + " products.");
-	}
+	public String display() { return "The products database has " + data_table.size() + " products.\n"; }
 
 	@Override
 	public Product read(String id) {
