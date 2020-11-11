@@ -309,7 +309,7 @@ public class OrderDatabase implements Database<Order> {
 				
 				if(!next_order.contains(date) && date != null)
 				{
-					main.dailyAssetsReport(date);
+					Main.dailyAssetsReport(date);
 					date = next_order.substring(0, date.length());
 					System.out.println(date);
 				}
@@ -336,7 +336,7 @@ public class OrderDatabase implements Database<Order> {
 				}
 			}
 			if (date != null) {
-				main.dailyAssetsReport(date);
+				Main.dailyAssetsReport(date);
 			}
 			
 			// Wipes the file of customer orders, so disabled for convenience.
@@ -370,8 +370,7 @@ public class OrderDatabase implements Database<Order> {
 		if(OrderDatabase.data_table.containsKey(date))
 		{
 			HashSet<Order> orders = data_table.get(date);
-			Scanner retrieve_scanner = new Scanner(System.in);
-			
+			Scanner retrieve_scanner = Main.getScanner();
 			System.out.println("Select the order you wish to retrieve: ");
 			
 			for(Order order: orders)

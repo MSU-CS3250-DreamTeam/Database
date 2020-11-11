@@ -5,7 +5,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.text.NumberFormat;
 import java.util.EnumSet;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Scanner;
 
@@ -24,7 +23,7 @@ import org.jfree.chart.plot.XYPlot;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
-public class main {
+public class Main {
 	// Variable Declarations
 	static private final ProductDatabase PRODUCT_DATABASE = ProductDatabase.getProducts();
 	static private final OrderDatabase ORDER_DATABASE = OrderDatabase.getOrders();
@@ -51,6 +50,10 @@ public class main {
 
 		MAIN_SCANNER.close();
 	} // End main method.
+
+	// ***************************************************************************
+
+	static public Scanner getScanner() { return MAIN_SCANNER; }
 
 	// ***************************************************************************
 
@@ -265,8 +268,6 @@ public class main {
 		XYSeries sales_line = new XYSeries("Sales $");
 		final XYSeriesCollection ASSETS_SERIES, SALES_SERIES;
 		JFreeChart assets_chart, sales_chart;
-		double current_assets = PRODUCT_DATABASE.countAssets();
-
 
 		// Setting up pdf document.
 		String annual_data_path = "files/annual-plot-data.csv";
@@ -278,19 +279,22 @@ public class main {
 
 		try (FileWriter data_writer = new FileWriter(annual_data_path, true);
 			 Scanner annual_data_scanner = new Scanner(annual_data_file)) {
+			
 			pdf_writer = new PDPageContentStream(document, page);
 			pdf_writer.beginText();
-			pdf_writer.moveTextPositionByAmount(100, 800);
+			pdf_writer.newLineAtOffset(100, 800);
 			PDFont font = PDType1Font.HELVETICA;
+			pdf_writer.setLeading(23.0);
 			pdf_writer.setFont(font, 20);
 			pdf_writer.showText("Daily Report of " + date);
-			pdf_writer.moveTextPositionByAmount(0, -23);
+			pdf_writer.newLine();
+			pdf_writer.setLeading(17);
 			pdf_writer.setFont(font, 14);
-			pdf_writer.moveTextPositionByAmount(-40, -17);
+			pdf_writer.newLine();
 			pdf_writer.showText(ASSETS_STATEMENT);
-			pdf_writer.moveTextPositionByAmount(0, -17);
+			pdf_writer.newLine();
 			pdf_writer.showText(ORDERS_STATEMENT);
-			pdf_writer.moveTextPositionByAmount(0, -17);
+			pdf_writer.newLine();
 			pdf_writer.showText(SALES_STATEMENT);
 			pdf_writer.endText();
 
@@ -331,30 +335,41 @@ public class main {
 			pdf_writer.drawImage(asset_img, 20, 400);
 			pdf_writer.drawImage(sales_img, 20, 40);
 			pdf_writer.close();
+
 			PDPage stats_page = new PDPage(PDRectangle.A4);
 			document.addPage(stats_page);
 			pdf_writer = new PDPageContentStream(document, stats_page);
+
 			pdf_writer.beginText();
-			pdf_writer.moveTextPositionByAmount(100, 800);
+			pdf_writer.newLineAtOffset(100, 800);
+			pdf_writer.setLeading(23.0);
 			pdf_writer.setFont(font, 20);
 			pdf_writer.showText("Top Products ");
-			pdf_writer.moveTextPositionByAmount(0, -23);
+			pdf_writer.newLine();
+			pdf_writer.setLeading(17);
 			pdf_writer.setFont(font, 14);
+
 			LinkedHashMap<String, Double> top_products = ORDER_DATABASE.findTopProducts(date);
 			for (String id : top_products.keySet()) {
 				pdf_writer.showText(id + ", $" + top_products.get(id));
-				pdf_writer.moveTextPositionByAmount(0, -17);
+				pdf_writer.newLine();
 			}
-			pdf_writer.moveTextPositionByAmount(0, -69);
+			
+			pdf_writer.newLine();
+			pdf_writer.newLine();
 			pdf_writer.setFont(font, 20);
+			pdf_writer.setLeading(23.0);
 			pdf_writer.showText("Top Customers ");
-			pdf_writer.moveTextPositionByAmount(0, -23);
+			pdf_writer.newLine();
 			pdf_writer.setFont(font, 14);
+			pdf_writer.setLeading(17.0);
+
 			LinkedHashMap<String, Double> top_customers = ORDER_DATABASE.findTopCustomers(date);
 			for (String id : top_customers.keySet()) {
 				pdf_writer.showText(id + ", $" + top_customers.get(id));
-				pdf_writer.moveTextPositionByAmount(0, -17);
+				pdf_writer.newLine();
 			}
+			
 			pdf_writer.endText();
 			pdf_writer.close();
 			document.save(report_path + ".pdf");
