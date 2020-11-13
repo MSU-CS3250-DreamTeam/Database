@@ -94,15 +94,14 @@ public class Product extends DatabaseEntry {
 	 * @return
 	 */
 	public String prettyPrint() {
-		String regex = ", \n\t\t\t";
+		String regex = ", \n\t";
 		String s =  "\nProduct:\t" +
 			   "{ product id:\t\t\"" + product_id + '\'' +
-			   regex + "  quantity:\t\t\t" + quantity +
+			   regex + "  quantity:\t\t" + quantity +
 			   regex + "  wholesale cost:\t$" + wholesale_cost +
 			   regex + "  sale price:\t\t$" + sale_price +
 			   regex + "  supplier id:\t\t\"" + supplier_id + '\"' + "\t}\n";
 
-		System.out.println(s);
 		return s;
 	}
 

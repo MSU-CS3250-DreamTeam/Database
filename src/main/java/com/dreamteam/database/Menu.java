@@ -6,36 +6,39 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.lang.Thread;
-import java.util.Scanner;
 
 public class Menu implements ActionListener {
 
     private volatile boolean lock_menu;
-    private volatile boolean lock_text_box;
+    private volatile boolean lock_input_form;
     private Options user_selection;
+    private final JScrollPane DIALOG_PANE;
     private final JFrame MENU_FRAME;
     private final JTextArea DIALOG_TEXT;
     private final Border MENU_BORDER;
 
     public Menu(EnumSet<Options> menu_selection) {
-        this.lock_menu = true;
-        this.lock_text_box = true;
-        this.DIALOG_TEXT = new JTextArea();
-        final JScrollPane VERTICAL_SCROLL = new JScrollPane(this.DIALOG_TEXT);
-        VERTICAL_SCROLL.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-        VERTICAL_SCROLL.createVerticalScrollBar();
-        Dimension dialog_size = new Dimension(200, 150);
-
-        this.MENU_FRAME = new JFrame();
-        this.MENU_BORDER = BorderFactory.createEmptyBorder(125, 300, 125, 300);
-
+        Dimension dialog_size = new Dimension(400, 300);
         JPanel menu_panel = new JPanel();
         JLabel menu_label = new JLabel("Select a choice?");
+
+        this.lock_menu = true;
+        this.lock_input_form = true;
+
+        this.DIALOG_TEXT = new JTextArea();
+        this.DIALOG_TEXT.setText("\nInitializing menu...");
+
+        this.DIALOG_PANE = new JScrollPane();
+        this.DIALOG_PANE.setViewportView(this.DIALOG_TEXT);
+        this.DIALOG_PANE.createVerticalScrollBar();
+        this.DIALOG_PANE.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+
+        this.MENU_FRAME = new JFrame();
+        this.MENU_BORDER = BorderFactory.createEmptyBorder(50, 500, 50, 500);
 
         menu_panel.add(menu_label);
         menu_panel.setBorder(MENU_BORDER);
@@ -47,13 +50,9 @@ public class Menu implements ActionListener {
             menu_panel.add(option_button);
         }
 
-        this.DIALOG_TEXT.setPreferredSize(dialog_size);
-        VERTICAL_SCROLL.setPreferredSize(dialog_size);
-        this.DIALOG_TEXT.setText("Nothing to show.");
-
+        this.DIALOG_PANE.setPreferredSize(dialog_size);
         this.MENU_FRAME.add(menu_panel, BorderLayout.CENTER);
-//        this.MENU_FRAME.add(this.DIALOG_TEXT, BorderLayout.SOUTH);
-        this.MENU_FRAME.add(VERTICAL_SCROLL, BorderLayout.SOUTH);
+        this.MENU_FRAME.add(this.DIALOG_PANE, BorderLayout.SOUTH);
         this.MENU_FRAME.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.MENU_FRAME.setTitle("GUI Menu Program");
         this.MENU_FRAME.pack();
@@ -86,15 +85,45 @@ public class Menu implements ActionListener {
         }
     }
 
+    /**
+     *  Clears the text dialog box with an empty string.
+     */
+    public void clearDialog() { this.DIALOG_TEXT.setText(""); }
+
+    /**
+     *  Closes the current menu to release visual components from memory, so runtime execution doesn't stall.
+     */
     public void closeMenu() {
+        clearDialog();
+        printMessage("Closing menu...");
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         this.MENU_FRAME.dispose();
     }
 
     /**
-     * This method reduces code to create new GUI windows
-     * for all operations being done
-     *
-     * @param title Title to know what operation user is on
+     *  Appends the passed message on a new line at the bottom of the text area in the dialog box.
+     * @param message   The text to print to the dialog box.
+     */
+    public void printMessage(String message) {
+        String dialog_output = this.DIALOG_TEXT.getText() + "\n" + message;
+        JScrollBar dialog_scrollbar = this.DIALOG_PANE.getVerticalScrollBar();
+
+        this.DIALOG_TEXT.setText(dialog_output);
+        dialog_scrollbar.setValue(dialog_scrollbar.getMaximum());
+    }
+
+    /**
+     *  A form with a dynamic set of input fields for the user to fill out.
+     *  Null inputs are not handled here.
+     * @param title     The title of the form.
+     * @param fields    The prompts of the input fields for the user to answer ie Date: 2020-01-24.
+     * @return          A list of the user's answers, as initialized or uninitialized strings.
+     *                  If the user does not answer a field, then uninitialized strings,
+     *                  not initialized strings, are in the list.
      */
     public ArrayList<String> runTextReader(Options title, ArrayList<String> fields) {
         JFrame text_frame = new JFrame();
@@ -133,8 +162,8 @@ public class Menu implements ActionListener {
         text_frame.pack();
         text_frame.setVisible(true);
 
-        while (lock_text_box) Thread.onSpinWait();
-        lock_text_box = true;
+        while (lock_input_form) Thread.onSpinWait();
+        lock_input_form = true;
 
         ArrayList<String> responses = new ArrayList<>();
         for (String field : fields) {
@@ -142,28 +171,33 @@ public class Menu implements ActionListener {
         }
 
         text_frame.dispose();
-        this.DIALOG_TEXT.setText("Nothing to show.");
         return responses;
     }
 
-    public void submitPerformed(ActionEvent s) {
-        lock_text_box = false;
-    }
+    /**
+     * Opens the file using the operating system's default application for the file format.
+     * @param file_path An initialized File with a valid file path.
+     */
+    public void showFile(File file_path) {
 
-    public void printMessage(String message) {
-        this.DIALOG_TEXT.setText(message);
-    }
-
-    public void showReport(String date) {
-
-        File pdfFile = new File("files/reports/daily-report_" + date + ".pdf");
-        if (pdfFile.exists()) {
+        if (file_path.exists()) {
 
             try {
-                Desktop.getDesktop().open(pdfFile);
+                Desktop.getDesktop().open(file_path);
             } catch (IOException e) {
                 e.printStackTrace();
+
             }
+        } else {
+            printMessage("The file, " + file_path + ", was not found.");
         }
+    }
+
+    /**
+     *  An event listener to pause runtime of menus with submit buttons, for user inputs and interactions.
+     * @param s An unused ActionEvent that triggers the parent form of the submit button to continue execution.
+     */
+    public void submitPerformed(ActionEvent s) {
+        lock_input_form = false;
     }
 }

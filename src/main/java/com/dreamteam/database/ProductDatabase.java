@@ -129,14 +129,13 @@ public class ProductDatabase implements Database<Product> {
 	}
 
 	@Override
-	public String display() { return "The products database has " + data_table.size() + " products.\n"; }
+	public String display() { return "The products database has " + data_table.size() + " products."; }
 
 	@Override
 	public Product read(String id) {
 		if (contains(id)) {
 			return data_table.get(id);
 		} else {
-			System.out.println("The product was not found.");
 			return new Product("000,000,000,000,000".split(","));
 		}
 
@@ -154,13 +153,12 @@ public class ProductDatabase implements Database<Product> {
 			do {
 				ArrayList<String> option_fields = new ArrayList<>();
 				menu.printMessage(existing_product.prettyPrint());
-				System.out.print(existing_product.getProductID() + "'s Update ");
 				user_choice = menu.getOption();
 
 				switch(user_choice) {
 					case QUANTITY:
 						option_fields.add("Are you buying? y/n");
-						option_fields.add("Enter the desired quantity: ");
+						option_fields.add("Enter quantity: ");
 						option_fields.add("Enter customer Id: ");
 						option_fields = menu.runTextReader(Options.QUANTITY, option_fields);
 						boolean isBuyer = "y".equals(option_fields.get(0));
@@ -218,17 +216,13 @@ public class ProductDatabase implements Database<Product> {
 					default:
 						menu.printMessage("The " + user_choice + " option is not in this menu.");
 				}
+
+				menu.clearDialog();
+
 			} while(user_choice != Options.DONE);
 
 		} else {
 			isUpdated = false;
-			menu.printMessage("The product database does not contain an entry for: "
-													+ existing_product.getProductID());
-			try {
-				Thread.sleep(400);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
 			menu.closeMenu();
 		}
 		return isUpdated;

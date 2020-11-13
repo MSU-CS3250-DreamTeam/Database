@@ -152,8 +152,8 @@ public class OrderDatabase implements Database<Order> {
 			totalSales += price * quantity;
 		}
 		
-		System.out
-		 .println("The company's total sale for " + date + " are: " + formatter.format(totalSales));
+//		System.out
+//		 .println("The company's total sale for " + date + " are: " + formatter.format(totalSales));
 		return totalSales;
 	}
 	
@@ -201,7 +201,7 @@ public class OrderDatabase implements Database<Order> {
 		{
 			number_of_orders += data_table.get(date).size();
 		}
-		return "The orders database has " + number_of_orders + " orders.\n";
+		return "The orders database has " + number_of_orders + " orders.";
 	}
 	
 	// TODO Find the top products (by spending) and return

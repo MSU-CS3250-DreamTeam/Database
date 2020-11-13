@@ -124,11 +124,12 @@ public class main {
 		System.out.println("\n-----------------------------");
 		System.out.println("       Launching Menu        ");
 		System.out.println("-----------------------------\n");
-		menu.printMessage("Welcome to DreamTeam DataBase\n" + PRODUCT_DATABASE.display() + ORDER_DATABASE.display());
+		menu.printMessage("Welcome to DreamTeam DataBase");
 
 		do {
 			ArrayList<String> option_fields = new ArrayList<>();
-			System.out.println(PRODUCT_DATABASE.display() + ORDER_DATABASE.display());
+			menu.printMessage(PRODUCT_DATABASE.display());
+			menu.printMessage(ORDER_DATABASE.display());
 			user_choice = menu.getOption();
 
 			switch (user_choice) {
@@ -142,10 +143,10 @@ public class main {
 					for (String field : option_fields) {
 						new_entry[option_fields.indexOf(field)] = field;
 					}
-					System.out.println(new_entry);
 					PRODUCT_DATABASE.create(new_entry);
 					
 					Product new_product = PRODUCT_DATABASE.read(new_entry[0]);
+					menu.printMessage("You created the product: " + new_product.toString());
 					new_product.prettyPrint();
 
 					break;
@@ -158,6 +159,8 @@ public class main {
 					
 					if(existing_entry != null) {
 						menu.printMessage(existing_entry.prettyPrint());
+					} else {
+						menu.printMessage("The product was not found.");
 					}
 					
 					break;
@@ -171,6 +174,9 @@ public class main {
 					if ((existing_entry != null) && !(existing_entry.getProductID().equals("000"))) {
 						PRODUCT_DATABASE.update(existing_entry, MAIN_SCANNER);
 						menu.printMessage(existing_entry.prettyPrint());
+					} else {
+						menu.printMessage("The product database does not contain an entry for: "
+								+ option_fields.get(0));
 					}
 
 					break;
@@ -185,8 +191,8 @@ public class main {
 					break;
 				
 				case PROCESS_ORDERS:
+					menu.printMessage("Processing orders...");
 					ORDER_DATABASE.processOrders();
-
 					menu.printMessage("Simulation processed.");
 					
 					break;
@@ -200,8 +206,8 @@ public class main {
 					date = option_fields.get(0);
 					if (ORDER_DATABASE.contains(date)) {
 						menu.printMessage("Reports generating...");
-
-						menu.showReport(date);
+						File pdfFile = new File("files/reports/daily-report_" + date + ".pdf");
+						menu.showFile(pdfFile);
 					}
 
 					break;
@@ -220,7 +226,7 @@ public class main {
 					option_fields = menu.runTextReader(Options.REPORTS, option_fields);
 					date = option_fields.get(0);
 					LinkedHashMap<String, Double> top_products = ORDER_DATABASE.findTopProducts(date);
-					String products = "Top Products:\n";
+					String products = date + " Top Products:\n";
 					for (String product : top_products.keySet()){
 						products += "\t" + product + ": " + top_products.get(product) + "\n";
 					}
@@ -234,7 +240,7 @@ public class main {
 					option_fields = menu.runTextReader(Options.REPORTS, option_fields);
 					date = option_fields.get(0);
 					LinkedHashMap<String, Double> top_customers = ORDER_DATABASE.findTopCustomers(date);
-					String customers = "Top Customers:\n";
+					String customers = date + " Top Customers:\n";
 					for (String customer : top_customers.keySet()){
 						customers += "\t" + customer + ": " + top_customers.get(customer) + "\n";
 					}
@@ -242,10 +248,6 @@ public class main {
 					break;
 				
 				case QUIT:
-					
-					System.out.println("\nSaving Database changes...");
-					System.out.println("Done!");
-					System.out.println("Bye!");
 					menu.closeMenu();
 					break;
 				
@@ -312,7 +314,6 @@ public class main {
 			pdf_writer.endText();
 
 			data_writer.write(date + "," + PRODUCT_DATABASE.countAssets() + "," + ORDER_DATABASE.countSales(date) + "\n");
-			System.out.println("Successfully wrote statements to the file.");
 
 			while (annual_data_scanner.hasNextLine()) {
 				plot_daily_data = annual_data_scanner.nextLine().split(",");
@@ -376,11 +377,9 @@ public class main {
 			pdf_writer.close();
 			document.save(report_path + ".pdf");
 
-			System.out.println("Successfully added charts to the report.");
-
 		} catch (IOException e) {
-			System.out.println("Failed to create or write to file.");
 			e.printStackTrace();
+			System.out.println("Failed to create or write to a pdf document: " + report_path);
 		}
 
 	}
@@ -414,11 +413,12 @@ public class main {
 		try (FileWriter writer = new FileWriter(location, true)) {
 			writer.append(new_order);
 			
-			System.out.println("Realtime order appended to file in relative path: " + location);
+//			System.out.println("Realtime order appended to file in relative path: " + location);
 			writer.flush();
 		}
 		catch(IOException e) {
 			e.printStackTrace();
+			System.out.println("Failed to append a transaction to buyer history: " + location);
 		}
 	}
 } // End main class. EOF
