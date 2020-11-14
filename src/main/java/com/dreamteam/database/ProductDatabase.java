@@ -252,7 +252,7 @@ public class ProductDatabase implements Database<Product> {
 		} catch (IOException e) {
 	
 			e.printStackTrace();
-			System.out.println("Failed to document the supply order.");
+			System.out.println("Failed to write the supply order to: " + file_destination);
 
 		}
 

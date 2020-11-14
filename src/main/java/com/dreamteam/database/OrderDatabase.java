@@ -152,8 +152,6 @@ public class OrderDatabase implements Database<Order> {
 			totalSales += price * quantity;
 		}
 		
-//		System.out
-//		 .println("The company's total sale for " + date + " are: " + formatter.format(totalSales));
 		return totalSales;
 	}
 	
@@ -290,8 +288,7 @@ public class OrderDatabase implements Database<Order> {
 		}
 		
 		String order_log_path = "files/customer_orders_A_team1.csv";
-		Order processed_order;
-		String next_order;
+		Order new_order;
 		Product existing_product;
 		String date = "2020-01-01";
 		ProductDatabase products = ProductDatabase.getProducts();
@@ -304,58 +301,39 @@ public class OrderDatabase implements Database<Order> {
 			
 			while(order_scanner.hasNextLine())
 			{
-				next_order = order_scanner.nextLine();
-				create(next_order);
-				
-				if(!next_order.contains(date) && date != null)
+				new_order = new Order(order_scanner.nextLine().split(","));
+
+				if (!contains(new_order)) 
 				{
-					main.dailyAssetsReport(date);
-					date = next_order.substring(0, date.length());
-					System.out.println(date);
-				}
+					create(new_order);
 				
-				processed_order = read(date, next_order);
-				existing_product = products.read(processed_order.getProductID());
-				
-				if(existing_product.buyQuantity(processed_order.getQuantity()))
-				{
-					try
+					if(!new_order.getDate().contains(date) || !order_scanner.hasNextLine())
 					{
-						appendCustomerHistory(processed_order);
+						main.dailyAssetsReport(date);
+						date = new_order.getDate();
 					}
-					catch(IOException e)
+					
+					existing_product = products.read(new_order.getProductID());
+					
+					if(existing_product.buyQuantity(new_order.getQuantity()))
 					{
-						e.printStackTrace();
-						System.out
-						 .println(processed_order.getEmail() + " could not be written to file.");
+						try
+						{
+							appendCustomerHistory(new_order);
+						}
+						catch(IOException e)
+						{
+							e.printStackTrace();
+							System.out
+								.println(new_order.getEmail() + " could not be written to file.");
+						}
 					}
-				}
-				else
-				{
-					System.out.println(processed_order.getEmail() + " could not be processed.");
+					else
+					{
+						System.out.println(new_order.getEmail() + " could not be processed.");
+					}
 				}
 			}
-			if (date != null) {
-				main.dailyAssetsReport(date);
-			}
-			
-			// Wipes the file of customer orders, so disabled for convenience.
-//			try (FileWriter fWriter = new FileWriter(order_log_path, false)) {
-//
-//				StringBuilder string_head = new StringBuilder();
-//
-//				for (String value : OrderDatabase.data_head) {
-//					if (!value.equals("time"))
-//						string_head.append(value).append(",");
-//				}
-//
-//				fWriter.write(string_head.toString() + '\n');
-//
-//			} catch (IOException e1) {
-//				e1.printStackTrace();
-//			}
-			
-			System.out.println("The orders are processed and appended to history.");
 		}
 		catch(FileNotFoundException e)
 		{

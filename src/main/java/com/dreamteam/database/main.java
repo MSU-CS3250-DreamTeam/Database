@@ -376,6 +376,7 @@ public class main {
 			pdf_writer.endText();
 			pdf_writer.close();
 			document.save(report_path + ".pdf");
+			document.close();
 
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -412,8 +413,6 @@ public class main {
 		
 		try (FileWriter writer = new FileWriter(location, true)) {
 			writer.append(new_order);
-			
-//			System.out.println("Realtime order appended to file in relative path: " + location);
 			writer.flush();
 		}
 		catch(IOException e) {
