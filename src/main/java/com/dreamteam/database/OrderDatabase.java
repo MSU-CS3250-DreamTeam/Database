@@ -1,7 +1,6 @@
 package com.dreamteam.database;
 
 import java.io.*;
-import java.text.NumberFormat;
 import java.util.*;
 
 public class OrderDatabase implements Database<Order> {
@@ -59,16 +58,7 @@ public class OrderDatabase implements Database<Order> {
 	{
 		return OrderDatabase.data_head;
 	}
-	
-	/**
-	 * Setters
-	 */
-	@Override
-	public void set_data_head(String[] labels)
-	{
-		OrderDatabase.data_head = labels;
-	}
-	
+
 	/* Class Methods (Alphabetical Order) */
 	// TODO javadoc for class methods without @override.
 	
@@ -130,10 +120,10 @@ public class OrderDatabase implements Database<Order> {
 		return data_table.get(date).size();
 	}
 	
-	public double countSales(String date) {
+	public double countSales(String date)
+	{
 
 		ProductDatabase product_database = ProductDatabase.getProducts();
-		NumberFormat formatter = NumberFormat.getCurrencyInstance();
 		
 		Iterator<Order> it = data_table.get(date).iterator();
 		
@@ -214,7 +204,7 @@ public class OrderDatabase implements Database<Order> {
 		HashSet<Order> date_orders = data_table.get(date);
 		TreeMap<Double, Order> mapper = new TreeMap<>();
 		ProductDatabase z = ProductDatabase.getProducts();
-		double price = 0;
+		double price;
 
 		for (Order next_order : date_orders) {
 			price = z.read(next_order.getProductID()).getSalePrice() * next_order.getQuantity();
@@ -244,7 +234,7 @@ public class OrderDatabase implements Database<Order> {
 		TreeMap<Double, String> inverse_mapper = new TreeMap<>();
 		HashSet<String> email_mapper = new HashSet<>();
 		ProductDatabase z = ProductDatabase.getProducts();
-		double price = 0;
+		double price;
 
 		for (Order next_order : date_orders) {
 			price = z.read(next_order.getProductID()).getSalePrice() * next_order.getQuantity();
@@ -309,7 +299,7 @@ public class OrderDatabase implements Database<Order> {
 				
 					if(!new_order.getDate().contains(date) || !order_scanner.hasNextLine())
 					{
-						main.dailyAssetsReport(date);
+						Main.dailyAssetsReport(date);
 						date = new_order.getDate();
 					}
 					
@@ -348,8 +338,7 @@ public class OrderDatabase implements Database<Order> {
 		if(OrderDatabase.data_table.containsKey(date))
 		{
 			HashSet<Order> orders = data_table.get(date);
-			Scanner retrieve_scanner = new Scanner(System.in);
-			
+			Scanner retrieve_scanner = Main.getScanner();
 			System.out.println("Select the order you wish to retrieve: ");
 			
 			for(Order order: orders)

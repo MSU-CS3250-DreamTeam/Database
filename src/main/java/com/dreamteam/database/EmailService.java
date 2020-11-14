@@ -6,11 +6,10 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Date;
+import java.util.EnumSet;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
-import java.util.Calendar.*;
 
 public class EmailService {
 	private final String HOST2;
@@ -37,9 +36,9 @@ public class EmailService {
 		String fromEmail = "thedreamteamsoftware@gmail.com";
 		String password = "Sch00l2020!";
 		String toEmail = "thedreamteamsoftware+orders@gmail.com";
-		System.out.println("Checking email, please hold...");
 		String confirmationMessage = new_order.prettyPrint() +
 		 "Your order has been successfully submitted. Thank you for choosing the Dream Team!";
+
 		try
 		{
 			TimeUnit.SECONDS.sleep(5);
@@ -48,13 +47,13 @@ public class EmailService {
 		{
 			Thread.currentThread().interrupt();
 		}
+
 		msg1.setFrom(new InternetAddress(fromEmail));
 		msg1.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmail));
 		msg1.setSubject("Order Confirmation");
 		msg1.setSentDate(new Date());
 		msg1.setText(confirmationMessage);
 		Transport.send(msg1, fromEmail, password);
-		System.out.println("Message sent successfully!");
 	}
 	
 	public String[] checkEmail()
@@ -62,6 +61,8 @@ public class EmailService {
 		final OrderDatabase od = OrderDatabase.getOrders();
 		String[] orderContents;
 		String[] bodyText;
+		Menu email_menu = new Menu(EnumSet.of(Options.DONE));
+
 		try
 		{
 			Properties props2 = new Properties();
@@ -76,7 +77,7 @@ public class EmailService {
 			emailFolder.open(Folder.READ_ONLY);
 			
 			Message[] messages = emailFolder.getMessages();
-			System.out.println("Total number of messages: " + messages.length);
+			email_menu.printMessage("Total number of messages: " + messages.length);
 			orderContents = new String[5];
 			bodyText = new String[messages.length];
 			
@@ -128,17 +129,17 @@ public class EmailService {
 							Order emailOrder = od.read(orderContents[0], order_string);
 							if(od.contains(emailOrder))
 							{
-								System.out.println("Order successful! Sending confirmation email" +
+								email_menu.printMessage("Order successful! Sending confirmation email" +
 								 ".");
 								sendMessage(emailOrder);
+								email_menu.printMessage("Message sent successfully!");
 							}
 							break;
 						}
 					}
 				}
 			}
-			
-			emailFolder.close(false); //TODO Should this be hardcoded?
+			emailFolder.close(false);
 			store.close();
 		}
 		catch(NoSuchProviderException e)
@@ -156,6 +157,10 @@ public class EmailService {
 			e.printStackTrace();
 			orderContents = new String[] {""};
 		}
+
+		if (email_menu.getOption() == Options.DONE)
+			email_menu.closeMenu();
+
 		return orderContents;
 	}
 	

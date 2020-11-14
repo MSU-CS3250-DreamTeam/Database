@@ -45,7 +45,8 @@ public class SupplierEvent {
 
         //Each supplier event (line of data in csv file) is stored as an object
         SupplierEvent event = new SupplierEvent();
-
+        SupplierEvent.updateQuantity(event);
+        
         //Reads corresponding input fields from csv and assigns them to object
         while (scanner.hasNextLine()) {
             String[] data_row = scanner.nextLine().split(",");

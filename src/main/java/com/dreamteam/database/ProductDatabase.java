@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -56,13 +55,6 @@ public class ProductDatabase implements Database<Product> {
 	@Override
 	public String[] get_data_head() {
 		return data_head;
-	}
-
-	/** Setters */
-
-	@Override
-	public void set_data_head(String[] labels) {
-		ProductDatabase.data_head = labels;
 	}
 
 	/* Class Methods (Alphabetical Order) */
@@ -172,7 +164,7 @@ public class ProductDatabase implements Database<Product> {
 						String date = LocalDate.now().toString();
 						String time = LocalDateTime.now().toString();
 
-						main.updateCustomerHistory(customer, date, time);
+						Main.updateCustomerHistory(customer, date, time);
 						break;
 
 					case CAPACITY:

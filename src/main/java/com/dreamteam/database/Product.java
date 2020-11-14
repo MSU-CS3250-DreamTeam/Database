@@ -3,7 +3,7 @@ package com.dreamteam.database;
 import java.io.FileWriter;
 import java.io.IOException;
 
-public class Product extends DatabaseEntry {
+public class Product {
 
 	/** Member Variables */
 
@@ -58,12 +58,12 @@ public class Product extends DatabaseEntry {
 		} else {
 			int attempted_quantity = getQuantity() - quantity;
 
-			recordTransaction("\n\t\tYou attempted to purchase " + attempted_quantity + ". " +
-								"\n\t\tWe need " + (-quantity) + " more of product " + product_id +
+			recordTransaction("\nYou attempted to purchase " + attempted_quantity + ". " +
+								"\nWe need " + (-quantity) + " more of product " + product_id +
 								" to make the sale, so we are restocking the product now.");
 			
 			if (restock()) {
-				recordTransaction("\t\tSuccess. ");
+				recordTransaction(" Success. ");
 				buyQuantity(attempted_quantity);
 			}
 		}
@@ -79,7 +79,7 @@ public class Product extends DatabaseEntry {
 
 	public void setSupplierID(String sellerID) { this.supplier_id = sellerID; }
 
-	/** Class Methods (Alphabetical Order) */
+	/* Class Methods (Alphabetical Order) */
 	// TODO javadoc of Class Methods.
 	
 	/**
@@ -98,14 +98,13 @@ public class Product extends DatabaseEntry {
 	 */
 	public String prettyPrint() {
 		String regex = ", \n\t";
-		String s =  "\nProduct:\t" +
+
+		return "\nProduct:\t" +
 			   "{ product id:\t\t\"" + product_id + '\'' +
 			   regex + "  quantity:\t\t" + quantity +
 			   regex + "  wholesale cost:\t$" + wholesale_cost +
 			   regex + "  sale price:\t\t$" + sale_price +
 			   regex + "  supplier id:\t\t\"" + supplier_id + '\"' + "\t}\n";
-
-		return s;
 	}
 
 	private static void recordTransaction(String transaction) {
@@ -121,7 +120,7 @@ public class Product extends DatabaseEntry {
 	 * @return
 	 */
 	private boolean restock() {
-		System.out.print("\n\t\tRestock ");
+		recordTransaction("\nRestock");
 		return supplyQuantity(getCapacity());
 	}
 	
@@ -131,7 +130,7 @@ public class Product extends DatabaseEntry {
 	 * @return
 	 */
 	public boolean supplyQuantity(int increment) {
-		recordTransaction("Supply Transaction of " + increment + ". ");
+		recordTransaction("\nSupply Transaction of " + increment + ". ");
 		ProductDatabase.getProducts().appendSupplierHistory(this, increment);
 		return setQuantity(getQuantity() + increment);
 	}
