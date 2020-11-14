@@ -180,7 +180,7 @@ public class ProductDatabase implements Database<Product> {
 						String date = LocalDate.now().toString();
 						String time = LocalDateTime.now().toString();
 
-						main.updateCustomerHistory(customer, date, time);
+						Main.updateCustomerHistory(customer, date, time);
 						break;
 
 					case CAPACITY:
