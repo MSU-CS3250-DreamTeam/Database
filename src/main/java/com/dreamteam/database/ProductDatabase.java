@@ -98,9 +98,6 @@ public class ProductDatabase implements Database<Product> {
 			totalAssets += price * quantity;
 		}
 
-		NumberFormat formatter = NumberFormat.getCurrencyInstance();
-
-		System.out.println("The company's total assets are: " + formatter.format(totalAssets));
 		return totalAssets;
 	}
 
@@ -237,9 +234,9 @@ public class ProductDatabase implements Database<Product> {
 
 		String file_destination = "files/supplier_order_history.csv";
 
-		try (FileWriter writer = new FileWriter(file_destination, true)) {
+		try (FileWriter writer = new FileWriter(file_destination, true))
+		{
 
-			
 			String supplier_order = "";
 			String regex = ",";
 			supplier_order += LocalDate.now() + regex;

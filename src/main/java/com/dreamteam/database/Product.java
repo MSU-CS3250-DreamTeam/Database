@@ -1,5 +1,8 @@
 package com.dreamteam.database;
 
+import java.io.FileWriter;
+import java.io.IOException;
+
 public class Product extends DatabaseEntry {
 
 	/** Member Variables */
@@ -50,17 +53,17 @@ public class Product extends DatabaseEntry {
 
 		if(quantity >= 0) {
 			this.quantity = quantity;
-			System.out.println("Product " + getProductID() + " quantity after transaction: " + quantity + ".");
+			recordTransaction("Product " + getProductID() + " quantity after transaction: " + quantity + ".");
 		
 		} else {
 			int attempted_quantity = getQuantity() - quantity;
 
-			System.out.print("\n\t\tYou attempted to purchase " + attempted_quantity + ". " +
+			recordTransaction("\n\t\tYou attempted to purchase " + attempted_quantity + ". " +
 								"\n\t\tWe need " + (-quantity) + " more of product " + product_id +
 								" to make the sale, so we are restocking the product now.");
 			
 			if (restock()) {
-				System.out.print("\t\tSuccess. ");
+				recordTransaction("\t\tSuccess. ");
 				buyQuantity(attempted_quantity);
 			}
 		}
@@ -85,7 +88,7 @@ public class Product extends DatabaseEntry {
 	 * @return
 	 */
 	public boolean buyQuantity(int increment) {
-		System.out.print("Buy Transaction of " + increment + " " + getProductID() + ". ");
+		recordTransaction("\nBuy Transaction of " + increment + " " + getProductID() + ". ");
 		return setQuantity(getQuantity() - increment);
 	}
 
@@ -105,6 +108,14 @@ public class Product extends DatabaseEntry {
 		return s;
 	}
 
+	private static void recordTransaction(String transaction) {
+		try (final FileWriter transaction_recorder = new FileWriter("files/transactions.txt", true)) {
+			transaction_recorder.append(transaction);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
 	/**
 	 * 
 	 * @return
@@ -120,7 +131,7 @@ public class Product extends DatabaseEntry {
 	 * @return
 	 */
 	public boolean supplyQuantity(int increment) {
-		System.out.print("Supply Transaction of " + increment + ". ");
+		recordTransaction("Supply Transaction of " + increment + ". ");
 		ProductDatabase.getProducts().appendSupplierHistory(this, increment);
 		return setQuantity(getQuantity() + increment);
 	}
