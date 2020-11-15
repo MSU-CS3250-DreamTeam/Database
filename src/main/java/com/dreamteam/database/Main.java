@@ -4,9 +4,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.NumberFormat;
-import java.util.EnumSet;
-import java.util.LinkedHashMap;
-import java.util.Scanner;
+import java.util.*;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -25,27 +23,19 @@ import org.jfree.data.xy.XYSeriesCollection;
 
 public class Main {
 	// Variable Declarations
-	static private final ProductDatabase PRODUCT_DATABASE = ProductDatabase.getProducts();
-	static private final OrderDatabase ORDER_DATABASE = OrderDatabase.getOrders();
-	static private final Scanner MAIN_SCANNER = new Scanner(System.in);
+	private static final ProductDatabase PRODUCT_DATABASE = ProductDatabase.getProducts();
+	private static final OrderDatabase ORDER_DATABASE = OrderDatabase.getOrders();
+	private static final Scanner MAIN_SCANNER = new Scanner(System.in);
 
 	// ***************************************************************************
 
 	/**
 	 * @param args
 	 */
-	static public void main(String[] args) {
-
-		// Welcome to DreamTeam DataBase
-		System.out.println("-------------------------------------------------------------------");
-		System.out.println("               Welcome to DreamTeam DataBase                       ");
-		System.out.println("-------------------------------------------------------------------");
-
-		// For debugging. Disable in final project.
-		demo_database();
+	public static void main(String[] args)
+	{
 
 		// Call the menu for user to access and modify the database.
-		new GUI();
 		runMenu();
 
 		MAIN_SCANNER.close();
@@ -53,62 +43,7 @@ public class Main {
 
 	// ***************************************************************************
 
-	static public Scanner getScanner() { return MAIN_SCANNER; }
-
-	// ***************************************************************************
-
-	/*
-	 * A demonstration of how to use the CRUD methods on an active, visible database
-	 * object.
-	 */
-	private static void demo_database() {
-
-		System.out.println("\nTesting the product database.");
-		System.out.println("-----------------------------");
-
-		String existing_product_id = "8XXKZRELM2JJ";
-		String new_product = "AGEXCVFG3344,3260,370.51,623.94,SASERNVV";
-		Product existing_product;
-		Product created_product;
-
-		System.out.print("\nRetrieving a product: ");
-		existing_product = PRODUCT_DATABASE.read(existing_product_id);
-		existing_product.prettyPrint();
-
-		System.out.print("\nRemoving a product: ");
-		if (PRODUCT_DATABASE.delete(existing_product_id))
-			System.out.println("product removed.");
-		PRODUCT_DATABASE.display();
-
-		System.out.print("\nExisting product should not be found: ");
-		PRODUCT_DATABASE.read(existing_product_id);
-
-		System.out.print("\nNew product should be found: ");
-		PRODUCT_DATABASE.create(new_product);
-		PRODUCT_DATABASE.display();
-		created_product = PRODUCT_DATABASE.read(new_product.split(",")[0]);
-
-		System.out.print("\nRetrieving a product. ");
-		PRODUCT_DATABASE.read(created_product.getProductID()).prettyPrint();
-
-		System.out.print("\nBuy quantity of 4000: ");
-		created_product.buyQuantity(4000);
-
-		System.out.print("\nRetrieving updated product in the product database: ");
-		PRODUCT_DATABASE.read(created_product.getProductID()).prettyPrint();
-
-		System.out.print("\n\nRemoving dummy product: ");
-		if (PRODUCT_DATABASE.delete(created_product.getProductID()))
-			System.out.println("product removed.");
-		PRODUCT_DATABASE.display();
-
-		PRODUCT_DATABASE.create(existing_product);
-
-		System.out.println("\n\n-----------------------------");
-		System.out.println("      Testing complete.      ");
-		System.out.println("-----------------------------\n");
-
-	}
+	public static Scanner getScanner() { return MAIN_SCANNER; }
 
 	// ***************************************************************************
 
@@ -125,118 +60,148 @@ public class Main {
 
 		Menu menu = new Menu(MAIN_MENU);
 		String[] database_header = PRODUCT_DATABASE.get_data_head();
-		String[] new_entry = new String[PRODUCT_DATABASE.get_column_size()];
 		Product existing_entry;
 		String date;
 
-		System.out.println("\n-----------------------------");
-		System.out.println("       Launching Menu        ");
-		System.out.println("-----------------------------\n");
+		menu.printMessage("Welcome to DreamTeam DataBase");
 
 		do {
-
-			PRODUCT_DATABASE.display();
-			ORDER_DATABASE.display();
-			System.out.println();
-			user_choice = menu.getOption(MAIN_SCANNER);
+			ArrayList<String> option_fields = new ArrayList<>();
+			menu.printMessage(PRODUCT_DATABASE.display());
+			menu.printMessage(ORDER_DATABASE.display());
+			user_choice = menu.getOption();
 
 			switch (user_choice) {
 
 				case CREATE:
 
-					for (int i = 0; i < database_header.length; i++) {
-						System.out.print("Enter " + database_header[i] + ": ");
-						new_entry[i] = MAIN_SCANNER.nextLine();
+					option_fields.addAll(Arrays.asList(database_header));
+					option_fields = menu.runTextReader(Options.CREATE, option_fields);
+					String[] new_entry = new String[database_header.length];
+
+					for (String field : option_fields) {
+						new_entry[option_fields.indexOf(field)] = field;
 					}
 					PRODUCT_DATABASE.create(new_entry);
 					
-					Product new_product = PRODUCT_DATABASE.read(new_entry[0]); // Prints the object address in memory.
+					Product new_product = PRODUCT_DATABASE.read(new_entry[0]);
+					menu.printMessage("You created the product: " + new_product.toString());
 					new_product.prettyPrint();
 
 					break;
 				
 				case READ:
 					
-					System.out.print("Enter " + database_header[0] + ": ");
-					existing_entry = PRODUCT_DATABASE.read(MAIN_SCANNER.nextLine());
+					option_fields.add(database_header[0]);
+					option_fields = menu.runTextReader(Options.READ, option_fields);
+					existing_entry = PRODUCT_DATABASE.read(option_fields.get(0));
 					
 					if(existing_entry != null) {
-						existing_entry.prettyPrint();
+						menu.printMessage(existing_entry.prettyPrint());
+					} else {
+						menu.printMessage("The product was not found.");
 					}
 					
 					break;
 				
 				case UPDATE:
 					
-					System.out.print("Enter existing entry's " + database_header[0] + ": ");
-					existing_entry = PRODUCT_DATABASE.read(MAIN_SCANNER.nextLine());
+					option_fields.add(database_header[0]);
+					option_fields = menu.runTextReader(Options.UPDATE, option_fields);
+					existing_entry = PRODUCT_DATABASE.read(option_fields.get(0));
 					
 					if ((existing_entry != null) && !(existing_entry.getProductID().equals("000"))) {
 						PRODUCT_DATABASE.update(existing_entry, MAIN_SCANNER);
-						existing_entry.prettyPrint();
+						menu.printMessage(existing_entry.prettyPrint());
+					} else {
+						menu.printMessage("The product database does not contain an entry for: "
+								+ option_fields.get(0));
 					}
 
 					break;
 				
 				case DELETE:
-					
-					System.out.print("Enter " + database_header[0] + ": ");
-					PRODUCT_DATABASE.delete(MAIN_SCANNER.nextLine());
+
+					option_fields.add(database_header[0]);
+					option_fields = menu.runTextReader(Options.UPDATE, option_fields);
+					if (PRODUCT_DATABASE.delete(option_fields.get(0)))
+						menu.printMessage(option_fields.get(0) + " was successfully deleted.");
 
 					break;
 				
 				case PROCESS_ORDERS:
+					menu.printMessage("Processing orders...");
 					ORDER_DATABASE.processOrders();
-
-					System.out.println("Simulation processed.");
+					menu.printMessage("Simulation processed.");
 					
 					break;
 
 				case REPORTS:
 
-					System.out.println("For which date would you like reports?");
-					date = MAIN_SCANNER.nextLine();
-					if (ORDER_DATABASE.contains(date)) {
-						System.out.println("Reports generating...");
+					menu.printMessage("For which date would you like reports?");
+					option_fields.add("Date");
+					option_fields = menu.runTextReader(Options.REPORTS, option_fields);
 
-						dailyAssetsReport(date);
-						dailyTopTenReport(date);
+					date = option_fields.get(0);
+					if (ORDER_DATABASE.contains(date)) {
+						menu.printMessage("Reports generating...");
+						File pdfFile = new File("files/reports/daily-report_" + date + ".pdf");
+						menu.showFile(pdfFile);
 					}
 
 					break;
 					
 				case CHECK_EMAIL:
 					
-					System.out.println("Checking inbox...");
+					menu.printMessage("Checking inbox...");
 					EmailService email = new EmailService();
 					email.checkEmail();
 					break;
 					
 				case TOP_PRODUCTS:
-          
-					System.out.println("For which date would you like reports?");
-					date = MAIN_SCANNER.nextLine();
-					ORDER_DATABASE.findTopProducts(date);
+
+					menu.printMessage("For which date would you like the top products?");
+					option_fields.add("Date");
+					option_fields = menu.runTextReader(Options.REPORTS, option_fields);
+					date = option_fields.get(0);
+					LinkedHashMap<String, Double> top_products = ORDER_DATABASE.findTopProducts(date);
+
+					StringBuilder products = new StringBuilder(date + " Top Products:\n");
+					for (String product : top_products.keySet()){
+						products.append("\t");
+						products.append(product);
+						products.append(": ");
+						products.append(top_products.get(product));
+						products.append("\n");
+					}
+					menu.printMessage(products.toString());
 
 					break;
 
 				case TOP_CUSTOMERS:
-          
-					System.out.println("For which date would you like reports?");
-					date = MAIN_SCANNER.nextLine();
-					ORDER_DATABASE.findTopCustomers(date);
 
+					menu.printMessage("For which date would you like the top products?");
+					option_fields.add("Date");
+					option_fields = menu.runTextReader(Options.REPORTS, option_fields);
+					date = option_fields.get(0);
+					LinkedHashMap<String, Double> top_customers = ORDER_DATABASE.findTopCustomers(date);
+					StringBuilder customers = new StringBuilder(date + " Top Customers:\n");
+					for (String customer : top_customers.keySet()){
+						customers.append("\t");
+						customers.append(customer);
+						customers.append(": ");
+						customers.append(top_customers.get(customer));
+						customers.append("\n");
+					}
+					menu.printMessage(customers.toString());
 					break;
 				
 				case QUIT:
-					
-					System.out.println("\nSaving Database changes...");
-					System.out.println("Done!");
-					System.out.println("Bye!");
+					menu.closeMenu();
 					break;
 				
 				default:
-					System.out.println("The " + user_choice + " option is not in this menu.");
+					menu.printMessage("The " + user_choice + " option is not in this menu.");
 			}
 		} while(user_choice != Options.QUIT);
 	}
@@ -299,7 +264,6 @@ public class Main {
 			pdf_writer.endText();
 
 			data_writer.write(date + "," + PRODUCT_DATABASE.countAssets() + "," + ORDER_DATABASE.countSales(date) + "\n");
-			System.out.println("Successfully wrote statements to the file.");
 
 			while (annual_data_scanner.hasNextLine()) {
 				plot_daily_data = annual_data_scanner.nextLine().split(",");
@@ -373,12 +337,11 @@ public class Main {
 			pdf_writer.endText();
 			pdf_writer.close();
 			document.save(report_path + ".pdf");
-
-			System.out.println("Successfully added charts to the report.");
+			document.close();
 
 		} catch (IOException e) {
-			System.out.println("Failed to create or write to file.");
 			e.printStackTrace();
+			System.out.println("Failed to create or write to a pdf document: " + report_path);
 		}
 
 	}
@@ -387,17 +350,6 @@ public class Main {
 	//	***************************************************************************	
 
 	//	TODO Write the top products and customers (by spending) to a daily report file
-
-	/**
-	 *
-	 * @param date
-	 */
-	private static void dailyTopTenReport(String date) {
-		ORDER_DATABASE.findTopCustomers(date);
-		ORDER_DATABASE.findTopProducts(date);
-	}
-
-	//	***************************************************************************
 	
 	/**
 	 * 
@@ -411,12 +363,11 @@ public class Main {
 		
 		try (FileWriter writer = new FileWriter(location, true)) {
 			writer.append(new_order);
-			
-			System.out.println("Realtime order appended to file in relative path: " + location);
 			writer.flush();
 		}
 		catch(IOException e) {
 			e.printStackTrace();
+			System.out.println("Failed to append a transaction to buyer history: " + location);
 		}
 	}
 } // End main class. EOF

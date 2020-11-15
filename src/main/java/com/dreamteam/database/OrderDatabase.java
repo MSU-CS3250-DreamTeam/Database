@@ -1,7 +1,6 @@
 package com.dreamteam.database;
 
 import java.io.*;
-import java.text.NumberFormat;
 import java.util.*;
 
 public class OrderDatabase implements Database<Order> {
@@ -59,16 +58,7 @@ public class OrderDatabase implements Database<Order> {
 	{
 		return OrderDatabase.data_head;
 	}
-	
-	/**
-	 * Setters
-	 */
-	@Override
-	public void set_data_head(String[] labels)
-	{
-		OrderDatabase.data_head = labels;
-	}
-	
+
 	/* Class Methods (Alphabetical Order) */
 	// TODO javadoc for class methods without @override.
 	
@@ -130,10 +120,10 @@ public class OrderDatabase implements Database<Order> {
 		return data_table.get(date).size();
 	}
 	
-	public double countSales(String date) {
+	public double countSales(String date)
+	{
 
 		ProductDatabase product_database = ProductDatabase.getProducts();
-		NumberFormat formatter = NumberFormat.getCurrencyInstance();
 		
 		Iterator<Order> it = data_table.get(date).iterator();
 		
@@ -152,8 +142,6 @@ public class OrderDatabase implements Database<Order> {
 			totalSales += price * quantity;
 		}
 		
-		System.out
-		 .println("The company's total sale for " + date + " are: " + formatter.format(totalSales));
 		return totalSales;
 	}
 	
@@ -193,7 +181,7 @@ public class OrderDatabase implements Database<Order> {
 	}
 	
 	@Override
-	public void display()
+	public String display()
 	{
 		int number_of_orders = 0;
 		Set<String> dates = data_table.keySet();
@@ -201,7 +189,7 @@ public class OrderDatabase implements Database<Order> {
 		{
 			number_of_orders += data_table.get(date).size();
 		}
-		System.out.println("The orders database has " + number_of_orders + " orders.");
+		return "The orders database has " + number_of_orders + " orders.";
 	}
 	
 	// TODO Find the top products (by spending) and return
@@ -216,7 +204,7 @@ public class OrderDatabase implements Database<Order> {
 		HashSet<Order> date_orders = data_table.get(date);
 		TreeMap<Double, Order> mapper = new TreeMap<>();
 		ProductDatabase z = ProductDatabase.getProducts();
-		double price = 0;
+		double price;
 
 		for (Order next_order : date_orders) {
 			price = z.read(next_order.getProductID()).getSalePrice() * next_order.getQuantity();
@@ -246,7 +234,7 @@ public class OrderDatabase implements Database<Order> {
 		TreeMap<Double, String> inverse_mapper = new TreeMap<>();
 		HashSet<String> email_mapper = new HashSet<>();
 		ProductDatabase z = ProductDatabase.getProducts();
-		double price = 0;
+		double price;
 
 		for (Order next_order : date_orders) {
 			price = z.read(next_order.getProductID()).getSalePrice() * next_order.getQuantity();
@@ -290,8 +278,7 @@ public class OrderDatabase implements Database<Order> {
 		}
 		
 		String order_log_path = "files/customer_orders_A_team1.csv";
-		Order processed_order;
-		String next_order;
+		Order new_order;
 		Product existing_product;
 		String date = "2020-01-01";
 		ProductDatabase products = ProductDatabase.getProducts();
@@ -304,58 +291,39 @@ public class OrderDatabase implements Database<Order> {
 			
 			while(order_scanner.hasNextLine())
 			{
-				next_order = order_scanner.nextLine();
-				create(next_order);
-				
-				if(!next_order.contains(date) && date != null)
+				new_order = new Order(order_scanner.nextLine().split(","));
+
+				if (!contains(new_order)) 
 				{
-					Main.dailyAssetsReport(date);
-					date = next_order.substring(0, date.length());
-					System.out.println(date);
-				}
+					create(new_order);
 				
-				processed_order = read(date, next_order);
-				existing_product = products.read(processed_order.getProductID());
-				
-				if(existing_product.buyQuantity(processed_order.getQuantity()))
-				{
-					try
+					if(!new_order.getDate().contains(date) || !order_scanner.hasNextLine())
 					{
-						appendCustomerHistory(processed_order);
+						Main.dailyAssetsReport(date);
+						date = new_order.getDate();
 					}
-					catch(IOException e)
+					
+					existing_product = products.read(new_order.getProductID());
+					
+					if(existing_product.buyQuantity(new_order.getQuantity()))
 					{
-						e.printStackTrace();
-						System.out
-						 .println(processed_order.getEmail() + " could not be written to file.");
+						try
+						{
+							appendCustomerHistory(new_order);
+						}
+						catch(IOException e)
+						{
+							e.printStackTrace();
+							System.out
+								.println(new_order.getEmail() + " could not be written to file.");
+						}
 					}
-				}
-				else
-				{
-					System.out.println(processed_order.getEmail() + " could not be processed.");
+					else
+					{
+						System.out.println(new_order.getEmail() + " could not be processed.");
+					}
 				}
 			}
-			if (date != null) {
-				Main.dailyAssetsReport(date);
-			}
-			
-			// Wipes the file of customer orders, so disabled for convenience.
-//			try (FileWriter fWriter = new FileWriter(order_log_path, false)) {
-//
-//				StringBuilder string_head = new StringBuilder();
-//
-//				for (String value : OrderDatabase.data_head) {
-//					if (!value.equals("time"))
-//						string_head.append(value).append(",");
-//				}
-//
-//				fWriter.write(string_head.toString() + '\n');
-//
-//			} catch (IOException e1) {
-//				e1.printStackTrace();
-//			}
-			
-			System.out.println("The orders are processed and appended to history.");
 		}
 		catch(FileNotFoundException e)
 		{

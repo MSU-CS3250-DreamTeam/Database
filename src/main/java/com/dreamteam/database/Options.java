@@ -1,18 +1,8 @@
 package com.dreamteam.database;
 
 public enum Options {
-
-    CREATE(1), READ(2), UPDATE(3), DELETE(4), PROCESS_ORDERS(5), REPORTS(6), TOP_CUSTOMERS(14), TOP_PRODUCTS(15), CHECK_EMAIL(16), QUIT(7),        // menu options
-    QUANTITY(8),CAPACITY(9),WHOLESALE_COST(10),SALE_PRICE(11),SUPPLIER(12),DONE(13);    // update options
-
-    private int value;
-
-    private Options(int v) {
-        this.value = v;
-    }
-
-    public int getValue() {
-        return value;
-    }
-
+    // menu options
+    CREATE, READ, UPDATE, DELETE, PROCESS_ORDERS, REPORTS, TOP_CUSTOMERS, TOP_PRODUCTS, CHECK_EMAIL, QUIT,
+    // update options
+    QUANTITY,CAPACITY,WHOLESALE_COST,SALE_PRICE,SUPPLIER,DONE;
 }

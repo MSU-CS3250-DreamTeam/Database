@@ -3,11 +3,11 @@ target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
-files/annual-plot-data.csv
 files/reports/
 *.jar
 *.jpg
 *.txt
+*.csv
 
 
 ### STS ###
@@ -38,5 +38,3 @@ build/
 
 ### VS Code ###
 .vscode
-
-*.csv

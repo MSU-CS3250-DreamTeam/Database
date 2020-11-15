@@ -1,6 +1,9 @@
 package com.dreamteam.database;
 
-public class Product extends DatabaseEntry {
+import java.io.FileWriter;
+import java.io.IOException;
+
+public class Product {
 
 	/** Member Variables */
 
@@ -50,17 +53,17 @@ public class Product extends DatabaseEntry {
 
 		if(quantity >= 0) {
 			this.quantity = quantity;
-			System.out.println("Product " + getProductID() + " quantity after transaction: " + quantity + ".");
+			recordTransaction("Product " + getProductID() + " quantity after transaction: " + quantity + ".");
 		
 		} else {
 			int attempted_quantity = getQuantity() - quantity;
 
-			System.out.print("\n\t\tYou attempted to purchase " + attempted_quantity + ". " +
-								"\n\t\tWe need " + (-quantity) + " more of product " + product_id +
+			recordTransaction("\nYou attempted to purchase " + attempted_quantity + ". " +
+								"\nWe need " + (-quantity) + " more of product " + product_id +
 								" to make the sale, so we are restocking the product now.");
 			
 			if (restock()) {
-				System.out.print("\t\tSuccess. ");
+				recordTransaction(" Success. ");
 				buyQuantity(attempted_quantity);
 			}
 		}
@@ -76,7 +79,7 @@ public class Product extends DatabaseEntry {
 
 	public void setSupplierID(String sellerID) { this.supplier_id = sellerID; }
 
-	/** Class Methods (Alphabetical Order) */
+	/* Class Methods (Alphabetical Order) */
 	// TODO javadoc of Class Methods.
 	
 	/**
@@ -85,7 +88,7 @@ public class Product extends DatabaseEntry {
 	 * @return
 	 */
 	public boolean buyQuantity(int increment) {
-		System.out.print("Buy Transaction of " + increment + " " + getProductID() + ". ");
+		recordTransaction("\nBuy Transaction of " + increment + " " + getProductID() + ". ");
 		return setQuantity(getQuantity() - increment);
 	}
 
@@ -94,16 +97,22 @@ public class Product extends DatabaseEntry {
 	 * @return
 	 */
 	public String prettyPrint() {
-		String regex = ", \n\t\t\t";
-		String s =  "\nProduct:\t" +
+		String regex = ", \n\t";
+
+		return "\nProduct:\t" +
 			   "{ product id:\t\t\"" + product_id + '\'' +
-			   regex + "  quantity:\t\t\t" + quantity +
+			   regex + "  quantity:\t\t" + quantity +
 			   regex + "  wholesale cost:\t$" + wholesale_cost +
 			   regex + "  sale price:\t\t$" + sale_price +
 			   regex + "  supplier id:\t\t\"" + supplier_id + '\"' + "\t}\n";
+	}
 
-		System.out.println(s);
-		return s;
+	private static void recordTransaction(String transaction) {
+		try (final FileWriter transaction_recorder = new FileWriter("files/transactions.txt", true)) {
+			transaction_recorder.append(transaction);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -111,7 +120,7 @@ public class Product extends DatabaseEntry {
 	 * @return
 	 */
 	private boolean restock() {
-		System.out.print("\n\t\tRestock ");
+		recordTransaction("\nRestock");
 		return supplyQuantity(getCapacity());
 	}
 	
@@ -121,7 +130,7 @@ public class Product extends DatabaseEntry {
 	 * @return
 	 */
 	public boolean supplyQuantity(int increment) {
-		System.out.print("Supply Transaction of " + increment + ". ");
+		recordTransaction("\nSupply Transaction of " + increment + ". ");
 		ProductDatabase.getProducts().appendSupplierHistory(this, increment);
 		return setQuantity(getQuantity() + increment);
 	}

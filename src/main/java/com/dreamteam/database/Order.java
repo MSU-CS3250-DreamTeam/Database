@@ -3,7 +3,7 @@ package com.dreamteam.database;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-public class Order extends DatabaseEntry {
+public class Order {
 
 	/** Member Variables */
     private String date;
