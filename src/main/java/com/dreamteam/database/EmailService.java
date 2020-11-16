@@ -157,7 +157,10 @@ public class EmailService {
 			e.printStackTrace();
 			orderContents = new String[] {""};
 		}
-
+		//This is a test of products id that match ids of 1208 to 1212 in the simulation file.
+		Order test_order = new Order(new String[]{"2020-03-04","dschne29@msudenver.edu", "80102", "6HWNDDX9A35J", "10"});
+		email_menu.printMessage("Recommmended products of " + test_order.toString());
+		email_menu.printMessage(od.findRecommendedProducts(test_order).toString());
 		if (email_menu.getOption() == Options.DONE)
 			email_menu.closeMenu();
 

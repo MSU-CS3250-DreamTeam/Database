@@ -260,7 +260,40 @@ public class OrderDatabase implements Database<Order> {
 
 		return customers;
 	}
-	
+
+	/**
+	 * @param product_id
+	 * @return similar_orders
+	 */
+	private HashSet<Order> findOrdersByProduct(String product_id) {
+		HashSet<Order> similar_orders = new HashSet<>();
+		Set<String> dates = data_table.keySet();
+		for (String date : dates) {
+			for (Order next_order : data_table.get(date)) {
+				if (next_order.getProductID().equals(product_id))
+					similar_orders.add(next_order);
+			}
+		}
+		return similar_orders;
+	}
+
+	/**
+	 * @param recommended_order
+	 * @return recommended_products
+	 */
+	public HashSet<String> findRecommendedProducts(Order recommended_order) {
+		HashSet<String> recommended_products = new HashSet<>();
+		HashSet<Order> recommended_orders = findOrdersByProduct(recommended_order.getProductID());
+		for (Order next_order  : recommended_orders) {
+			for (Order each_order : data_table.get(next_order.getDate())) {
+				if (each_order.getEmail().equals(next_order.getEmail()))
+					if (!each_order.getProductID().equals(recommended_order.getProductID()))
+						recommended_products.add(each_order.getProductID());
+			}
+		}
+		return recommended_products;
+	}
+
 	/**
 	 *
 	 */
