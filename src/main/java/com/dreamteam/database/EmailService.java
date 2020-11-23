@@ -23,7 +23,7 @@ public class EmailService {
 		this.PASSWORD = "Sch00l2020!";
 	}
 	
-	public static void sendMessage(Order new_order) throws MessagingException
+	public static void sendConfirmationMessage(Order new_order) throws MessagingException
 	{
 		String host1 = "smtp.gmail.com";
 		Properties props1 = new Properties();
@@ -38,7 +38,7 @@ public class EmailService {
 		String toEmail = "thedreamteamsoftware+orders@gmail.com";
 		String confirmationMessage = new_order.prettyPrint() +
 		 "Your order has been successfully submitted. Thank you for choosing the Dream Team!";
-
+		
 		try
 		{
 			TimeUnit.SECONDS.sleep(5);
@@ -47,7 +47,7 @@ public class EmailService {
 		{
 			Thread.currentThread().interrupt();
 		}
-
+		
 		msg1.setFrom(new InternetAddress(fromEmail));
 		msg1.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmail));
 		msg1.setSubject("Order Confirmation");
@@ -56,13 +56,47 @@ public class EmailService {
 		Transport.send(msg1, fromEmail, password);
 	}
 	
+	public static void sendCancellationMessage(Order new_order) throws MessagingException
+	{
+		String host2 = "smtp.gmail.com";
+		Properties props2 = new Properties();
+		props2.put("mail.smtp.host", host2);
+		props2.put("mail.smtp.port", 587);
+		props2.put("mail.smtp.auth", "true");
+		props2.put("mail.smtp.starttls.enable", "true");
+		Session session2 = Session.getInstance(props2, null);
+		MimeMessage msg2 = new MimeMessage(session2);
+		String fromEmail = "thedreamteamsoftware@gmail.com";
+		String password = "Sch00l2020!";
+		String toEmail = "thedreamteamsoftware+orders@gmail.com";
+		String cancellationMessage = new_order.prettyPrint() +
+		 "Your order has been successfully cancelled. We look forward to your business in the " +
+		 "future!";
+		
+		try
+		{
+			TimeUnit.SECONDS.sleep(5);
+		}
+		catch(InterruptedException ex)
+		{
+			Thread.currentThread().interrupt();
+		}
+		
+		msg2.setFrom(new InternetAddress(fromEmail));
+		msg2.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmail));
+		msg2.setSubject("Order Confirmation");
+		msg2.setSentDate(new Date());
+		msg2.setText(cancellationMessage);
+		Transport.send(msg2, fromEmail, password);
+	}
+	
 	public String[] checkEmail()
 	{
 		final OrderDatabase od = OrderDatabase.getOrders();
 		String[] orderContents;
 		String[] bodyText;
 		Menu email_menu = new Menu(EnumSet.of(Options.DONE));
-
+		
 		try
 		{
 			Properties props2 = new Properties();
@@ -114,6 +148,10 @@ public class EmailService {
 					{
 						orderContents[4] = toArray[k + 1];
 					}
+					if(toArray[k].contains("cancel"))
+					{
+						return null;
+					}
 					if(!(orderContents[0] == null))
 					{
 						if(!(orderContents[0].equals("New")))
@@ -129,9 +167,10 @@ public class EmailService {
 							Order emailOrder = od.read(orderContents[0], order_string);
 							if(od.contains(emailOrder))
 							{
-								email_menu.printMessage("Order successful! Sending confirmation email" +
-								 ".");
-								sendMessage(emailOrder);
+								email_menu
+								 .printMessage("Order successful! Sending confirmation email" +
+								  ".");
+								sendConfirmationMessage(emailOrder);
 								email_menu.printMessage("Message sent successfully!");
 							}
 							break;
@@ -158,12 +197,16 @@ public class EmailService {
 			orderContents = new String[] {""};
 		}
 		//This is a test of products id that match ids of 1208 to 1212 in the simulation file.
-		Order test_order = new Order(new String[]{"2020-03-04","dschne29@msudenver.edu", "80102", "6HWNDDX9A35J", "10"});
-		email_menu.printMessage("Recommmended products of " + test_order.toString());
+		Order test_order =
+		 new Order(new String[] {"2020-03-04", "dschne29@msudenver.edu", "80102", "6HWNDDX9A35J", 
+								 "10"});
+		email_menu.printMessage("Recommended products of " + test_order.toString());
 		email_menu.printMessage(od.findRecommendedProducts(test_order).toString());
-		if (email_menu.getOption() == Options.DONE)
+		if(email_menu.getOption() == Options.DONE)
+		{
 			email_menu.closeMenu();
-
+		}
+		
 		return orderContents;
 	}
 	
