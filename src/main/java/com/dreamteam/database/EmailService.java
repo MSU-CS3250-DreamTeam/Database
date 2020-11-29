@@ -122,58 +122,62 @@ public class EmailService {
 				String[] toArray = bodyText[i].split(" ");
 				for(int k = 0; k < toArray.length; k++)
 				{
-					if(toArray[k].contains("Submitted"))
+					if(!toArray[k].contains("cancel.html."))
 					{
-						orderContents[0] = toArray[k + 1]
-						 + toArray[k + 2]
-						 + toArray[k + 3]
-						 + toArray[k + 4]
-						 + toArray[k + 5]
-						 + toArray[k + 6];
-						orderContents[0] = reformatDate(orderContents[0]);
-					}
-					if(toArray[k].contains("email:"))
-					{
-						orderContents[1] = toArray[k + 1];
-					}
-					if(toArray[k].contains("address:"))
-					{
-						orderContents[2] = toArray[k + 1];
-					}
-					if(toArray[k].contains("product:"))
-					{
-						orderContents[3] = toArray[k + 1];
-					}
-					if(toArray[k].contains("quantity:"))
-					{
-						orderContents[4] = toArray[k + 1];
-					}
-					if(toArray[k].contains("cancel"))
-					{
-						return null;
-					}
-					if(!(orderContents[0] == null))
-					{
-						if(!(orderContents[0].equals("New")))
+						if(toArray[k].contains("Submitted"))
 						{
-							od.create(orderContents);
-							String regex = ",";
-							String order_string = orderContents[0] + regex +
-							 orderContents[1] + regex +
-							 orderContents[2] + regex +
-							 orderContents[3] + regex +
-							 orderContents[4];
-							
-							Order emailOrder = od.read(orderContents[0], order_string);
-							if(od.contains(emailOrder))
+							orderContents[0] = toArray[k + 1]
+							 + toArray[k + 2]
+							 + toArray[k + 3]
+							 + toArray[k + 4]
+							 + toArray[k + 5]
+							 + toArray[k + 6];
+							orderContents[0] = reformatDate(orderContents[0]);
+						}
+						if(toArray[k].contains("email:"))
+						{
+							orderContents[1] = toArray[k + 1];
+						}
+						if(toArray[k].contains("address:"))
+						{
+							orderContents[2] = toArray[k + 1];
+						}
+						if(toArray[k].contains("product:"))
+						{
+							orderContents[3] = toArray[k + 1];
+						}
+						if(toArray[k].contains("quantity:"))
+						{
+							orderContents[4] = toArray[k + 1];
+						}
+						if(!(orderContents[0] == null))
+						{
+							if(!(orderContents[0].equals("New")))
 							{
-								email_menu
-								 .printMessage("Order successful! Sending confirmation email" +
-								  ".");
-								sendConfirmationMessage(emailOrder);
-								email_menu.printMessage("Message sent successfully!");
+								od.create(orderContents);
+								String regex = ",";
+								String order_string = orderContents[0] + regex +
+								 orderContents[1] + regex +
+								 orderContents[2] + regex +
+								 orderContents[3] + regex +
+								 orderContents[4];
+								
+								Order emailOrder = od.read(orderContents[0], order_string);
+								if(od.contains(emailOrder))
+								{
+									email_menu
+									 .printMessage("Order successful! Sending confirmation email" +
+									  ".");
+									sendConfirmationMessage(emailOrder);
+									email_menu.printMessage("Message sent successfully!");
+								}
+								break;
 							}
-							break;
+						}
+					}
+					else {
+						if(toArray[k].contains("product:")) {
+							return null; // Need to populate this with finding the order within the order database to then call a delete method; any ideas appreciated
 						}
 					}
 				}
@@ -198,8 +202,10 @@ public class EmailService {
 		}
 		//This is a test of products id that match ids of 1208 to 1212 in the simulation file.
 		Order test_order =
-		 new Order(new String[] {"2020-03-04", "dschne29@msudenver.edu", "80102", "6HWNDDX9A35J", 
-								 "10"});
+		 new Order(new String[] {
+		  "2020-03-04", "dschne29@msudenver.edu", "80102", "6HWNDDX9A35J",
+		  "10"
+		 });
 		email_menu.printMessage("Recommended products of " + test_order.toString());
 		email_menu.printMessage(od.findRecommendedProducts(test_order).toString());
 		if(email_menu.getOption() == Options.DONE)
