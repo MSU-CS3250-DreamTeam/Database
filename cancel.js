@@ -4,6 +4,7 @@ $(document).ready(function() {
     var method = "POST"
     var email = document.getElementById("email");
     var product = document.getElementById("product");
+    var cancelDate = document.getElementById("date");
     var regex = ",";
 
     $('#submit').click(function(event) {
@@ -13,6 +14,7 @@ $(document).ready(function() {
         var order = date + regex;
         order += email.value + regex;
         order += product.value + regex;
+        order += cancelDate.value + regex;
 
         var data = new FormData(order);
         var xhr = new XMLHttpRequest();
