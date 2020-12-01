@@ -6,6 +6,7 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.EnumSet;
 import java.util.Properties;
@@ -122,7 +123,40 @@ public class EmailService {
 				String[] toArray = bodyText[i].split(" ");
 				for(int k = 0; k < toArray.length; k++)
 				{
-					if(!toArray[k].contains("cancel.html."))
+					if(message2.getSubject().contains("Cancel"))
+					{
+						String orderEmail = "";
+						String orderProduct = "";
+						String orderDate = "";
+						if(toArray[k].contains("email:"))
+						{
+							orderEmail = toArray[k + 1];
+							System.out.println(orderEmail);
+						}
+						if(toArray[k].contains("product:"))
+						{
+							orderProduct = toArray[k + 1];
+							System.out.println(orderProduct);
+						}
+						if(toArray[k].contains("date:"))
+						{
+							orderDate = toArray[k + 1];
+							System.out.println(orderDate);
+							//System.out.println("Hello world");
+						}
+						//if(!orderEmail.isEmpty() && !orderProduct.isEmpty() && !orderDate
+						// .isEmpty())
+						//{
+						if(orderDate != null && !orderDate.equals("New") && !orderDate.isEmpty())
+						{
+							Order cancelledOrder = od.read(orderEmail, orderProduct, orderDate);
+							System.out.println(cancelledOrder.toString());
+							email_menu.printMessage(
+							 "Was the order successfully cancelled? " + od.delete(cancelledOrder));
+							//}
+						}
+					}
+					else
 					{
 						if(toArray[k].contains("Submitted"))
 						{
@@ -154,6 +188,7 @@ public class EmailService {
 						{
 							if(!(orderContents[0].equals("New")))
 							{
+								System.out.println(Arrays.toString(orderContents));
 								od.create(orderContents);
 								String regex = ",";
 								String order_string = orderContents[0] + regex +
@@ -166,8 +201,9 @@ public class EmailService {
 								if(od.contains(emailOrder))
 								{
 									email_menu
-									 .printMessage("Order successful! Sending confirmation email" +
-									  ".");
+									 .printMessage(
+									  "Order successful! Sending confirmation email" +
+									   ".");
 									sendConfirmationMessage(emailOrder);
 									email_menu.printMessage("Message sent successfully!");
 								}
@@ -175,14 +211,9 @@ public class EmailService {
 							}
 						}
 					}
-					else {
-						if(toArray[k].contains("product:")) {
-							return null; // Need to populate this with finding the order within the order database to then call a delete method; any ideas appreciated
-						}
-					}
 				}
 			}
-			emailFolder.close(false);
+			emailFolder.close(true);
 			store.close();
 		}
 		catch(NoSuchProviderException e)
@@ -243,8 +274,6 @@ public class EmailService {
 		boolean multipartAlt =
 		 new ContentType(mimeMultipart.getContentType()).match("multipart/alternative");
 		if(multipartAlt)
-		// alternatives appear in an order of increasing 
-		// faithfulness to the original content. Customize as req'd.
 		{
 			return getTextFromBodyPart(mimeMultipart.getBodyPart(count - 1));
 		}

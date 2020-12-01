@@ -58,7 +58,7 @@ public class OrderDatabase implements Database<Order> {
 	{
 		return OrderDatabase.data_head;
 	}
-
+	
 	/* Class Methods (Alphabetical Order) */
 	// TODO javadoc for class methods without @override.
 	
@@ -122,7 +122,7 @@ public class OrderDatabase implements Database<Order> {
 	
 	public double countSales(String date)
 	{
-
+		
 		ProductDatabase product_database = ProductDatabase.getProducts();
 		
 		Iterator<Order> it = data_table.get(date).iterator();
@@ -180,6 +180,17 @@ public class OrderDatabase implements Database<Order> {
 		return isRemoved;
 	}
 	
+	public boolean delete(Order o)
+	{
+		boolean isRemoved = false;
+		if(OrderDatabase.data_table.containsKey(o.getDate()))
+		{
+			HashSet<Order> orders = data_table.get(o.getDate());
+			isRemoved = (orders.remove(o));
+		}
+		return isRemoved;
+	}
+	
 	@Override
 	public String display()
 	{
@@ -198,23 +209,25 @@ public class OrderDatabase implements Database<Order> {
 	 * @param date
 	 * @return a string array of top product's ids to use in reports/etc.
 	 */
-
-	public LinkedHashMap<String, Double> findTopProducts(String date) {
+	public LinkedHashMap<String, Double> findTopProducts(String date)
+	{
 		LinkedHashMap<String, Double> products = new LinkedHashMap<>();
 		HashSet<Order> date_orders = data_table.get(date);
 		TreeMap<Double, Order> mapper = new TreeMap<>();
 		ProductDatabase z = ProductDatabase.getProducts();
 		double price;
-
-		for (Order next_order : date_orders) {
+		
+		for(Order next_order: date_orders)
+		{
 			price = z.read(next_order.getProductID()).getSalePrice() * next_order.getQuantity();
 			mapper.put(price, next_order);
 		}
-
+		
 		ArrayList<Double> order_keys = new ArrayList<>(mapper.keySet());
 		Collections.sort(order_keys);
 		Collections.reverse(order_keys);
-		for (double x: order_keys) {
+		for(double x: order_keys)
+		{
 			products.put(mapper.get(x).getProductID(), x);
 		}
 		return products;
@@ -226,8 +239,8 @@ public class OrderDatabase implements Database<Order> {
 	 * @param date
 	 * @return a string array of top customer's ids to use in reports/etc.
 	 */
-
-	public LinkedHashMap<String, Double> findTopCustomers(String date) {
+	public LinkedHashMap<String, Double> findTopCustomers(String date)
+	{
 		LinkedHashMap<String, Double> customers = new LinkedHashMap<>();
 		HashSet<Order> date_orders = data_table.get(date);
 		TreeMap<String, Double> mapper = new TreeMap<>();
@@ -235,65 +248,81 @@ public class OrderDatabase implements Database<Order> {
 		HashSet<String> email_mapper = new HashSet<>();
 		ProductDatabase z = ProductDatabase.getProducts();
 		double price;
-
-		for (Order next_order : date_orders) {
+		
+		for(Order next_order: date_orders)
+		{
 			price = z.read(next_order.getProductID()).getSalePrice() * next_order.getQuantity();
-			if (email_mapper.contains(next_order.getEmail())) {
+			if(email_mapper.contains(next_order.getEmail()))
+			{
 				mapper.put(next_order.getEmail(), mapper.get(next_order.getEmail()) + price);
 			}
-			else {
+			else
+			{
 				mapper.put(next_order.getEmail(), price);
 				email_mapper.add(next_order.getEmail());
 			}
-
 		}
-		for (String email : mapper.keySet()) {
+		for(String email: mapper.keySet())
+		{
 			inverse_mapper.put(mapper.get(email), email);
 		}
-
+		
 		ArrayList<Double> order_keys = new ArrayList<>(mapper.values());
 		Collections.sort(order_keys);
 		Collections.reverse(order_keys);
-		for (double x: order_keys) {
+		for(double x: order_keys)
+		{
 			customers.put(inverse_mapper.get(x), x);
 		}
-
+		
 		return customers;
 	}
-
+	
 	/**
 	 * @param product_id
 	 * @return similar_orders
 	 */
-	private HashSet<Order> findOrdersByProduct(String product_id) {
+	private HashSet<Order> findOrdersByProduct(String product_id)
+	{
 		HashSet<Order> similar_orders = new HashSet<>();
 		Set<String> dates = data_table.keySet();
-		for (String date : dates) {
-			for (Order next_order : data_table.get(date)) {
-				if (next_order.getProductID().equals(product_id))
+		for(String date: dates)
+		{
+			for(Order next_order: data_table.get(date))
+			{
+				if(next_order.getProductID().equals(product_id))
+				{
 					similar_orders.add(next_order);
+				}
 			}
 		}
 		return similar_orders;
 	}
-
+	
 	/**
 	 * @param recommended_order
 	 * @return recommended_products
 	 */
-	public HashSet<String> findRecommendedProducts(Order recommended_order) {
+	public HashSet<String> findRecommendedProducts(Order recommended_order)
+	{
 		HashSet<String> recommended_products = new HashSet<>();
 		HashSet<Order> recommended_orders = findOrdersByProduct(recommended_order.getProductID());
-		for (Order next_order  : recommended_orders) {
-			for (Order each_order : data_table.get(next_order.getDate())) {
-				if (each_order.getEmail().equals(next_order.getEmail()))
-					if (!each_order.getProductID().equals(recommended_order.getProductID()))
+		for(Order next_order: recommended_orders)
+		{
+			for(Order each_order: data_table.get(next_order.getDate()))
+			{
+				if(each_order.getEmail().equals(next_order.getEmail()))
+				{
+					if(!each_order.getProductID().equals(recommended_order.getProductID()))
+					{
 						recommended_products.add(each_order.getProductID());
+					}
+				}
 			}
 		}
 		return recommended_products;
 	}
-
+	
 	/**
 	 *
 	 */
@@ -325,11 +354,11 @@ public class OrderDatabase implements Database<Order> {
 			while(order_scanner.hasNextLine())
 			{
 				new_order = new Order(order_scanner.nextLine().split(","));
-
-				if (!contains(new_order)) 
+				
+				if(!contains(new_order))
 				{
 					create(new_order);
-				
+					
 					if(!new_order.getDate().contains(date) || !order_scanner.hasNextLine())
 					{
 						Main.dailyAssetsReport(date);
@@ -348,7 +377,7 @@ public class OrderDatabase implements Database<Order> {
 						{
 							e.printStackTrace();
 							System.out
-								.println(new_order.getEmail() + " could not be written to file.");
+							 .println(new_order.getEmail() + " could not be written to file.");
 						}
 					}
 					else
@@ -384,6 +413,29 @@ public class OrderDatabase implements Database<Order> {
 			}
 		}
 		
+		System.out.println("The order was not found.");
+		return new Order("000,000,000,000,000".split(","));
+	}
+	
+	public Order read(String email, String productid, String date)
+	{
+		HashSet<Order> orders = data_table.get(date);
+		if(orders != null)
+		{
+			System.out.println("Hello world");
+			for(Order o: orders)
+			{
+				System.out.println(o.toString());
+				System.out.println(productid);
+				System.out.println(email);
+				if(//email.equals(o.getEmail())) 
+				productid.equals(o.getProductID()))
+				{
+					System.out.println("Goodbye world");
+					return o;
+				}
+			}
+		}
 		System.out.println("The order was not found.");
 		return new Order("000,000,000,000,000".split(","));
 	}
