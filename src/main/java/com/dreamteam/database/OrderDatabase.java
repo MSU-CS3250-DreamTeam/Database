@@ -297,7 +297,7 @@ public class OrderDatabase implements Database<Order> {
 	/**
 	 *
 	 */
-	public void processOrders()
+	public void processOrders(String order_log_path)
 	{
 		
 		// Cleans out annual-plot-data csv for a fresh simulation.
@@ -309,11 +309,10 @@ public class OrderDatabase implements Database<Order> {
 		{
 			e.printStackTrace();
 		}
-		
-		String order_log_path = "files/customer_orders_A_team1.csv";
+
 		Order new_order;
 		Product existing_product;
-		String date = "2020-01-01";
+		String date = "";
 		ProductDatabase products = ProductDatabase.getProducts();
 		File order_log = new File(order_log_path);
 		
@@ -325,6 +324,11 @@ public class OrderDatabase implements Database<Order> {
 			while(order_scanner.hasNextLine())
 			{
 				new_order = new Order(order_scanner.nextLine().split(","));
+
+				if (date.isEmpty())
+				{
+					date = new_order.getDate();
+				}
 
 				if (!contains(new_order)) 
 				{
