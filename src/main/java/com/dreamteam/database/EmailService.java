@@ -39,7 +39,10 @@ public class EmailService {
 		String toEmail = "thedreamteamsoftware+orders@gmail.com";
 		String confirmationMessage = new_order.prettyPrint() +
 		 "Your order has been successfully submitted. Thank you for choosing the Dream Team!";
-		
+
+		final OrderDatabase OD = OrderDatabase.getOrders();
+		confirmationMessage += "\nRecommended Products\n" + OD.findRecommendedProducts(new_order).toString();
+
 		try
 		{
 			TimeUnit.SECONDS.sleep(5);

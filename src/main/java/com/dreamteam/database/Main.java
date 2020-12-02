@@ -131,7 +131,10 @@ public class Main {
 				
 				case PROCESS_ORDERS:
 					menu.printMessage("Processing orders...");
-					ORDER_DATABASE.processOrders();
+					String order_log_path = "files/customer_orders_A_team1.csv";
+					String final_log_path = "files/customer_orders_final_team1.csv";
+					ORDER_DATABASE.processOrders(order_log_path);
+					ORDER_DATABASE.processOrders(final_log_path);
 					menu.printMessage("Simulation processed.");
 					
 					break;
@@ -249,7 +252,7 @@ public class Main {
 			pdf_writer.beginText();
 			pdf_writer.newLineAtOffset(100, 800);
 			PDFont font = PDType1Font.HELVETICA;
-			pdf_writer.setLeading(23.0);
+			pdf_writer.setLeading(23);
 			pdf_writer.setFont(font, 20);
 			pdf_writer.showText("Daily Report of " + date);
 			pdf_writer.newLine();
@@ -306,7 +309,7 @@ public class Main {
 
 			pdf_writer.beginText();
 			pdf_writer.newLineAtOffset(100, 800);
-			pdf_writer.setLeading(23.0);
+			pdf_writer.setLeading(23);
 			pdf_writer.setFont(font, 20);
 			pdf_writer.showText("Top Products ");
 			pdf_writer.newLine();
@@ -314,24 +317,34 @@ public class Main {
 			pdf_writer.setFont(font, 14);
 
 			LinkedHashMap<String, Double> top_products = ORDER_DATABASE.findTopProducts(date);
+			int top_index = 1;
 			for (String id : top_products.keySet()) {
 				pdf_writer.showText(id + ", $" + top_products.get(id));
 				pdf_writer.newLine();
+				if (top_index++ >= 10)
+				{
+					top_index = 1;
+					break;
+				}
 			}
 			
 			pdf_writer.newLine();
 			pdf_writer.newLine();
 			pdf_writer.setFont(font, 20);
-			pdf_writer.setLeading(23.0);
+			pdf_writer.setLeading(23);
 			pdf_writer.showText("Top Customers ");
 			pdf_writer.newLine();
 			pdf_writer.setFont(font, 14);
-			pdf_writer.setLeading(17.0);
+			pdf_writer.setLeading(17);
 
 			LinkedHashMap<String, Double> top_customers = ORDER_DATABASE.findTopCustomers(date);
 			for (String id : top_customers.keySet()) {
 				pdf_writer.showText(id + ", $" + top_customers.get(id));
 				pdf_writer.newLine();
+				if (top_index++ >= 10)
+				{
+					break;
+				}
 			}
 			
 			pdf_writer.endText();
