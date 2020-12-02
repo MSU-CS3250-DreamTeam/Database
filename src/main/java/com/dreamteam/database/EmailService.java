@@ -6,6 +6,7 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.EnumSet;
 import java.util.Properties;
@@ -23,7 +24,7 @@ public class EmailService {
 		this.PASSWORD = "Sch00l2020!";
 	}
 	
-	public static void sendMessage(Order new_order) throws MessagingException
+	public static void sendConfirmationMessage(Order new_order) throws MessagingException
 	{
 		String host1 = "smtp.gmail.com";
 		Properties props1 = new Properties();
@@ -38,8 +39,10 @@ public class EmailService {
 		String toEmail = "thedreamteamsoftware+orders@gmail.com";
 		String confirmationMessage = new_order.prettyPrint() +
 		 "Your order has been successfully submitted. Thank you for choosing the Dream Team!";
+
 		final OrderDatabase OD = OrderDatabase.getOrders();
 		confirmationMessage += "\nRecommended Products\n" + OD.findRecommendedProducts(new_order).toString();
+
 		try
 		{
 			TimeUnit.SECONDS.sleep(5);
@@ -48,7 +51,7 @@ public class EmailService {
 		{
 			Thread.currentThread().interrupt();
 		}
-
+		
 		msg1.setFrom(new InternetAddress(fromEmail));
 		msg1.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmail));
 		msg1.setSubject("Order Confirmation");
@@ -57,13 +60,52 @@ public class EmailService {
 		Transport.send(msg1, fromEmail, password);
 	}
 	
+	public static void sendCancellationMessage(Order new_order) throws MessagingException
+	{
+		String host2 = "smtp.gmail.com";
+		Properties props2 = new Properties();
+		props2.put("mail.smtp.host", host2);
+		props2.put("mail.smtp.port", 587);
+		props2.put("mail.smtp.auth", "true");
+		props2.put("mail.smtp.starttls.enable", "true");
+		Session session2 = Session.getInstance(props2, null);
+		MimeMessage msg2 = new MimeMessage(session2);
+		String fromEmail = "thedreamteamsoftware@gmail.com";
+		String password = "Sch00l2020!";
+		String toEmail = "thedreamteamsoftware+orders@gmail.com";
+		String cancellationMessage =
+		 "We are sorry to hear you need to cancel your order on " + new_order.getDate() + ". " +
+		  "Your order of " + new_order.getProductID() +
+		  " has been successfully cancelled. We look forward to your business in the " +
+		  "future!";
+		
+		try
+		{
+			TimeUnit.SECONDS.sleep(5);
+		}
+		catch(InterruptedException ex)
+		{
+			Thread.currentThread().interrupt();
+		}
+		
+		msg2.setFrom(new InternetAddress(fromEmail));
+		msg2.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmail));
+		msg2.setSubject("Order Cancellation");
+		msg2.setSentDate(new Date());
+		msg2.setText(cancellationMessage);
+		Transport.send(msg2, fromEmail, password);
+	}
+	
 	public String[] checkEmail()
 	{
 		final OrderDatabase od = OrderDatabase.getOrders();
 		String[] orderContents;
 		String[] bodyText;
 		Menu email_menu = new Menu(EnumSet.of(Options.DONE));
-
+		String orderEmail = "";
+		String orderProduct = "";
+		String orderDate = "";
+		
 		try
 		{
 			Properties props2 = new Properties();
@@ -89,58 +131,89 @@ public class EmailService {
 				String[] toArray = bodyText[i].split(" ");
 				for(int k = 0; k < toArray.length; k++)
 				{
-					if(toArray[k].contains("Submitted"))
+					if(message2.getSubject().contains("Cancel"))
 					{
-						orderContents[0] = toArray[k + 1]
-						 + toArray[k + 2]
-						 + toArray[k + 3]
-						 + toArray[k + 4]
-						 + toArray[k + 5]
-						 + toArray[k + 6];
-						orderContents[0] = reformatDate(orderContents[0]);
-					}
-					if(toArray[k].contains("email:"))
-					{
-						orderContents[1] = toArray[k + 1];
-					}
-					if(toArray[k].contains("address:"))
-					{
-						orderContents[2] = toArray[k + 1];
-					}
-					if(toArray[k].contains("product:"))
-					{
-						orderContents[3] = toArray[k + 1];
-					}
-					if(toArray[k].contains("quantity:"))
-					{
-						orderContents[4] = toArray[k + 1];
-					}
-					if(!(orderContents[0] == null))
-					{
-						if(!(orderContents[0].equals("New")))
+						if(toArray[k].contains("email:"))
 						{
-							od.create(orderContents);
-							String regex = ",";
-							String order_string = orderContents[0] + regex +
-							 orderContents[1] + regex +
-							 orderContents[2] + regex +
-							 orderContents[3] + regex +
-							 orderContents[4];
-							
-							Order emailOrder = od.read(orderContents[0], order_string);
-							if(od.contains(emailOrder))
+							orderEmail = toArray[k + 1];
+						}
+						if(toArray[k].contains("product:"))
+						{
+							orderProduct = toArray[k + 1];
+						}
+						if(toArray[k].contains("date:"))
+						{
+							orderDate = toArray[k + 1];
+						}
+					}
+					else
+					{
+						if(toArray[k].contains("Submitted"))
+						{
+							orderContents[0] = toArray[k + 1]
+							 + toArray[k + 2]
+							 + toArray[k + 3]
+							 + toArray[k + 4]
+							 + toArray[k + 5]
+							 + toArray[k + 6];
+							orderContents[0] = reformatDate(orderContents[0]);
+						}
+						if(toArray[k].contains("email:"))
+						{
+							orderContents[1] = toArray[k + 1];
+						}
+						if(toArray[k].contains("address:"))
+						{
+							orderContents[2] = toArray[k + 1];
+						}
+						if(toArray[k].contains("product:"))
+						{
+							orderContents[3] = toArray[k + 1];
+						}
+						if(toArray[k].contains("quantity:"))
+						{
+							orderContents[4] = toArray[k + 1];
+						}
+						if(!(orderContents[0] == null))
+						{
+							if(!(orderContents[0].equals("New")))
 							{
-								email_menu.printMessage("Order successful! Sending confirmation email" +
-								 ".");
-								sendMessage(emailOrder);
-								email_menu.printMessage("Message sent successfully!");
+								System.out.println(Arrays.toString(orderContents));
+								od.create(orderContents);
+								String regex = ",";
+								String order_string = orderContents[0] + regex +
+								 orderContents[1] + regex +
+								 orderContents[2] + regex +
+								 orderContents[3] + regex +
+								 orderContents[4];
+								
+								Order emailOrder = od.read(orderContents[0], order_string);
+								if(od.contains(emailOrder))
+								{
+									email_menu
+									 .printMessage(
+									  "Order successful! Sending confirmation email" +
+									   ".");
+									sendConfirmationMessage(emailOrder);
+									email_menu.printMessage("Message sent successfully!");
+								}
+								break;
 							}
-							break;
 						}
 					}
 				}
 			}
-			emailFolder.close(false);
+			if(orderDate != null && !orderDate.equals("New") && !orderDate.isEmpty())
+			{
+				Order cancelledOrder = od.read(orderEmail, orderProduct, orderDate);
+				if(od.delete(cancelledOrder))
+				{
+					email_menu.printMessage("Sending cancellation email...");
+					sendCancellationMessage(cancelledOrder);
+					email_menu.printMessage("Cancellation confirmation sent!");
+				}
+			}
+			emailFolder.close(true);
 			store.close();
 		}
 		catch(NoSuchProviderException e)
@@ -159,12 +232,18 @@ public class EmailService {
 			orderContents = new String[] {""};
 		}
 		//This is a test of products id that match ids of 1208 to 1212 in the simulation file.
-		Order test_order = new Order(new String[]{"2020-03-04","dschne29@msudenver.edu", "80102", "6HWNDDX9A35J", "10"});
-		email_menu.printMessage("Recommmended products of " + test_order.toString());
+		Order test_order =
+		 new Order(new String[] {
+		  "2020-03-04", "dschne29@msudenver.edu", "80102", "6HWNDDX9A35J",
+		  "10"
+		 });
+		email_menu.printMessage("Recommended products of " + test_order.toString());
 		email_menu.printMessage(od.findRecommendedProducts(test_order).toString());
-		if (email_menu.getOption() == Options.DONE)
+		if(email_menu.getOption() == Options.DONE)
+		{
 			email_menu.closeMenu();
-
+		}
+		
 		return orderContents;
 	}
 	
@@ -195,8 +274,6 @@ public class EmailService {
 		boolean multipartAlt =
 		 new ContentType(mimeMultipart.getContentType()).match("multipart/alternative");
 		if(multipartAlt)
-		// alternatives appear in an order of increasing 
-		// faithfulness to the original content. Customize as req'd.
 		{
 			return getTextFromBodyPart(mimeMultipart.getBodyPart(count - 1));
 		}
