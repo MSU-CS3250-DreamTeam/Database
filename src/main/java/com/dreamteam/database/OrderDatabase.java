@@ -417,21 +417,16 @@ public class OrderDatabase implements Database<Order> {
 		return new Order("000,000,000,000,000".split(","));
 	}
 	
-	public Order read(String email, String productid, String date)
+	public Order read(String email, String productID, String date)
 	{
 		HashSet<Order> orders = data_table.get(date);
 		if(orders != null)
 		{
-			System.out.println("Hello world");
 			for(Order o: orders)
 			{
 				System.out.println(o.toString());
-				System.out.println(productid);
-				System.out.println(email);
-				if(//email.equals(o.getEmail())) 
-				productid.equals(o.getProductID()))
+				if(productID.equals(o.getProductID()))
 				{
-					System.out.println("Goodbye world");
 					return o;
 				}
 			}

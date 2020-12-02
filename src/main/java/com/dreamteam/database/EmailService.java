@@ -70,9 +70,11 @@ public class EmailService {
 		String fromEmail = "thedreamteamsoftware@gmail.com";
 		String password = "Sch00l2020!";
 		String toEmail = "thedreamteamsoftware+orders@gmail.com";
-		String cancellationMessage = new_order.prettyPrint() +
-		 "Your order has been successfully cancelled. We look forward to your business in the " +
-		 "future!";
+		String cancellationMessage =
+		 "We are sorry to hear you need to cancel your order on " + new_order.getDate() + ". " +
+		  "Your order of " + new_order.getProductID() +
+		  " has been successfully cancelled. We look forward to your business in the " +
+		  "future!";
 		
 		try
 		{
@@ -85,7 +87,7 @@ public class EmailService {
 		
 		msg2.setFrom(new InternetAddress(fromEmail));
 		msg2.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmail));
-		msg2.setSubject("Order Confirmation");
+		msg2.setSubject("Order Cancellation");
 		msg2.setSentDate(new Date());
 		msg2.setText(cancellationMessage);
 		Transport.send(msg2, fromEmail, password);
@@ -97,6 +99,9 @@ public class EmailService {
 		String[] orderContents;
 		String[] bodyText;
 		Menu email_menu = new Menu(EnumSet.of(Options.DONE));
+		String orderEmail = "";
+		String orderProduct = "";
+		String orderDate = "";
 		
 		try
 		{
@@ -125,35 +130,17 @@ public class EmailService {
 				{
 					if(message2.getSubject().contains("Cancel"))
 					{
-						String orderEmail = "";
-						String orderProduct = "";
-						String orderDate = "";
 						if(toArray[k].contains("email:"))
 						{
 							orderEmail = toArray[k + 1];
-							System.out.println(orderEmail);
 						}
 						if(toArray[k].contains("product:"))
 						{
 							orderProduct = toArray[k + 1];
-							System.out.println(orderProduct);
 						}
 						if(toArray[k].contains("date:"))
 						{
 							orderDate = toArray[k + 1];
-							System.out.println(orderDate);
-							//System.out.println("Hello world");
-						}
-						//if(!orderEmail.isEmpty() && !orderProduct.isEmpty() && !orderDate
-						// .isEmpty())
-						//{
-						if(orderDate != null && !orderDate.equals("New") && !orderDate.isEmpty())
-						{
-							Order cancelledOrder = od.read(orderEmail, orderProduct, orderDate);
-							System.out.println(cancelledOrder.toString());
-							email_menu.printMessage(
-							 "Was the order successfully cancelled? " + od.delete(cancelledOrder));
-							//}
 						}
 					}
 					else
@@ -211,6 +198,16 @@ public class EmailService {
 							}
 						}
 					}
+				}
+			}
+			if(orderDate != null && !orderDate.equals("New") && !orderDate.isEmpty())
+			{
+				Order cancelledOrder = od.read(orderEmail, orderProduct, orderDate);
+				if(od.delete(cancelledOrder))
+				{
+					email_menu.printMessage("Sending cancellation email...");
+					sendCancellationMessage(cancelledOrder);
+					email_menu.printMessage("Cancellation confirmation sent!");
 				}
 			}
 			emailFolder.close(true);
