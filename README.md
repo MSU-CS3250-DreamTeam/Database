@@ -9,6 +9,8 @@
 
 A database to manage cvs stored data.
 
+P.S. Thank you guys for all the hard work you put into this project. You may never see this message, but I appreciate everything this team put into the project. Best of luck in everything you set out to do. -A.S.
+
 [GH-Pages Host Website](https://msu-cs3250-dreamteam.github.io/Database/)
 
 ## Run Program in CLI
